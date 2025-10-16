@@ -1,0 +1,46 @@
+--Creacion de la base de datos:
+CREATE DATABASE DB_EcoPuntos
+GO
+USE DB_EcoPuntos
+GO
+-- Tabla única Usuario
+CREATE TABLE Usuario (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(100) NOT NULL,
+    Cedula DECIMAL(18,0) NOT NULL UNIQUE,
+    Correo NVARCHAR(255) NOT NULL UNIQUE,
+    Direccion NVARCHAR(255),
+    Telefono NVARCHAR(20),
+    Contraseña NVARCHAR(255) NOT NULL,
+    
+    --Usuario
+    --Asegurarse que fuese alguno de estos 3
+    TipoUsuario NVARCHAR(20) NOT NULL CHECK (TipoUsuario IN ('Cliente', 'Trabajador', 'Administrador')),
+    
+    --Cliente
+    EcoPuntos INT DEFAULT 0,
+    
+    --Empleado
+    CodigoEmpleado NVARCHAR(50) NULL UNIQUE,
+    
+    --Trabajador
+    Horario NVARCHAR(100) NULL,
+    
+    --Administrador
+    NivelAcceso INT NULL
+);
+
+-- Constraints, esto es una regla que nos facilitara que no se creen mal los usuarios
+ALTER TABLE Usuario
+ADD CONSTRAINT Tipo CHECK 
+(
+    (TipoUsuario = 'Cliente' AND CodigoEmpleado IS NULL AND Horario IS NULL AND NivelAcceso IS NULL) OR
+    (TipoUsuario = 'Trabajador' AND CodigoEmpleado IS NOT NULL AND Horario IS NOT NULL AND NivelAcceso IS NULL) OR
+    (TipoUsuario = 'Administrador' AND CodigoEmpleado IS NOT NULL AND Horario IS NULL AND NivelAcceso IS NOT NULL)
+);
+
+--Probemos
+INSERT INTO Usuario (Nombre,Cedula,Correo,Direccion,Telefono,Contraseña,TipoUsuario,CodigoEmpleado,Horario)
+VALUES ('Juan Murillo',12345678,'Sebastian@Correo','CarreraAlgo','+57 3136113753','AVC123','Trabajador','EMP-001','Lunes a Sábado 7:00-16:00');
+GO
+SELECT * FROM Usuario WHERE TipoUsuario='Trabajador'

@@ -1,0 +1,69 @@
+--Creacion de la base de datos:
+CREATE DATABASE DBEcoPuntos
+GO
+--Uso de la base de datos:
+USE DBEcoPuntos
+GO
+--Insertemos las primera tablas
+
+-- Tabla Usuario
+
+CREATE TABLE Usuario (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre NVARCHAR(100) NOT NULL,
+    Cedula DECIMAL(20,0) NOT NULL UNIQUE,
+    Correo NVARCHAR(255) NOT NULL UNIQUE,
+    Direccion NVARCHAR(255),
+    Telefono NVARCHAR(20), --Se coloca Nvarchar por si +57 313.....
+    Contraseña NVARCHAR(255) NOT NULL
+);
+GO
+
+-- Tabla Cliente
+CREATE TABLE Cliente (
+    Id INT PRIMARY KEY FOREIGN KEY REFERENCES Usuario(Id),
+    EcoPuntos INT DEFAULT 0
+);
+GO
+
+-- Tabla Empleado
+CREATE TABLE Empleado (
+    Id INT PRIMARY KEY FOREIGN KEY REFERENCES Usuario(Id),
+    CodigoDeEmpleado NVARCHAR(50) NOT NULL UNIQUE
+);
+GO
+
+-- Tabla Trabajador
+CREATE TABLE Trabajador (
+    Id INT PRIMARY KEY FOREIGN KEY REFERENCES Empleado(Id),
+    Horario NVARCHAR(100) NOT NULL
+);
+GO
+
+-- Tabla Administrador
+CREATE TABLE Administrador (
+    Id INT PRIMARY KEY FOREIGN KEY REFERENCES Empleado(Id),
+    NivelAcceso INT NOT NULL DEFAULT 1
+);
+GO
+
+--Prueba de herencia de las tablas:
+
+--Primero insertar en Usuario
+DECLARE @Id INT;
+INSERT INTO Usuario (Nombre, Cedula, Correo, Direccion, Telefono, Contraseña)
+VALUES ('Juan', 421542, 'Juan@Prueba', 'Carrera Algo', '+58 3136113753', 'ABC123');
+SET @Id = SCOPE_IDENTITY();
+
+--insertar en Empleado
+INSERT INTO Empleado (Id, CodigoDeEmpleado)
+VALUES (@Id, 'EMP-001');
+
+--insertar en Trabajador
+INSERT INTO Trabajador (Id, Horario)
+VALUES (@Id, 'Lunes a Viernes 8:00-17:00');
+
+SELECT * FROM Usuario
+SELECT * FROM Empleado
+SELECT * FROM Trabajador
+GO

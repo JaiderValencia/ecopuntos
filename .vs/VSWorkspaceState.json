@@ -1,9 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\backend",
-    "\\frontend"
+    ""
   ],
-  "SelectedNode": "\\backend\\backend.txt",
+  "SelectedNode": "\\backend.sln",
   "PreviewInSolutionExplorer": false
 }
