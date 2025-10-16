@@ -1,7 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\backend",
+    "\\frontend"
   ],
-  "SelectedNode": "\\C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos",
+  "SelectedNode": "\\backend\\backend.txt",
   "PreviewInSolutionExplorer": false
 }

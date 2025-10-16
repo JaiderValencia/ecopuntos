@@ -1,0 +1,2 @@
+Para este backend se utilizo codigo c#
+se uso como guia lo explicado por el profesor de CARLOS ARTURO CASTRO, profesor de Aplicacion y Servicios Web
