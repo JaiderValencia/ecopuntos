@@ -1,4 +1,4 @@
-import InputComponent from '../../components/input'
+import InputComponent from '../../components/input/texts'
 import type { InputProps } from '../../interfaces/login/InputProps'
 
 const inputsLogin: InputProps[] = [{

@@ -1,3 +1,5 @@
+import { NavLink } from 'react-router-dom'
+
 function Header() {
     return (
         <header className="bg-green-600 shadow-md fixed top-0 left-0 right-0 z-10">
@@ -8,10 +10,10 @@ function Header() {
                 </div>
                 <nav className="flex items-center">
                     <a className="text-white mx-4" href="#">Mapa</a>
-                    <a className="text-white mx-4 flex items-center" href="#">
+                    <NavLink className="text-white mx-4 flex items-center" to="/login">
                         Iniciar sesion
                         <span className="material-icons ml-2">account_circle</span>
-                    </a>
+                    </NavLink>
                 </nav>
             </div>
         </header>
