@@ -21,7 +21,79 @@ function Inicio() {
             "Estado": (
                 <span className="inline-block bg-gray-300 text-gray-800 px-2 py-1 rounded text-xs">Cerrado</span>
             )
-        }
+        },
+        {
+            "Nombre": "Ecopunto Norte",
+            "Dirección": "Cra 7 # 45-89",
+            "Materiales": "Calle 99 #75-156",
+            "Responsable": "Plástico, Vidrio",
+            "Estado": (
+                <span className="inline-block bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Abierto</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Sur",
+            "Dirección": "Cra. 55 #65 B 256",
+            "Materiales": "Metal, Plástico",
+            "Responsable": "Tomas Doe",
+            "Estado": (
+                <span className="inline-block bg-gray-300 text-gray-800 px-2 py-1 rounded text-xs">Cerrado</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Norte",
+            "Dirección": "Cra 7 # 45-89",
+            "Materiales": "Calle 99 #75-156",
+            "Responsable": "Plástico, Vidrio",
+            "Estado": (
+                <span className="inline-block bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Abierto</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Sur",
+            "Dirección": "Cra. 55 #65 B 256",
+            "Materiales": "Metal, Plástico",
+            "Responsable": "Tomas Doe",
+            "Estado": (
+                <span className="inline-block bg-gray-300 text-gray-800 px-2 py-1 rounded text-xs">Cerrado</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Norte",
+            "Dirección": "Cra 7 # 45-89",
+            "Materiales": "Calle 99 #75-156",
+            "Responsable": "Plástico, Vidrio",
+            "Estado": (
+                <span className="inline-block bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Abierto</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Sur",
+            "Dirección": "Cra. 55 #65 B 256",
+            "Materiales": "Metal, Plástico",
+            "Responsable": "Tomas Doe",
+            "Estado": (
+                <span className="inline-block bg-gray-300 text-gray-800 px-2 py-1 rounded text-xs">Cerrado</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Norte",
+            "Dirección": "Cra 7 # 45-89",
+            "Materiales": "Calle 99 #75-156",
+            "Responsable": "Plástico, Vidrio",
+            "Estado": (
+                <span className="inline-block bg-green-200 text-green-800 px-2 py-1 rounded text-xs">Abierto</span>
+            )
+        },
+        {
+            "Nombre": "Ecopunto Sur",
+            "Dirección": "Cra. 55 #65 B 256",
+            "Materiales": "Metal, Plástico",
+            "Responsable": "Tomas Doe",
+            "Estado": (
+                <span className="inline-block bg-gray-300 text-gray-800 px-2 py-1 rounded text-xs">Cerrado</span>
+            )
+        },
     ])
 
     return (
