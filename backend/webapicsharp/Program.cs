@@ -44,6 +44,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCrud,
                            webapicsharp.Servicios.ServicioCrud>();
 
+builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioUsuario,
+                           webapicsharp.Servicios.ServicioUsuario>();
+
+
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
 
@@ -57,6 +61,8 @@ switch (proveedorBD.ToLower())
     default:
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioLecturaTabla,
         webapicsharp.Repositorios.RepositorioLecturaSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEscrituraTabla,
+        webapicsharp.Repositorios.RepositorioEscrituraSqlServer>();
     break;
 }
 
