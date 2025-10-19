@@ -1,3 +1,4 @@
 export interface TableProps {
-    data: object[]    
+    columns: string[],
+    children: React.ReactNode
 }

@@ -40,7 +40,22 @@ function Inicio() {
 
             <section>
                 <h2 className='text-4xl font-bold mb-4'>Ecopuntos</h2>
-                <Table data={sucursales} />
+
+                {!sucursales.length && 'No hay sucursales disponibles, vuelve más tarde.'}
+
+                {sucursales.length > 0 && (
+                    <Table columns={Object.keys(sucursales[0] || {})}>
+                        {sucursales.map((sucursal, index) => (
+                            <tr key={index} className="border-b">
+                                <td className="px-4 py-2">{sucursal.Nombre}</td>
+                                <td className="px-4 py-2">{sucursal.Dirección}</td>
+                                <td className="px-4 py-2">{sucursal.Materiales}</td>
+                                <td className="px-4 py-2">{sucursal.Responsable}</td>
+                                <td className="px-4 py-2">{sucursal.Estado}</td>
+                            </tr>
+                        ))}
+                    </Table>
+                )}
             </section>
         </div>
     )
