@@ -1,0 +1,45 @@
+CREATE DATABASE EcoPuntos
+Go
+Use EcoPuntos
+Go
+
+CREATE TABLE Cliente (
+    Id INT IDENTITY PRIMARY KEY,
+    Nombre NVARCHAR(100),
+    Cedula DECIMAL(18,0) UNIQUE,
+    Correo NVARCHAR(255) UNIQUE,
+    Direccion NVARCHAR(255),
+    Telefono NVARCHAR(20),
+    Contraseña NVARCHAR(255),
+    EcoPuntos INT DEFAULT 0
+);
+
+CREATE TABLE Trabajador (
+    Id INT IDENTITY PRIMARY KEY,
+    Nombre NVARCHAR(100),
+    Cedula DECIMAL(18,0) UNIQUE,
+    Correo NVARCHAR(255) UNIQUE,
+    Direccion NVARCHAR(255),
+    Telefono NVARCHAR(20),
+    Contraseña NVARCHAR(255),
+    CodigoEmpleado NVARCHAR(50) UNIQUE,
+    Horario NVARCHAR(100)
+);
+
+CREATE TABLE Administrador (
+    Id INT IDENTITY PRIMARY KEY,
+    Nombre NVARCHAR(100),
+    Cedula DECIMAL(18,0) UNIQUE,
+    Correo NVARCHAR(255) UNIQUE,
+    Direccion NVARCHAR(255),
+    Telefono NVARCHAR(20),
+    Contraseña NVARCHAR(255),
+    CodigoEmpleado NVARCHAR(50) UNIQUE,
+    NivelAcceso INT
+);
+
+Go
+
+INSERT INTO Trabajador (Nombre,Cedula,Correo,Direccion,Telefono,Contraseña,CodigoEmpleado,Horario)
+VALUES ('Carlos Rodríguez',112233445,'carlos.rodriguez@empresa.com','Calle 45 # 67-89','3104445566','trabajador456','TRAB-001','Lunes a Viernes 7:00 - 16:00');
+Go
