@@ -8,7 +8,7 @@ function App() {
   return (
     <>
       <Header />
-      <main className='flex items-center justify-center min-h-screen pt-16'>
+      <main className='min-h-screen pt-16'>
         <Routes>
           <Route path='/login' element={<Login />} />
 
