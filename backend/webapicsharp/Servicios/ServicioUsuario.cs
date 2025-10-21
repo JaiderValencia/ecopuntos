@@ -51,7 +51,7 @@ namespace webapicsharp.Servicios
                 ["Correo"] = usuario.ObtenerCorreo(),
                 ["Direccion"] = usuario.ObtenerDireccion(),
                 ["Telefono"] = usuario.ObtenerTelefono(),
-                ["Contraseña"] = usuario.ObtenerContraseña(),
+                ["Contrasena"] = usuario.ObtenerContrasena(),
             };
 
             bool usuarioCreado = await _repoEscritura.InsertarAsync("usuario", datos);
@@ -63,7 +63,7 @@ namespace webapicsharp.Servicios
 
             return "El usuario fue creado correctamente";
         }
-        public async Task<Dictionary<string, object?>?> BuscarUsuarioPorCorreoAsync(string correo)
+        public async Task<Usuario?> BuscarUsuarioPorCorreoAsync(string correo)
         {
             var resultado = await _repoBusqueda.BuscarPorCampoAsync("Usuario", "Correo", correo);
 
@@ -72,16 +72,15 @@ namespace webapicsharp.Servicios
                 return null;
             }
 
-            var usuarioFiltrado = new Dictionary<string, object?>
-            {
-                ["Nombre"] = resultado["Nombre"],
-                ["Cedula"] = resultado["Cedula"],
-                ["Correo"] = resultado["Correo"],
-                ["Direccion"] = resultado["Direccion"],
-                ["Telefono"] = resultado["Telefono"],
-            };
-
-            return usuarioFiltrado;
+            return new Usuario(
+                int.TryParse(resultado["Id"]?.ToString(), out var id) ? id: 0,
+                resultado["Nombre"]?.ToString() ?? "",
+                resultado["Cedula"]?.ToString() ?? "",
+                resultado["Correo"]?.ToString() ?? "",
+                resultado["Direccion"]?.ToString() ?? "",
+                resultado["Telefono"]?.ToString() ?? "",
+                resultado["Contrasena"]?.ToString() ?? ""
+            );
         }
         public async Task<string> ActualizarUsuarioPorCorreoAsync(string correo, Usuario usuario)
         {
@@ -107,7 +106,7 @@ namespace webapicsharp.Servicios
                 {"Correo", usuario.ObtenerCorreo()},
                 {"Direccion", usuario.ObtenerDireccion()},
                 {"Telefono", usuario.ObtenerTelefono()},
-                {"Contraseña", usuario.ObtenerContraseña()}
+                {"Contrasena", usuario.ObtenerContrasena()}
             };
 
             bool respuesta = await _repoActualizar.ActualizarPorCampoAsync("usuario", "Correo", correo, nuevosDatos);

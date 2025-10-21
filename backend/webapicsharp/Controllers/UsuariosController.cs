@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using webapicsharp.Modelos;
 using webapicsharp.Servicios;
@@ -7,8 +8,10 @@ using webapicsharp.Servicios.Abstracciones;
 
 namespace webapicsharp.Controllers
 {
+
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class UsuariosController : ControllerBase
     {
         private readonly IServicioUsuario _servicioUsuario;
@@ -28,7 +31,7 @@ namespace webapicsharp.Controllers
                 string.IsNullOrWhiteSpace(dto.Correo) ||
                 string.IsNullOrWhiteSpace(dto.Direccion) ||
                 string.IsNullOrWhiteSpace(dto.Telefono) ||
-                string.IsNullOrWhiteSpace(dto.Contraseña))
+                string.IsNullOrWhiteSpace(dto.Contrasena))
                 {
                     return BadRequest(new { mensaje = "Datos inválidos o incompletos." }); 
                 }
@@ -39,7 +42,7 @@ namespace webapicsharp.Controllers
                     dto.Correo!,
                     dto.Direccion!,
                     dto.Telefono!,
-                    dto.Contraseña!
+                    dto.Contrasena!
                 );
 
                 var resultado = await _servicioUsuario.CrearUsuarioAsync(nuevoUsuario);
@@ -89,7 +92,7 @@ namespace webapicsharp.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
         }
-
+        
         [HttpPut]
         public async Task<IActionResult> ActualizarUsuarioPorCorreo([FromBody] UsuarioDto dto, [FromQuery] string correo)
         {
@@ -106,7 +109,7 @@ namespace webapicsharp.Controllers
                     dto.Correo!,
                     dto.Direccion!,
                     dto.Telefono!,
-                    dto.Contraseña!
+                    dto.Contrasena!
                 );
 
                 string respuesta = await _servicioUsuario.ActualizarUsuarioPorCorreoAsync(correo, nuevosDatos);

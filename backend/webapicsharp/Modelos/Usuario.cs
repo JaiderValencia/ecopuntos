@@ -11,16 +11,27 @@ namespace webapicsharp.Modelos
         [JsonInclude] protected string? Correo { get; set; }
         [JsonInclude] protected string? Direccion { get; set; }
         [JsonInclude] protected string? Telefono { get; set; }
-        [JsonIgnore] private string? Contraseña { get; set; }
+        [JsonIgnore] private string? Contrasena { get; set; }
 
-        public Usuario(string nombre, string cedula, string correo, string direccion, string telefono, string contraseña)
+        public Usuario( string nombre, string cedula, string correo, string direccion, string telefono, string contrasena)
         {
             Nombre = nombre;
             Cedula = cedula;
             Correo = correo;
             Direccion = direccion;
             Telefono = telefono;
-            Contraseña = contraseña;
+            Contrasena = contrasena;
+        }
+
+        public Usuario(int id, string nombre, string cedula, string correo, string direccion, string telefono, string contrasena)
+        {
+            Id = id;
+            Nombre = nombre;
+            Cedula = cedula;
+            Correo = correo;
+            Direccion = direccion;
+            Telefono = telefono;
+            Contrasena = contrasena;
         }
 
         public string? ObtenerNombre() => Nombre;
@@ -28,11 +39,11 @@ namespace webapicsharp.Modelos
         public string? ObtenerCorreo() => Correo;
         public string? ObtenerDireccion() => Direccion;
         public string? ObtenerTelefono() => Telefono;
-        public string? ObtenerContraseña() => Contraseña;
+        public string? ObtenerContrasena() => Contrasena;
 
-        protected bool LogIn(string cedula, string contraseña)
+        public bool LogIn(string correo, string Contrasena)
         {
-            return this.Cedula == cedula && this.Contraseña == contraseña;
+            return this.Correo == correo && this.Contrasena == Contrasena;
         }
 
         public Usuario? Registrarse(Usuario NuevoUsuario)
@@ -42,7 +53,7 @@ namespace webapicsharp.Modelos
                 string.IsNullOrWhiteSpace(NuevoUsuario.Correo) ||
                 string.IsNullOrWhiteSpace(NuevoUsuario.Direccion) ||
                 string.IsNullOrWhiteSpace(NuevoUsuario.Telefono) ||
-                string.IsNullOrWhiteSpace(NuevoUsuario.Contraseña))
+                string.IsNullOrWhiteSpace(NuevoUsuario.Contrasena))
             {
                 return null;
             }
@@ -56,7 +67,7 @@ namespace webapicsharp.Modelos
         public string? Correo { get; set; }
         public string? Direccion { get; set; }
         public string? Telefono { get; set; }
-        public string? Contraseña { get; set; }
+        public string? Contrasena { get; set; }
     }
 
 }
