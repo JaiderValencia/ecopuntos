@@ -3,5 +3,7 @@ export interface InputProps {
     inputType: string
     inputPlaceholder?: string
     inputId: string
-    inputName: string
+    inputName: string,
+    divClassName?: string,
+    inputClassName?: string,
 }

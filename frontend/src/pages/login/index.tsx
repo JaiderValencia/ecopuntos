@@ -1,20 +1,19 @@
+import { NavLink } from 'react-router-dom'
 import FlexCenter from '../../components/flexCenter'
 import InputComponent from '../../components/input/texts'
-import type { InputProps } from '../../interfaces/login/InputProps'
+import type { InputProps } from '../../interfaces/inputComponent/InputProps'
 
 const inputsLogin: InputProps[] = [{
-    label: 'Correo Electronico',
+    label: 'Correo:',
     inputType: 'email',
     inputId: 'email',
     inputName: 'email',
-    inputPlaceholder: 'Correo Electronico'
 },
 {
-    label: 'Contraseña',
+    label: 'Contraseña:',
     inputType: 'password',
     inputId: 'password',
     inputName: 'password',
-    inputPlaceholder: 'Contraseña'
 }
 ]
 
@@ -33,7 +32,7 @@ function Login() {
                         type="button">Iniciar sesion</button>
                 </form>
                 <div className="text-center mt-4">
-                    <a className="text-gray-500 hover:text-blue-600 text-sm" href="#">Registrarse</a>
+                    <NavLink className="text-gray-500 hover:text-blue-600 text-sm" to="/registro">Registrarse</NavLink>
                 </div>
             </div>
         </FlexCenter>
