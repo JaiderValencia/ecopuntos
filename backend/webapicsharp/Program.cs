@@ -59,11 +59,17 @@ switch (proveedorBD.ToLower())
     case "sqlserverexpress": 
     case "localdb":
     default:
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioBusquedaPorCampoTabla,
+        webapicsharp.Repositorios.RepositorioBuscarPorCampoSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioLecturaTabla,
         webapicsharp.Repositorios.RepositorioLecturaSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEscrituraTabla,
         webapicsharp.Repositorios.RepositorioEscrituraSqlServer>();
-    break;
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioActualizarTabla,
+        webapicsharp.Repositorios.RepositorioActualizarSqlServer>(); 
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEliminarTabla,
+        webapicsharp.Repositorios.RepositorioEliminarSqlServer>();
+        break;
 }
 
 var app = builder.Build();
