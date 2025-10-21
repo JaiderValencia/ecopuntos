@@ -17,7 +17,7 @@ namespace webapicsharp.Repositorios
             _proveedor = proveedor;
         }
 
-        public async Task<int> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores)
+        public async Task<bool> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores)
         {
             if (string.IsNullOrWhiteSpace(nombreTabla))
                 throw new ArgumentException("El nombre de la tabla no puede estar vacío.");
@@ -27,7 +27,7 @@ namespace webapicsharp.Repositorios
 
             var columnas = string.Join(", ", valores.Keys);
             var parametros = string.Join(", ", valores.Keys.Select(k => $"@{k}"));
-            var sql = $"INSERT INTO {nombreTabla} ({columnas}) VALUES ({parametros});";
+            var sql = $"INSERT INTO [{nombreTabla}] ({columnas}) VALUES ({parametros});";
 
             using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
             using var comando = new SqlCommand(sql, conexion);
@@ -36,7 +36,8 @@ namespace webapicsharp.Repositorios
                 comando.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value ?? DBNull.Value);
 
             await conexion.OpenAsync();
-            return await comando.ExecuteNonQueryAsync();
+            var filas = await comando.ExecuteNonQueryAsync();
+            return filas > 0;
         }
     }
 }

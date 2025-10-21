@@ -1,32 +1,141 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using webapicsharp.Servicios.Abstracciones;            
+using webapicsharp.Modelos; // para usar la clase Usuario
 using webapicsharp.Repositorios.Abstracciones;
+using webapicsharp.Servicios.Abstracciones;
 
 namespace webapicsharp.Servicios
 {
     public class ServicioUsuario : IServicioUsuario
     {
-        private readonly IRepositorioEscrituraTabla _repo;
-
-        public ServicioUsuario(IRepositorioEscrituraTabla repo)
+        private readonly IRepositorioBusquedaPorCampoTabla _repoBusqueda;
+        private readonly IRepositorioEscrituraTabla _repoEscritura;
+        private readonly IRepositorioActualizarTabla _repoActualizar;
+        private readonly IRepositorioEliminarTabla _repoEliminar;
+        
+        public ServicioUsuario(
+            IRepositorioEscrituraTabla repoEscritura,
+            IRepositorioActualizarTabla repoActualizar,
+            IRepositorioEliminarTabla repoEliminar,
+            IRepositorioBusquedaPorCampoTabla repoBusqueda)
         {
-            _repo = repo;
+            _repoEscritura = repoEscritura;
+            _repoBusqueda = repoBusqueda;
+            _repoActualizar = repoActualizar;
+            _repoEliminar= repoEliminar;
         }
 
-        public async Task<int> CrearUsuarioAsync(string Nombre, string Cedula, string Correo, string Direccion, string Telefono, string Contraseña)
+
+        public async Task<string> CrearUsuarioAsync(Usuario usuario)
         {
+            var cedula = usuario.ObtenerCedula();
+            var correo = usuario.ObtenerCorreo();
+
+            var usuarioActual = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Correo", correo!);
+            var existeCedula = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Cedula", cedula!);
+           
+            if (usuarioActual != null)
+            {
+                return "Ya existe usuario con este correo";
+            }
+
+            if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
+            {
+                return "Existe otro usuario con la misma cedula";
+            }
+            
             var datos = new Dictionary<string, object?>
             {
-                ["Nombre"] = Nombre,
-                ["Cedula"] = Cedula,
-                ["Correo"] = Correo,
-                ["Direccion"] = Direccion,
-                ["Telefono"] = Telefono,
-                ["Contraseña"] = Contraseña,
+                ["Nombre"] = usuario.ObtenerNombre(),
+                ["Cedula"] = usuario.ObtenerCedula(),
+                ["Correo"] = usuario.ObtenerCorreo(),
+                ["Direccion"] = usuario.ObtenerDireccion(),
+                ["Telefono"] = usuario.ObtenerTelefono(),
+                ["Contrasena"] = usuario.ObtenerContrasena(),
             };
 
-            return await _repo.InsertarAsync("usuario", datos);
+            bool usuarioCreado = await _repoEscritura.InsertarAsync("usuario", datos);
+
+            if (!usuarioCreado)
+            {
+                return "El usuario no se pudo crear correctamente";
+            }
+
+            return "El usuario fue creado correctamente";
+        }
+        public async Task<Usuario?> BuscarUsuarioPorCorreoAsync(string correo)
+        {
+            var resultado = await _repoBusqueda.BuscarPorCampoAsync("Usuario", "Correo", correo);
+
+            if (resultado == null)
+            {
+                return null;
+            }
+
+            return new Usuario(
+                int.TryParse(resultado["Id"]?.ToString(), out var id) ? id: 0,
+                resultado["Nombre"]?.ToString() ?? "",
+                resultado["Cedula"]?.ToString() ?? "",
+                resultado["Correo"]?.ToString() ?? "",
+                resultado["Direccion"]?.ToString() ?? "",
+                resultado["Telefono"]?.ToString() ?? "",
+                resultado["Contrasena"]?.ToString() ?? ""
+            );
+        }
+        public async Task<string> ActualizarUsuarioPorCorreoAsync(string correo, Usuario usuario)
+        {
+            var cedula = usuario.ObtenerCedula();
+            
+            var usuarioActual = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Correo", correo);
+            var existeCedula = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Cedula", cedula!);
+            
+            if (usuarioActual == null)
+            {
+                return "No existe usuario con este correo";
+            }
+
+            if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
+            {
+                return "Existe otro usuario con la misma cedula";
+            }
+
+            var nuevosDatos = new Dictionary<string, object?>
+            {
+                {"Nombre", usuario.ObtenerNombre()},
+                {"Cedula", usuario.ObtenerCedula()},
+                {"Correo", usuario.ObtenerCorreo()},
+                {"Direccion", usuario.ObtenerDireccion()},
+                {"Telefono", usuario.ObtenerTelefono()},
+                {"Contrasena", usuario.ObtenerContrasena()}
+            };
+
+            bool respuesta = await _repoActualizar.ActualizarPorCampoAsync("usuario", "Correo", correo, nuevosDatos);
+
+            if (!respuesta)
+            {
+                return "Usuario no se pudo actualizar";
+            }
+
+            return "Usuario actualizado correctamente";
+        }
+
+        public async Task<string> EliminarUsuarioPorCorreoAsync(string correo)
+        {
+            var existeUsuario = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Correo", correo);
+
+            if (existeUsuario == null)
+            {
+                return $"No existe usuario con este correo: {correo}";
+            }
+
+            bool respuesta = await _repoEliminar.EliminarPorCampoAsync("usuario", "Correo", correo);
+
+            if (!respuesta)
+            {
+                return "Usuario no se pudo eliminar";
+            }
+
+            return "Usuario eliminado correctamente";
         }
     }
 }
