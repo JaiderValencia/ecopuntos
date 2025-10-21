@@ -12,17 +12,17 @@ namespace webapicsharp.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class UsuariosController : ControllerBase
+    public class ClientesController : ControllerBase
     {
-        private readonly IServicioUsuario _servicioUsuario;
+        private readonly IServicioCliente _servicioCliente;
 
-        public UsuariosController(IServicioUsuario servicioUsuario)
+        public ClientesController(IServicioCliente servicioCliente)
         {
-            _servicioUsuario = servicioUsuario;
+            _servicioCliente = servicioCliente;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CrearUsuario([FromBody] UsuarioDto dto)
+        public async Task<IActionResult> CrearCliente([FromBody] ClienteDto dto)
         {
             try
             {
@@ -36,26 +36,28 @@ namespace webapicsharp.Controllers
                     return BadRequest(new { mensaje = "Datos inválidos o incompletos." }); 
                 }
 
-                var nuevoUsuario = new Usuario(
+                var nuevoCliente = new Cliente(
+                    0,
                     dto.Nombre!,
                     dto.Cedula!,
                     dto.Correo!,
                     dto.Direccion!,
                     dto.Telefono!,
-                    dto.Contrasena!
+                    dto.Contrasena!,
+                    0
                 );
 
-                var resultado = await _servicioUsuario.CrearUsuarioAsync(nuevoUsuario);
+                var resultado = await _servicioCliente.CrearClienteAsync(nuevoCliente);
 
-                if (resultado != "El usuario fue creado correctamente")
+                if (resultado != "El cliente fue creado correctamente")
                 {
-                    return BadRequest(new { mensaje = "El usuario no se pudo crear" });
+                    return BadRequest(new { mensaje = "El cliente no se pudo crear" });
                 }
 
                 return Ok(new
                 {
                     mensaje = resultado,
-                    Usuario = nuevoUsuario
+                    Cliente = nuevoCliente
                 });
             }
             catch (Exception e)
@@ -65,7 +67,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> BuscarUsuarioPorCorreo([FromQuery] string correo)
+        public async Task<IActionResult> BuscarClientePorCorreo([FromQuery] string correo)
         {
             try
             {
@@ -74,17 +76,17 @@ namespace webapicsharp.Controllers
                     return BadRequest("Debe proporcionar un correo.");
                 }
 
-                var usuarioFiltrado = await _servicioUsuario.BuscarUsuarioPorCorreoAsync(correo);
+                var clienteFiltrado = await _servicioCliente.BuscarClientePorCorreoAsync(correo);
 
-                if (usuarioFiltrado == null)
+                if (clienteFiltrado == null)
                 {
-                    return BadRequest(new {mensaje = $"No se encontro un usuario con el correo {correo}" });
+                    return BadRequest(new {mensaje = $"No se encontro un cliente con el correo {correo}" });
                 }
 
                 return Ok(new
                 {
                     mensaje = "Encontrado exitosamente",
-                    Usuario = usuarioFiltrado
+                    Cliente = clienteFiltrado
                 });
             }
             catch (Exception e)
@@ -92,9 +94,9 @@ namespace webapicsharp.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
         }
-        
+
         [HttpPut]
-        public async Task<IActionResult> ActualizarUsuarioPorCorreo([FromBody] UsuarioDto dto, [FromQuery] string correo)
+        public async Task<IActionResult> ActualizarClientePorCorreo([FromBody] ClienteDto dto, [FromQuery] string correo)
         {
             try
             {
@@ -103,29 +105,31 @@ namespace webapicsharp.Controllers
                     return BadRequest("Debe proporcionar un correo.");
                 }
 
-                var nuevosDatos = new Usuario(
+                var nuevosDatos = new Cliente(
+                    0,
                     dto.Nombre!,
                     dto.Cedula!,
                     dto.Correo!,
                     dto.Direccion!,
                     dto.Telefono!,
-                    dto.Contrasena!
+                    dto.Contrasena!,
+                    dto.EcoPuntos!
                 );
 
-                string respuesta = await _servicioUsuario.ActualizarUsuarioPorCorreoAsync(correo, nuevosDatos);
+                string respuesta = await _servicioCliente.ActualizarClientePorCorreoAsync(correo, nuevosDatos);
 
                 if (respuesta != "Usuario actualizado correctamente")
                 {
                     return BadRequest(new { mensaje = respuesta });
                 }
-                
+
                 return Ok(new
                 {
                     mensaje = respuesta,
-                    usuario = nuevosDatos
+                    Cliente = nuevosDatos
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
@@ -134,7 +138,7 @@ namespace webapicsharp.Controllers
         [HttpDelete]
         public async Task<IActionResult> EliminarUsuarioPorCorreo([FromQuery] string correo)
         {
-            
+
             try
             {
                 if (string.IsNullOrWhiteSpace(correo))
@@ -142,15 +146,16 @@ namespace webapicsharp.Controllers
                     return BadRequest("Debe proporcionar un correo.");
                 }
 
-                string respuesta = await _servicioUsuario.EliminarUsuarioPorCorreoAsync(correo);
+                string respuesta = await _servicioCliente.EliminarClientePorCorreoAsync(correo);
 
-                if (respuesta != "Usuario eliminado correctamente")
+                if (respuesta != "Cliente eliminado correctamente")
                 {
                     return BadRequest(new { mensaje = respuesta });
                 }
 
-                return Ok(new { mensaje = respuesta});
-            } catch (Exception e)
+                return Ok(new { mensaje = respuesta });
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }

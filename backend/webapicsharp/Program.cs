@@ -103,8 +103,8 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCrud,
                            webapicsharp.Servicios.ServicioCrud>();
 
-builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioUsuario,
-                           webapicsharp.Servicios.ServicioUsuario>();
+builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCliente,
+                           webapicsharp.Servicios.ServicioCliente>();
 
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioJwt,
                            webapicsharp.Servicios.ServicioJwt>();

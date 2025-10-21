@@ -2,7 +2,7 @@
 
 namespace webapicsharp.Modelos
 {
-    public class Usuario
+    public abstract class Usuario
     {
 
         [JsonIgnore] public int Id { get; set; }
@@ -11,7 +11,7 @@ namespace webapicsharp.Modelos
         [JsonInclude] protected string? Correo { get; set; }
         [JsonInclude] protected string? Direccion { get; set; }
         [JsonInclude] protected string? Telefono { get; set; }
-        [JsonIgnore] private string? Contrasena { get; set; }
+        [JsonIgnore] protected string? Contrasena { get; set; }
 
         public Usuario( string nombre, string cedula, string correo, string direccion, string telefono, string contrasena)
         {
@@ -41,9 +41,9 @@ namespace webapicsharp.Modelos
         public string? ObtenerTelefono() => Telefono;
         public string? ObtenerContrasena() => Contrasena;
 
-        public bool LogIn(string correo, string Contrasena)
+        public bool LogIn(string correo, string contrasena)
         {
-            return this.Correo == correo && this.Contrasena == Contrasena;
+            return this.Correo == correo && this.Contrasena == contrasena;
         }
 
         public Usuario? Registrarse(Usuario NuevoUsuario)
@@ -61,7 +61,7 @@ namespace webapicsharp.Modelos
         }
     }
 
-    public class UsuarioDto{
+    public abstract class UsuarioDto{
         public string? Nombre { get; set; }
         public string? Cedula { get; set; }
         public string? Correo { get; set; }
