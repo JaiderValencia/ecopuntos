@@ -5,7 +5,7 @@ namespace webapicsharp.Modelos
     public abstract class Usuario
     {
 
-        [JsonIgnore] public int Id { get; set; }
+        [JsonInclude] public int Id { get; set; }
         [JsonInclude] protected string? Nombre { get; set; }
         [JsonInclude] protected string? Cedula { get; set; }
         [JsonInclude] protected string? Correo { get; set; }
@@ -13,6 +13,8 @@ namespace webapicsharp.Modelos
         [JsonInclude] protected string? Telefono { get; set; }
         [JsonIgnore] protected string? Contrasena { get; set; }
 
+
+        public Usuario() { }
         public Usuario( string nombre, string cedula, string correo, string direccion, string telefono, string contrasena)
         {
             Nombre = nombre;
@@ -43,7 +45,7 @@ namespace webapicsharp.Modelos
 
         public bool LogIn(string correo, string contrasena)
         {
-            return this.Correo == correo && this.Contrasena == contrasena;
+            return this.Correo == correo && BCrypt.Net.BCrypt.Verify(contrasena, this.Contrasena);
         }
 
         public Usuario? Registrarse(Usuario NuevoUsuario)

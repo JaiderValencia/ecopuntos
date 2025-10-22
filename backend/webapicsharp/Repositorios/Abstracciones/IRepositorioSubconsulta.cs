@@ -2,10 +2,11 @@
 {
     public interface IRepositorioSubconsulta
     {
-        Task<Dictionary<string, object?>?> EjecutarSubconsultaAsync(
+        public Task<List<Dictionary<string, object?>>?> EjecutarSubconsultaAsync(
             string tablaExterna,
             string tablaInterna,
-            string campoRelacion,
+            string campoRelacionExterna,
+            string campoRelacionInterna,
             string campoFiltro,
             object valorFiltro
         );

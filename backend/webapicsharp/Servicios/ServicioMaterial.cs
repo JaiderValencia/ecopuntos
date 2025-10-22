@@ -98,9 +98,9 @@ namespace webapicsharp.Servicios
                     throw new Exception("Ocurrio un error buscando el material");
 
                 var materialFiltrado = new Material(
-                    int.TryParse(material["Id"]?.ToString(), out var id) ? id : 0,
-                    material["Nombre"]?.ToString() ?? "",
-                    double.TryParse(material["Peso"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
+                    int.TryParse(material[0]["Id"]?.ToString(), out var id) ? id : 0,
+                    material[0]["Nombre"]?.ToString() ?? "",
+                    double.TryParse(material[0]["Peso"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
                 );
 
                 return materialFiltrado;

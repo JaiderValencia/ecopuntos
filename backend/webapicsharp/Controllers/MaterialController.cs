@@ -24,6 +24,7 @@ namespace webapicsharp.Controllers
         {
             try
             {
+                material.Id = 0;
                 var materialCreado = await _servicioMaterial.CrearMaterialAsync(material);
 
                 if (materialCreado is null)

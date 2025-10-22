@@ -42,7 +42,7 @@ namespace webapicsharp.Servicios
                 if (usuarioExiste != null)
                     throw new Exception("Ya existe usuario con este correo");
 
-                if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
+                if (existeCedula != null && existeCedula[0]["Correo"]?.ToString() != correo)
                     throw new Exception("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
@@ -95,9 +95,10 @@ namespace webapicsharp.Servicios
                 var cliente = await _repoSubconsulta.EjecutarSubconsultaAsync(
                     "Cliente",
                     "Usuario",
-                    "Id",
-                    "Correo",
-                    correo
+                    campoRelacionExterna: "Id",
+                    campoRelacionInterna: "Id",
+                    campoFiltro: "Correo",
+                    valorFiltro: correo
                     );
 
 
@@ -107,14 +108,14 @@ namespace webapicsharp.Servicios
                 }
 
                 var clienteFiltrado = new Cliente(
-                    int.TryParse(cliente["Id"]?.ToString(), out var id) ? id : 0,
-                    cliente["Nombre"]?.ToString() ?? "",
-                    cliente["Cedula"]?.ToString() ?? "",
-                    cliente["Correo"]?.ToString() ?? "",
-                    cliente["Direccion"]?.ToString() ?? "",
-                    cliente["Telefono"]?.ToString() ?? "",
-                    cliente["Contrasena"]?.ToString() ?? "",
-                    int.TryParse(cliente["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
+                    int.TryParse(cliente[0]["Id"]?.ToString(), out var id) ? id : 0,
+                    cliente[0]["Nombre"]?.ToString() ?? "",
+                    cliente[0]["Cedula"]?.ToString() ?? "",
+                    cliente[0]["Correo"]?.ToString() ?? "",
+                    cliente[0]["Direccion"]?.ToString() ?? "",
+                    cliente[0]["Telefono"]?.ToString() ?? "",
+                    cliente[0]["Contrasena"]?.ToString() ?? "",
+                    int.TryParse(cliente[0]["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
                 );
 
                 return clienteFiltrado;
@@ -138,7 +139,7 @@ namespace webapicsharp.Servicios
                 if (usuarioExiste == null)
                     throw new Exception ("No existe usuario con este correo");
 
-                if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
+                if (existeCedula != null && existeCedula[0]["Correo"]?.ToString() != correo)
                     throw new Exception ("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
@@ -157,7 +158,7 @@ namespace webapicsharp.Servicios
                 };
 
                 var dictUsuario = await _repoActualizar.ActualizarPorCampoAsync("usuario", "Correo", correo, datosUsuario);
-                var dictCliente = await _repoActualizar.ActualizarPorCampoAsync("cliente", "Id", usuarioExiste["Id"]!, datosCliente);
+                var dictCliente = await _repoActualizar.ActualizarPorCampoAsync("cliente", "Id", usuarioExiste[0]["Id"]!, datosCliente);
 
                 if (dictUsuario is null || dictCliente is null)
                 {
@@ -195,9 +196,9 @@ namespace webapicsharp.Servicios
                     return $"No existe usuario con este correo: {correo}";
                 }
 
-                var existeCliente = await _repoBusqueda.BuscarPorCampoAsync("cliente", "Id", existeUsuario["Id"]!);
+                var existeCliente = await _repoBusqueda.BuscarPorCampoAsync("cliente", "Id", existeUsuario[0]["Id"]!);
 
-                bool respuestaCliente = await _repoEliminar.EliminarPorCampoAsync("Cliente", "Id", existeUsuario!["Id"]!);
+                bool respuestaCliente = await _repoEliminar.EliminarPorCampoAsync("Cliente", "Id", existeUsuario![0]["Id"]!);
                 bool respuestaUsuario = await _repoEliminar.EliminarPorCampoAsync("usuario", "Correo", correo);
 
                 if (!respuestaUsuario || !respuestaCliente)

@@ -11,7 +11,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioEliminarTabla _repoEliminar;
         private readonly IRepositorioBuscarUltimoTabla _repoBuscarUltimo;
-        private readonly IRepositorioJoinTresTablas _repoJoinTres;
+        private readonly IRepositorioJoinTresTablasFiltrado _repoJoinTresFiltrado;
 
         public ServicioAdministrador(
             IRepositorioEscrituraTabla repoEscritura,
@@ -19,14 +19,14 @@ namespace webapicsharp.Servicios
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda,
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
-            IRepositorioJoinTresTablas repoJoinTres)
+            IRepositorioJoinTresTablasFiltrado repoJoinTresFiltrado)
         {
             _repoEscritura = repoEscritura;
             _repoBusqueda = repoBusqueda;
             _repoActualizar = repoActualizar;
             _repoEliminar = repoEliminar;
             _repoBuscarUltimo = repoBuscarUltimo;
-            _repoJoinTres = repoJoinTres;
+            _repoJoinTresFiltrado = repoJoinTresFiltrado;
         }
 
         public async Task<Administrador?> CrearAdministradorAsync(Administrador administrador)
@@ -42,7 +42,7 @@ namespace webapicsharp.Servicios
                 if (usuarioExiste != null)
                     throw new Exception( "Ya existe usuario con este correo");
 
-                if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
+                if (existeCedula != null && existeCedula[0]["Correo"]?.ToString() != correo)
                     throw new Exception("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
@@ -106,7 +106,7 @@ namespace webapicsharp.Servicios
         {
             try
             {
-                var administradorDatos = await _repoJoinTres.JoinTresTablasAsync(
+                var administradorDatos = await _repoJoinTresFiltrado.JoinTresTablasAsync(
                     "Usuario",
                     "Empleado",
                     "Administrador",
@@ -114,8 +114,10 @@ namespace webapicsharp.Servicios
                     "Id",
                     "Id",
                     "Id",
-                    "*",
-                    "INNER"
+                    columnasSeleccionadas:"*",
+                    tipoJoin:"INNER",
+                    campoFiltro: "Correo",
+                    valorFiltro: correo
                     );
 
                 var administrador = new Administrador(

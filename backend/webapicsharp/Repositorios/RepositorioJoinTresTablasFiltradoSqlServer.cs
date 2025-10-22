@@ -5,11 +5,11 @@ using webapicsharp.Servicios.Abstracciones;
 
 namespace webapicsharp.Repositorios
 {
-    public class RepositorioJoinTresTablasSqlServer : IRepositorioJoinTresTablas
+    public class RepositorioJoinTresTablasFiltradoSqlServer : IRepositorioJoinTresTablasFiltrado
     {
         private readonly IProveedorConexion _proveedor;
 
-        public RepositorioJoinTresTablasSqlServer(IProveedorConexion proveedor)
+        public RepositorioJoinTresTablasFiltradoSqlServer(IProveedorConexion proveedor)
         {
             _proveedor = proveedor;
         }
@@ -24,13 +24,14 @@ namespace webapicsharp.Repositorios
             string campoRelacion23Tabla3,
             string columnasSeleccionadas = "*",
             string tipoJoin = "INNER",
-            int? limite = null)
+            int? limite = null,
+            string? campoFiltro = null,
+            object? valorFiltro = null)
         {
             try
             {
                 var resultados = new List<Dictionary<string, object?>>();
 
-                // Validar parámetros
                 if (string.IsNullOrWhiteSpace(tabla1) ||
                     string.IsNullOrWhiteSpace(tabla2) ||
                     string.IsNullOrWhiteSpace(tabla3))
@@ -39,17 +40,34 @@ namespace webapicsharp.Repositorios
                 using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
                 await conexion.OpenAsync();
 
-                // Construir la consulta
                 var topClause = limite.HasValue ? $"TOP {limite.Value}" : string.Empty;
 
+                string whereClause = string.Empty;
+
+                if (!string.IsNullOrWhiteSpace(campoFiltro) && valorFiltro != null)
+                {
+                    // Subconsulta dinámica usando el campo de filtro
+                    whereClause = $@"
+                        WHERE t1.[{campoRelacion12Tabla1}] = (
+                            SELECT TOP 1 [Id]
+                            FROM [{tabla1}]
+                            WHERE [{campoFiltro}] = @valorFiltro
+                        )";
+                }
+
                 string query = $@"
-                SELECT {topClause} {columnasSeleccionadas}
-                FROM [{tabla1}] AS t1
-                {tipoJoin} JOIN [{tabla2}] AS t2 ON t1.[{campoRelacion12Tabla1}] = t2.[{campoRelacion12Tabla2}]
-                {tipoJoin} JOIN [{tabla3}] AS t3 ON t2.[{campoRelacion23Tabla2}] = t3.[{campoRelacion23Tabla3}];
-            ";
+                    SELECT {topClause} {columnasSeleccionadas}
+                    FROM [{tabla1}] AS t1
+                    {tipoJoin} JOIN [{tabla2}] AS t2 ON t1.[{campoRelacion12Tabla1}] = t2.[{campoRelacion12Tabla2}]
+                    {tipoJoin} JOIN [{tabla3}] AS t3 ON t2.[{campoRelacion23Tabla2}] = t3.[{campoRelacion23Tabla3}]
+                    {whereClause};
+                ";
 
                 using var comando = new SqlCommand(query, conexion);
+
+                if (!string.IsNullOrWhiteSpace(campoFiltro) && valorFiltro != null)
+                    comando.Parameters.AddWithValue("@valorFiltro", valorFiltro);
+
                 using var lector = await comando.ExecuteReaderAsync(CommandBehavior.CloseConnection);
 
                 while (await lector.ReadAsync())
@@ -66,10 +84,10 @@ namespace webapicsharp.Repositorios
             catch (SqlException excepcionSql)
             {
                 throw new InvalidOperationException(
-                   $"Error de SQL Server al consultar el join: {excepcionSql.Message}. " +
-                   $"Código de error SQL Server: {excepcionSql.Number}. " +
-                   $"Verificar que la tabla existe y se tienen permisos de actualizacion.",
-                   excepcionSql
+                    $"Error de SQL Server al consultar el join: {excepcionSql.Message}. " +
+                    $"Código de error SQL Server: {excepcionSql.Number}. " +
+                    $"Verificar que la tabla existe y se tienen permisos de actualización.",
+                    excepcionSql
                 );
             }
         }

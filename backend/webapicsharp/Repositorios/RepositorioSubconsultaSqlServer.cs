@@ -14,17 +14,13 @@ namespace webapicsharp.Repositorios
             _proveedor = proveedor;
         }
 
-        /// <summary>
-        /// Ejecuta una subconsulta SQL con una condición anidada.
-        /// Ejemplo:
-        /// SELECT * FROM Cliente WHERE Id = (SELECT Id FROM Usuario WHERE Correo = @correo);
-        /// </summary>
-        public async Task<Dictionary<string, object?>?> EjecutarSubconsultaAsync(
-            string tablaExterna,      // Ej: "Cliente"
-            string tablaInterna,      // Ej: "Usuario"
-            string campoRelacion,     // Ej: "Id"
-            string campoFiltro,       // Ej: "Correo"
-            object valorFiltro        // Ej: "correo@ejemplo.com"
+        public async Task<List<Dictionary<string, object?>>?> EjecutarSubconsultaAsync(
+            string tablaExterna,
+            string tablaInterna,
+            string campoRelacionExterna,
+            string campoRelacionInterna,
+            string campoFiltro,
+            object valorFiltro
         )
         {
             try
@@ -32,40 +28,44 @@ namespace webapicsharp.Repositorios
                 using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
                 await conexion.OpenAsync();
 
-                // 🔹 Construcción del SQL: incluye los campos de ambas tablas
                 string consulta = $@"
-                SELECT 
-                    u.*, 
-                    c.*
-                FROM [{tablaExterna}] AS c
-                INNER JOIN [{tablaInterna}] AS u
-                    ON c.[{campoRelacion}] = u.[{campoRelacion}]
-                WHERE u.[{campoFiltro}] = @valor;
+                    SELECT 
+                        u.*, 
+                        c.*
+                    FROM [{tablaExterna}] AS c
+                    INNER JOIN [{tablaInterna}] AS u
+                        ON c.[{campoRelacionExterna}] = u.[{campoRelacionInterna}]
+                    WHERE u.[{campoFiltro}] = @valor;
                 ";
 
                 using var comando = new SqlCommand(consulta, conexion);
                 comando.Parameters.AddWithValue("@valor", valorFiltro ?? DBNull.Value);
 
-                using var lector = await comando.ExecuteReaderAsync(CommandBehavior.SingleRow);
+                using var lector = await comando.ExecuteReaderAsync(); // <-- todos los registros
 
-                if (!await lector.ReadAsync())
-                    return null;
+                var resultados = new List<Dictionary<string, object?>>();
 
-                var resultado = new Dictionary<string, object?>();
-                for (int i = 0; i < lector.FieldCount; i++)
-                    resultado[lector.GetName(i)] = await lector.IsDBNullAsync(i) ? null : lector.GetValue(i);
+                while (await lector.ReadAsync())
+                {
+                    var registro = new Dictionary<string, object?>();
+                    for (int i = 0; i < lector.FieldCount; i++)
+                        registro[lector.GetName(i)] = await lector.IsDBNullAsync(i) ? null : lector.GetValue(i);
 
-                return resultado;
+                    resultados.Add(registro);
+                }
+
+                return resultados.Count > 0 ? resultados : null;
             }
             catch (SqlException excepcionSql)
             {
                 throw new InvalidOperationException(
                    $"Error de SQL Server al consultar la subconsulta: {excepcionSql.Message}. " +
                    $"Código de error SQL Server: {excepcionSql.Number}. " +
-                   $"Verificar que la tabla existe y se tienen permisos de actualizacion.",
+                   $"Verificar que la tabla existe y se tienen permisos de actualización.",
                    excepcionSql
                 );
             }
+
         }
     }
 }

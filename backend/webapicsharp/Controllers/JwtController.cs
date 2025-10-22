@@ -30,6 +30,7 @@ namespace webapicsharp.Controllers
         {
             try
             {
+
                 var usuario = await _servicioCliente.BuscarClientePorCorreoAsync(request.Email);
 
                 if (usuario == null )
@@ -37,17 +38,16 @@ namespace webapicsharp.Controllers
                     return BadRequest(new { mensaje = "No existe esa cuenta" });
                 }
 
-                var correo = usuario.ObtenerCorreo();
-                var contrasena = usuario.ObtenerContrasena();
-
-                var resultado = usuario.LogIn(correo!, contrasena!);
+                var resultado = usuario.LogIn(request.Email!, request.Password!);
 
                 if (!resultado)
                 {
                     return Unauthorized(new { mensaje = "Correo o contraseña erroneos" });
                 }
 
-                var token = _jwt.GenerarToken(correo!);
+                var rol = _jwt.ValidacionRol(request.Email!);
+
+                var token = _jwt.GenerarToken(request.Email!);
 
                 return Ok(new
                 {
@@ -57,7 +57,8 @@ namespace webapicsharp.Controllers
                     {
                         Id = usuario.Id,
                         Nombre = usuario.ObtenerNombre(),
-                        Correo = correo,
+                        Correo = request.Email!,
+                        Rol = rol,
                         Telefono = usuario.ObtenerTelefono()
                     }
                 });
@@ -74,6 +75,8 @@ namespace webapicsharp.Controllers
         {
             try
             {
+                var hash = _jwt.HashearContrasena(dto.Contrasena!);
+
                 var nuevoRegistro = new Cliente(
                     0,
                     dto.Nombre!,
@@ -81,9 +84,10 @@ namespace webapicsharp.Controllers
                     dto.Correo!,
                     dto.Direccion!,
                     dto.Telefono!,
-                    dto.Contrasena!,
+                    hash!,
                     0
                 );
+
 
                 var clienteCreado = await _servicioCliente.CrearClienteAsync(nuevoRegistro);
 
@@ -94,7 +98,7 @@ namespace webapicsharp.Controllers
 
                 return Ok(new
                 {
-                    mensaje = "Inicio de sesión exitoso.",
+                    mensaje = "Registro exitoso.",
                     Bearer = token,
                     datosUsuario = new
                     {
@@ -112,14 +116,5 @@ namespace webapicsharp.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor" , detalle = e.Message});
             }
         }
-
-        //public bool EsEmpleado(string correo)
-        //{
-        //    List<string> split = correo.Split("@").ToList();
-
-        //    if (split[1] == "ecomedellin.com")
-        //        return true;
-        //    return false;
-        //}
     }
 }

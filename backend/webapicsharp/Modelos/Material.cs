@@ -4,7 +4,7 @@ namespace webapicsharp.Modelos
 {
     public class Material
     {
-        [JsonIgnore]public int Id { get; set; }
+        public int Id { get; set; }
         public string? Nombre { get; set; }
         public double Peso { get; set; }
 
@@ -14,5 +14,12 @@ namespace webapicsharp.Modelos
             Nombre = nombre;
             Peso = peso;
         }
+
+    }
+    public class MaterialDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = "";
+        public double Peso { get; set; }
     }
 }

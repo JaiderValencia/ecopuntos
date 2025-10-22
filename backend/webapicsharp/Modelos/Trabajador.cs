@@ -4,6 +4,7 @@
     {
         public string? Horario { get; set; }
 
+        public Trabajador() : base() { }
         public Trabajador(int id, string nombre, string cedula, string correo, string direccion, string telefono, string contrasena, string codigoDeEmpleado, string horario)
                 : base(id, nombre, cedula, correo, direccion, telefono, contrasena, codigoDeEmpleado)
         {

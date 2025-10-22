@@ -10,6 +10,10 @@
         {
             CodigoDeEmpleado = codigoDeEmpleado;
         }
+
+        protected Empleado() 
+        {
+        }
     }
 
     public class EmpleadoDto : UsuarioDto

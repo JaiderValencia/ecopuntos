@@ -14,7 +14,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioBuscarUltimoTabla _repoBuscarUltimo;
         private readonly IRepositorioEliminarTabla _repoEliminar;
-        private readonly IRepositorioJoinTresTablas _repoJoinTres;
+        private readonly IRepositorioJoinTresTablasFiltrado _repoJoinTresFiltrado;
 
         public ServicioTrabajador(
             IRepositorioEscrituraTabla repoEscritura,
@@ -22,14 +22,15 @@ namespace webapicsharp.Servicios
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda, 
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
-            IRepositorioJoinTresTablas repoJoinTres)
+            IRepositorioJoinTresTablasFiltrado repoJoinTresFiltrado
+            )
         {
             _repoEscritura = repoEscritura;
             _repoBusqueda = repoBusqueda;
             _repoActualizar = repoActualizar;
             _repoEliminar = repoEliminar;
             _repoBuscarUltimo = repoBuscarUltimo;
-            _repoJoinTres = repoJoinTres;
+            _repoJoinTresFiltrado = repoJoinTresFiltrado;
         }
 
         public async Task<Trabajador?> CrearTrabajadorAsync(Trabajador trabajador)
@@ -45,7 +46,7 @@ namespace webapicsharp.Servicios
                 if (usuarioExiste != null)
                     throw new Exception("Ya existe usuario con este correo");
 
-                if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
+                if (existeCedula != null && existeCedula[0]["Correo"]?.ToString() != correo)
                     throw new Exception("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
@@ -108,7 +109,7 @@ namespace webapicsharp.Servicios
         {
             try
             {
-                var trabajadorDatos = await _repoJoinTres.JoinTresTablasAsync(
+                var trabajadorDatos = await _repoJoinTresFiltrado.JoinTresTablasAsync(
                    "Usuario",
                    "Empleado",
                    "Trabajador",
@@ -116,8 +117,11 @@ namespace webapicsharp.Servicios
                    "Id",
                    "Id",
                    "Id",
-                   "*",
-                   "INNER"
+                   columnasSeleccionadas:"*",
+                   tipoJoin:"INNER",
+                   limite: null,
+                   campoFiltro: "Correo",
+                   valorFiltro: correo
                    );
 
                 var trabajador = new Trabajador(
@@ -150,7 +154,7 @@ namespace webapicsharp.Servicios
                     throw new Exception("Debe proporcionar un limite positivo.");
                 }
 
-                var trabajadores = await _repoJoinTres.JoinTresTablasAsync(
+                var trabajadores = await _repoJoinTresFiltrado.JoinTresTablasAsync(
                     "Usuario",
                     "Empleado",
                     "Trabajador",
@@ -158,9 +162,11 @@ namespace webapicsharp.Servicios
                     "Id",
                     "Id",
                     "Id",
-                    "*",
-                    "INNER",
-                    limite
+                    columnasSeleccionadas: "*",
+                    tipoJoin: "INNER",
+                    limite: limite,
+                    campoFiltro: null,
+                    valorFiltro: null
                     );
 
                 return trabajadores;
