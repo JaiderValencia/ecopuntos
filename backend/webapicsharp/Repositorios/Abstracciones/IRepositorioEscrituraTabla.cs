@@ -5,6 +5,6 @@ namespace webapicsharp.Repositorios.Abstracciones
 {
     public interface IRepositorioEscrituraTabla
     {
-        Task<int> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores);
-    }
+        public Task<Dictionary<string, object?>> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores);
+    } 
 }
