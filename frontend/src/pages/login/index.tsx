@@ -6,6 +6,7 @@ import type { LoginFormData } from '../../interfaces/login/loginForm'
 import { inputsLogin as inputs } from '../../utils/login'
 import { login } from '../../api/auth'
 import { useUserContext } from '../../contex/user'
+import Card from '../../components/card'
 
 
 function Login() {
@@ -37,7 +38,7 @@ function Login() {
 
     return (
         <FlexCenter>
-            <div className='bg-white p-8 rounded-lg shadow-lg w-full max-w-sm'>
+            <Card className='bg-white p-8 rounded-lg shadow-lg w-full max-w-sm'>
                 <h2 className="text-2xl font-bold text-center mb-6">Iniciar Sesion</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
 
@@ -51,7 +52,7 @@ function Login() {
                 <div className="text-center mt-4">
                     <NavLink className="text-gray-500 hover:text-blue-600 text-sm" to="/registro">Registrarse</NavLink>
                 </div>
-            </div>
+            </Card>
         </FlexCenter>
     )
 }
