@@ -18,7 +18,7 @@ namespace webapicsharp.Repositorios
             _proveedor = proveedor;
         }
 
-        public async Task<bool> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores)
+        public async Task<Dictionary<string, object?>> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores)
         {
             try
             {
@@ -30,7 +30,8 @@ namespace webapicsharp.Repositorios
 
                 var columnas = string.Join(", ", valores.Keys);
                 var parametros = string.Join(", ", valores.Keys.Select(k => $"@{k}"));
-                var sql = $"INSERT INTO [{nombreTabla}] ({columnas}) VALUES ({parametros});";
+
+                var sql = $"INSERT INTO [{nombreTabla}] ({columnas}) OUTPUT INSERTED.* VALUES ({parametros});";
 
                 using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
                 using var comando = new SqlCommand(sql, conexion);
@@ -39,18 +40,30 @@ namespace webapicsharp.Repositorios
                     comando.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value ?? DBNull.Value);
 
                 await conexion.OpenAsync();
-                var filas = await comando.ExecuteNonQueryAsync();
-                return filas > 0;
+
+                using var reader = await comando.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    var resultado = new Dictionary<string, object?>();
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        resultado[reader.GetName(i)] = await reader.IsDBNullAsync(i) ? null : reader.GetValue(i);
+                    }
+                    return resultado;
+                }
+
+                throw new InvalidOperationException("No se pudo insertar el registro o recuperar los datos insertados.");
             }
             catch (SqlException excepcionSql)
             {
                 throw new InvalidOperationException(
-                   $"Error de SQL Server al consultar la tabla '{nombreTabla}': {excepcionSql.Message}. " +
-                   $"Código de error SQL Server: {excepcionSql.Number}. " +
-                   $"Verificar que la tabla existe y se tienen permisos de actualizacion.",
-                   excepcionSql
+                    $"Error de SQL Server al insertar en la tabla '{nombreTabla}': {excepcionSql.Message}. " +
+                    $"Código SQL: {excepcionSql.Number}. Verifique permisos y existencia de la tabla.",
+                    excepcionSql
                 );
             }
         }
+
     }
 }

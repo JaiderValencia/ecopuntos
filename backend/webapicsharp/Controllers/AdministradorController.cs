@@ -49,7 +49,7 @@ namespace webapicsharp.Controllers
 
                 var resultado = await _servicioAdministrador.CrearAdministradorAsync(datosAdministrador);
 
-                if (resultado != "El Administrador fue creado exitosamente")
+                if (resultado is null)
                 {
                     return BadRequest(new { mensaje = "El cliente no se pudo crear" });
                 }
@@ -58,8 +58,8 @@ namespace webapicsharp.Controllers
 
                 return Ok(new
                 {
-                    mensaje = resultado,
-                    Administrador = nuevoAdministrador
+                    mensaje = "Administrador creado exitosamente",
+                    Administrador = resultado
                 });
             }
             catch (Exception e)
@@ -88,7 +88,7 @@ namespace webapicsharp.Controllers
                 return Ok(new
                 {
                     mensaje = "Encontrado exitosamente",
-                    Cliente = administradorFiltrado
+                    Administrador = administradorFiltrado
                 });
 
             }

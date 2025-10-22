@@ -110,6 +110,10 @@ builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServi
                            webapicsharp.Servicios.ServicioTrabajador>();
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioAdministrador,
                            webapicsharp.Servicios.ServicioAdministrador>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioMaterial,
+                           webapicsharp.Servicios.ServicioMaterial>();
+//builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioAdministrador,
+//                           webapicsharp.Servicios.ServicioAdministrador>();
 
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
@@ -134,7 +138,9 @@ switch (proveedorBD.ToLower())
         webapicsharp.Repositorios.RepositorioEliminarSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioBuscarUltimoTabla,
         webapicsharp.Repositorios.RepositorioBuscarUltimoSqlServer>();
-        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioLecturaJoin,
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioSubconsulta,
+        webapicsharp.Repositorios.RepositorioSubconsultaSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioJoinTresTablas,
         webapicsharp.Repositorios.RepositorioJoinTresTablasSqlServer>();
         break;
 }

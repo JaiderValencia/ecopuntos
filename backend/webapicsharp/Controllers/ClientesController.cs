@@ -47,17 +47,17 @@ namespace webapicsharp.Controllers
                     0
                 );
 
-                var resultado = await _servicioCliente.CrearClienteAsync(nuevoCliente);
+                var clienteCreado = await _servicioCliente.CrearClienteAsync(nuevoCliente);
 
-                if (resultado != "El cliente fue creado correctamente")
+                if (clienteCreado is null)
                 {
                     return BadRequest(new { mensaje = "El cliente no se pudo crear" });
                 }
 
                 return Ok(new
                 {
-                    mensaje = resultado,
-                    Cliente = nuevoCliente
+                    mensaje = "El Cliente fue creado con exito",
+                    Cliente = clienteCreado
                 });
             }
             catch (Exception e)
@@ -116,17 +116,17 @@ namespace webapicsharp.Controllers
                     dto.EcoPuntos!
                 );
 
-                string respuesta = await _servicioCliente.ActualizarClientePorCorreoAsync(correo, nuevosDatos);
+                var clienteActualizado = await _servicioCliente.ActualizarClientePorCorreoAsync(correo, nuevosDatos);
 
-                if (respuesta != "Usuario actualizado correctamente")
+                if (clienteActualizado is null)
                 {
-                    return BadRequest(new { mensaje = respuesta });
+                    return BadRequest("Ocurrio un error actualizando el cliente");
                 }
 
                 return Ok(new
                 {
-                    mensaje = respuesta,
-                    Cliente = nuevosDatos
+                    mensaje = "cliente actualizado con exito",
+                    Cliente = clienteActualizado
                 });
             }
             catch (Exception e)

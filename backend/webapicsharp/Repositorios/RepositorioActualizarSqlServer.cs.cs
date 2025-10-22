@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using webapicsharp.Repositorios.Abstracciones;
 using webapicsharp.Servicios.Abstracciones;
+using System.Data;
 
 namespace webapicsharp.Repositorios
 {
@@ -13,20 +14,24 @@ namespace webapicsharp.Repositorios
             _proveedor = proveedor;
         }
 
-        public async Task<bool> ActualizarPorCampoAsync(string nombreTabla, string campoFiltro, object valorFiltro, Dictionary<string, object?> nuevosValores)
+        public async Task<Dictionary<string, object?>> ActualizarPorCampoAsync(
+            string nombreTabla,
+            string campoFiltro,
+            object valorFiltro,
+            Dictionary<string, object?> nuevosValores)
         {
             if (string.IsNullOrWhiteSpace(nombreTabla))
-                throw new ArgumentException("El nombre de la tabla no puede estar vacío.");
+                throw new ArgumentException("El nombre de la tabla no puede estar vacío.", nameof(nombreTabla));
 
             if (nuevosValores == null || nuevosValores.Count == 0)
-                throw new ArgumentException("Debe proporcionar al menos una columna con valor.");
+                throw new ArgumentException("Debe proporcionar al menos una columna con valor.", nameof(nuevosValores));
 
             try
             {
                 using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
                 await conexion.OpenAsync();
 
-                //Construye el SET dinamicamente con partes
+                // Construcción del SET dinámicamente
                 var setPartes = new List<string>();
                 var comando = new SqlCommand { Connection = conexion };
 
@@ -39,24 +44,42 @@ namespace webapicsharp.Repositorios
                     contador++;
                 }
 
-                // Filtro (WHERE)
-                comando.CommandText = $"UPDATE [{nombreTabla}] SET {string.Join(", ", setPartes)} WHERE [{campoFiltro}] = @filtro";
+                // Parámetro de filtro
                 comando.Parameters.AddWithValue("@filtro", valorFiltro ?? DBNull.Value);
 
-                //Ejecutamos la consulta de actualizacion
-                int filasAfectadas = await comando.ExecuteNonQueryAsync();
-                return filasAfectadas > 0;
+                // Construcción de la consulta con OUTPUT para devolver los valores actualizados
+                string setClause = string.Join(", ", setPartes);
+                comando.CommandText = $@"
+                    UPDATE [{nombreTabla}]
+                    SET {setClause}
+                    OUTPUT inserted.*
+                    WHERE [{campoFiltro}] = @filtro;";
 
-            } catch(SqlException excepcionSql)
+                var filaActualizada = new Dictionary<string, object?>();
+
+                using var lector = await comando.ExecuteReaderAsync(CommandBehavior.SingleRow);
+
+                if (await lector.ReadAsync())
+                {
+                    for (int i = 0; i < lector.FieldCount; i++)
+                    {
+                        string nombreColumna = lector.GetName(i);
+                        object? valor = lector.IsDBNull(i) ? null : lector.GetValue(i);
+                        filaActualizada[nombreColumna] = valor;
+                    }
+                }
+
+                return filaActualizada;
+            }
+            catch (SqlException excepcionSql)
             {
                 throw new InvalidOperationException(
-                   $"Error de SQL Server al consultar la tabla '{nombreTabla}': {excepcionSql.Message}. " +
-                   $"Código de error SQL Server: {excepcionSql.Number}. " +
-                   $"Verificar que la tabla existe y se tienen permisos de actualizacion.",
-                   excepcionSql
+                    $"Error de SQL Server al actualizar la tabla '{nombreTabla}': {excepcionSql.Message}. " +
+                    $"Código de error SQL Server: {excepcionSql.Number}. " +
+                    $"Verificar que la tabla existe y se tienen permisos de actualización.",
+                    excepcionSql
                 );
             }
         }
-
     }
 }

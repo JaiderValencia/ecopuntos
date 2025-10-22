@@ -85,15 +85,12 @@ namespace webapicsharp.Controllers
                     0
                 );
 
-                var usuarioCreado = await _servicioCliente.CrearClienteAsync(nuevoRegistro);
+                var clienteCreado = await _servicioCliente.CrearClienteAsync(nuevoRegistro);
 
-                if (usuarioCreado != "El cliente fue creado correctamente")
+                if (clienteCreado is null)
                     return BadRequest(new { mensaje = "Ocurrio un error durante el registro" });
 
-                var usuario = await _servicioCliente.BuscarClientePorCorreoAsync(dto.Correo!);
-
                 var token = _jwt.GenerarToken(dto.Correo!);
-
 
                 return Ok(new
                 {
@@ -101,10 +98,10 @@ namespace webapicsharp.Controllers
                     Bearer = token,
                     datosUsuario = new
                     {
-                        Id = usuario!.Id,
-                        Nombre = usuario.ObtenerNombre(),
-                        Correo = usuario.ObtenerCorreo(),
-                        Telefono = usuario.ObtenerTelefono(),
+                        Id = clienteCreado!.Id,
+                        Nombre = clienteCreado.ObtenerNombre(),
+                        Correo = clienteCreado.ObtenerCorreo(),
+                        Telefono = clienteCreado.ObtenerTelefono(),
                         Rol = "Usuario"
                     }
                 });
@@ -115,5 +112,14 @@ namespace webapicsharp.Controllers
                 return StatusCode(500, new { mensaje = "Error interno del servidor" , detalle = e.Message});
             }
         }
+
+        //public bool EsEmpleado(string correo)
+        //{
+        //    List<string> split = correo.Split("@").ToList();
+
+        //    if (split[1] == "ecomedellin.com")
+        //        return true;
+        //    return false;
+        //}
     }
 }

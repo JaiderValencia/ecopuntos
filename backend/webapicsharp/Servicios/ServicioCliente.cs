@@ -12,21 +12,24 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioEscrituraTabla _repoEscritura;
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioEliminarTabla _repoEliminar;
-        
+        private readonly IRepositorioSubconsulta _repoSubconsulta;
+
         public ServicioCliente(
             IRepositorioEscrituraTabla repoEscritura,
             IRepositorioActualizarTabla repoActualizar,
             IRepositorioEliminarTabla repoEliminar,
-            IRepositorioBusquedaPorCampoTabla repoBusqueda)
+            IRepositorioBusquedaPorCampoTabla repoBusqueda,
+            IRepositorioSubconsulta repoSubconsulta)
         {
             _repoEscritura = repoEscritura;
             _repoBusqueda = repoBusqueda;
             _repoActualizar = repoActualizar;
             _repoEliminar= repoEliminar;
+            _repoSubconsulta = repoSubconsulta;
         }
 
 
-        public async Task<string> CrearClienteAsync(Cliente cliente)
+        public async Task<Cliente?> CrearClienteAsync(Cliente cliente)
         {
             try
             {
@@ -37,10 +40,10 @@ namespace webapicsharp.Servicios
                 var existeCedula = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Cedula", cedula!);
 
                 if (usuarioExiste != null)
-                    return "Ya existe usuario con este correo";
+                    throw new Exception("Ya existe usuario con este correo");
 
                 if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
-                    return "Existe otro usuario con la misma cedula";
+                    throw new Exception("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
                 {
@@ -52,54 +55,65 @@ namespace webapicsharp.Servicios
                     ["Contrasena"] = cliente.ObtenerContrasena(),
                 };
 
-                if (!await _repoEscritura.InsertarAsync("Usuario", datosUsuario))
-                    return "El cliente no se pudo crear correctamente";
+                var dictUsuario = await _repoEscritura.InsertarAsync("Usuario", datosUsuario);
+                if (dictUsuario is null)
+                    throw new Exception("El cliente no se pudo crear correctamente");
 
-
-                var nuevoUsuario = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Correo", correo!);
 
                 var datosCliente = new Dictionary<string, object?>
                 {
-                    ["Id"] = nuevoUsuario!["Id"],
+                    ["Id"] = dictUsuario!["Id"],
                     ["EcoPuntos"] = cliente.EcoPuntos
                 };
 
-                if (!await _repoEscritura.InsertarAsync("Cliente", datosCliente))
-                    return "El cliente no se pudo crear correctamente";
+                var dictCliente = await _repoEscritura.InsertarAsync("Cliente", datosCliente);
+                if (dictCliente is null)
+                    throw new Exception("El cliente no se pudo crear correctamente");
 
-                return "El cliente fue creado correctamente";
+                var clienteCreado= new Cliente(
+                    int.TryParse(dictUsuario["Id"]?.ToString(), out var id) ? id : 0,
+                    dictUsuario["Nombre"]?.ToString() ?? "",
+                    dictUsuario["Cedula"]?.ToString() ?? "",
+                    dictUsuario["Correo"]?.ToString() ?? "",
+                    dictUsuario["Direccion"]?.ToString() ?? "",
+                    dictUsuario["Telefono"]?.ToString() ?? "",
+                    dictUsuario["Contrasena"]?.ToString() ?? "",
+                    int.TryParse(dictCliente["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
+                );
+
+                return clienteCreado;
             }
             catch (Exception e)
             {
-                return $"Error inesperado al crear cliente: {e.Message}";
+                throw new Exception($"Error inesperado al crear cliente: {e.Message}");
             }
         }
         public async Task<Cliente?> BuscarClientePorCorreoAsync(string correo)
         {
             try
             {
-                var usuario = await _repoBusqueda.BuscarPorCampoAsync("Usuario", "Correo", correo);
+                var cliente = await _repoSubconsulta.EjecutarSubconsultaAsync(
+                    "Cliente",
+                    "Usuario",
+                    "Id",
+                    "Correo",
+                    correo
+                    );
 
-                if (usuario == null)
-                {
-                    return null;
-                }
 
-                var idUsuario = usuario["Id"];
-                var cliente = await _repoBusqueda.BuscarPorCampoAsync("Cliente", "Id", idUsuario!);
                 if (cliente == null)
                 {
                     return null;
                 }
 
                 var clienteFiltrado = new Cliente(
-                    int.TryParse(usuario["Id"]?.ToString(), out var id) ? id : 0,
-                    usuario["Nombre"]?.ToString() ?? "",
-                    usuario["Cedula"]?.ToString() ?? "",
-                    usuario["Correo"]?.ToString() ?? "",
-                    usuario["Direccion"]?.ToString() ?? "",
-                    usuario["Telefono"]?.ToString() ?? "",
-                    usuario["Contrasena"]?.ToString() ?? "",
+                    int.TryParse(cliente["Id"]?.ToString(), out var id) ? id : 0,
+                    cliente["Nombre"]?.ToString() ?? "",
+                    cliente["Cedula"]?.ToString() ?? "",
+                    cliente["Correo"]?.ToString() ?? "",
+                    cliente["Direccion"]?.ToString() ?? "",
+                    cliente["Telefono"]?.ToString() ?? "",
+                    cliente["Contrasena"]?.ToString() ?? "",
                     int.TryParse(cliente["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
                 );
 
@@ -112,7 +126,7 @@ namespace webapicsharp.Servicios
 
         }
 
-        public async Task<string> ActualizarClientePorCorreoAsync(string correo, Cliente cliente)
+        public async Task<Cliente?> ActualizarClientePorCorreoAsync(string correo, Cliente cliente)
         {
             try
             {
@@ -122,10 +136,10 @@ namespace webapicsharp.Servicios
                 var existeCedula = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Cedula", cedula!);
 
                 if (usuarioExiste == null)
-                    return "No existe usuario con este correo";
+                    throw new Exception ("No existe usuario con este correo");
 
                 if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
-                    return "Existe otro usuario con la misma cedula";
+                    throw new Exception ("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
                 {
@@ -142,15 +156,26 @@ namespace webapicsharp.Servicios
                     {"EcoPuntos", cliente.EcoPuntos},
                 };
 
-                bool respuestaUsuario = await _repoActualizar.ActualizarPorCampoAsync("usuario", "Correo", correo, datosUsuario);
-                bool respuestaCliente = await _repoActualizar.ActualizarPorCampoAsync("cliente", "Id", usuarioExiste["Id"]!, datosCliente);
+                var dictUsuario = await _repoActualizar.ActualizarPorCampoAsync("usuario", "Correo", correo, datosUsuario);
+                var dictCliente = await _repoActualizar.ActualizarPorCampoAsync("cliente", "Id", usuarioExiste["Id"]!, datosCliente);
 
-                if (!respuestaUsuario && !respuestaCliente)
+                if (dictUsuario is null || dictCliente is null)
                 {
-                    return "Usuario no se pudo actualizar";
+                    throw new Exception ("Usuario no se pudo actualizar");
                 }
 
-                return "Usuario actualizado correctamente";
+                var clienteActualizado = new Cliente(
+                    int.TryParse(dictUsuario["Id"]?.ToString(), out var id) ? id : 0,
+                    dictUsuario["Nombre"]?.ToString() ?? "",
+                    dictUsuario["Cedula"]?.ToString() ?? "",
+                    dictUsuario["Correo"]?.ToString() ?? "",
+                    dictUsuario["Direccion"]?.ToString() ?? "",
+                    dictUsuario["Telefono"]?.ToString() ?? "",
+                    dictUsuario["Contrasena"]?.ToString() ?? "",
+                    int.TryParse(dictCliente["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
+                );
+
+                return clienteActualizado;
 
             }
             catch (Exception e)

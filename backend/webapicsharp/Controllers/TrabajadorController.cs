@@ -48,19 +48,17 @@ namespace webapicsharp.Controllers
                     dto.Horario!
                 );
 
-                var resultado = await _servicioTrabajador.CrearTrabajadorAsync(datosTrabajador);
+                var trabajadorCreado = await _servicioTrabajador.CrearTrabajadorAsync(datosTrabajador);
 
-                if (resultado != "El Trabajador fue creado exitosamente")
+                if (trabajadorCreado is null)
                 {
                     return BadRequest(new { mensaje = "El cliente no se pudo crear" });
                 }
 
-                var nuevoTrabajador = await _servicioTrabajador.BuscarTrabajadorPorCorreoAsync(dto.Correo);
-
                 return Ok(new
                 {
-                    mensaje = resultado,
-                    Trabajador = nuevoTrabajador
+                    mensaje = "El trabajador fue creado exitosamente",
+                    Trabajador = trabajadorCreado
                 });
             }
             catch (Exception e)

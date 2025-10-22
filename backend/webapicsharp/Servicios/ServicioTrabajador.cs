@@ -1,4 +1,5 @@
-﻿using webapicsharp.Interface.Servicios.Abstracciones;
+﻿using System.Collections.Generic;
+using webapicsharp.Interface.Servicios.Abstracciones;
 using webapicsharp.Modelos;
 using webapicsharp.Repositorios.Abstracciones;
 
@@ -13,7 +14,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioBuscarUltimoTabla _repoBuscarUltimo;
         private readonly IRepositorioEliminarTabla _repoEliminar;
-        private readonly IRepositorioLecturaJoin _repoJoin;
+        private readonly IRepositorioJoinTresTablas _repoJoinTres;
 
         public ServicioTrabajador(
             IRepositorioEscrituraTabla repoEscritura,
@@ -21,17 +22,17 @@ namespace webapicsharp.Servicios
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda, 
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
-            IRepositorioLecturaJoin repoJoin)
+            IRepositorioJoinTresTablas repoJoinTres)
         {
             _repoEscritura = repoEscritura;
             _repoBusqueda = repoBusqueda;
             _repoActualizar = repoActualizar;
             _repoEliminar = repoEliminar;
             _repoBuscarUltimo = repoBuscarUltimo;
-            _repoJoin = repoJoin;
+            _repoJoinTres = repoJoinTres;
         }
 
-        public async Task<string> CrearTrabajadorAsync(Trabajador trabajador)
+        public async Task<Trabajador?> CrearTrabajadorAsync(Trabajador trabajador)
         {
             try
             {
@@ -42,10 +43,10 @@ namespace webapicsharp.Servicios
                 var existeCedula = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Cedula", cedula!);
 
                 if (usuarioExiste != null)
-                    return "Ya existe usuario con este correo";
+                    throw new Exception("Ya existe usuario con este correo");
 
                 if (existeCedula != null && existeCedula["Correo"]?.ToString() != correo)
-                    return "Existe otro usuario con la misma cedula";
+                    throw new Exception("Existe otro usuario con la misma cedula");
 
                 var datosUsuario = new Dictionary<string, object?>
                 {
@@ -56,31 +57,46 @@ namespace webapicsharp.Servicios
                     ["Telefono"] = trabajador.ObtenerTelefono(),
                     ["Contrasena"] = trabajador.ObtenerContrasena(),
                 };
-                if (!await _repoEscritura.InsertarAsync("Usuario", datosUsuario))
-                    return "El registro usuario no se pudo crear correctamente";
+                var dictUsuario = await _repoEscritura.InsertarAsync("Usuario", datosUsuario);
+                if (dictUsuario is null)
+                    throw new Exception("El registro usuario no se pudo crear correctamente");
 
-                var idUsuario = await _repoBusqueda.BuscarPorCampoAsync("usuario", "Correo", correo!);
+                var idUsuario = dictUsuario["Id"];
 
                 var ultimoEmpleado = await _repoBuscarUltimo.BuscarUltimoAsync("Empleado", "Id");
                 var codigoEmpleado = CalculadorCodigoEmpleado(ultimoEmpleado!["CodigoDeEmpleado"].ToString()!);
 
                 var datosEmpleado = new Dictionary<string, object?>
                 {
-                    ["id"] = idUsuario!["Id"],
+                    ["id"] = idUsuario,
                     ["CodigoDeEmpleado"] = codigoEmpleado
                 };
-                if (!await _repoEscritura.InsertarAsync("Empleado", datosEmpleado))
-                    return "El registro empleado no se pudo crear correctamente";
+                var dictEmpleado = await _repoEscritura.InsertarAsync("Empleado", datosEmpleado);
+                if (dictEmpleado is null)
+                    throw new Exception("El registro empleado no se pudo crear correctamente");
 
                 var datosTrabajador = new Dictionary<string, object?>
                 {
-                    ["id"] = idUsuario!["Id"],
+                    ["id"] = idUsuario,
                     ["Horario"] = trabajador.Horario
                 };
-                if (!await _repoEscritura.InsertarAsync("Trabajador", datosTrabajador))
-                    return "El registro trabajador no se pudo crear correctamente";
+                var dictTrabajador = await _repoEscritura.InsertarAsync("Trabajador", datosTrabajador);
+                if (dictTrabajador is null)
+                    throw new Exception("El registro trabajador no se pudo crear correctamente");
 
-                return "El Trabajador fue creado exitosamente";
+                var trabajadorCreado = new Trabajador(
+                    int.TryParse(dictUsuario["Id"]?.ToString(), out var id) ? id : 0,
+                    dictUsuario["Nombre"]?.ToString() ?? "",
+                    dictUsuario["Cedula"]?.ToString() ?? "",
+                    dictUsuario["Correo"]?.ToString() ?? "",
+                    dictUsuario["Direccion"]?.ToString() ?? "",
+                    dictUsuario["Telefono"]?.ToString() ?? "",
+                    dictUsuario["Contrasena"]?.ToString() ?? "",
+                    datosEmpleado["CodigoDeEmpleado"]?.ToString() ?? "",
+                    dictTrabajador["Horario"]?.ToString() ?? ""
+                    );
+
+                return trabajadorCreado;
             }
             catch (Exception e)
             {
@@ -92,20 +108,28 @@ namespace webapicsharp.Servicios
         {
             try
             {
-                var usuarioDatos = await _repoBusqueda.BuscarPorCampoAsync("Usuario", "Correo", correo);
-                var empleadoDatos = await _repoBusqueda.BuscarPorCampoAsync("Empleado", "Id", usuarioDatos!["Id"]!);
-                var trabajadorDatos = await _repoBusqueda.BuscarPorCampoAsync("Trabajador", "Id", usuarioDatos!["Id"]!);
+                var trabajadorDatos = await _repoJoinTres.JoinTresTablasAsync(
+                   "Usuario",
+                   "Empleado",
+                   "Trabajador",
+                   "Id",
+                   "Id",
+                   "Id",
+                   "Id",
+                   "*",
+                   "INNER"
+                   );
 
                 var trabajador = new Trabajador(
-                    int.TryParse(usuarioDatos["Id"]?.ToString(), out var id) ? id : 0,
-                    usuarioDatos["Nombre"]?.ToString() ?? "",
-                    usuarioDatos["Cedula"]?.ToString() ?? "",
-                    usuarioDatos["Correo"]?.ToString() ?? "",
-                    usuarioDatos["Direccion"]?.ToString() ?? "",
-                    usuarioDatos["Telefono"]?.ToString() ?? "",
-                    usuarioDatos["Contrasena"]?.ToString() ?? "",
-                    empleadoDatos!["CodigoDeEmpleado"]?.ToString() ?? "",
-                    trabajadorDatos!["Horario"]?.ToString() ?? ""
+                    int.TryParse(trabajadorDatos[0]["Id"]?.ToString(), out var id) ? id : 0,
+                    trabajadorDatos[0]["Nombre"]?.ToString() ?? "",
+                    trabajadorDatos[0]["Cedula"]?.ToString() ?? "",
+                    trabajadorDatos[0]["Correo"]?.ToString() ?? "",
+                    trabajadorDatos[0]["Direccion"]?.ToString() ?? "",
+                    trabajadorDatos[0]["Telefono"]?.ToString() ?? "",
+                    trabajadorDatos[0]["Contrasena"]?.ToString() ?? "",
+                    trabajadorDatos[0]["CodigoDeEmpleado"]?.ToString() ?? "",
+                    trabajadorDatos[0]["Horario"]?.ToString() ?? ""
                     );
 
                 return trabajador;
@@ -121,7 +145,23 @@ namespace webapicsharp.Servicios
         {
             try
             {
-                var trabajadores = await _repoJoin.ListarTrabajadoresAsync(limite);
+                if (!int.TryParse(limite.ToString(), out _) || limite < 1)
+                {
+                    throw new Exception("Debe proporcionar un limite positivo.");
+                }
+
+                var trabajadores = await _repoJoinTres.JoinTresTablasAsync(
+                    "Usuario",
+                    "Empleado",
+                    "Trabajador",
+                    "Id",
+                    "Id",
+                    "Id",
+                    "Id",
+                    "*",
+                    "INNER",
+                    limite
+                    );
 
                 return trabajadores;
             }
