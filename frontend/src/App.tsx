@@ -5,6 +5,7 @@ import PageNotFound from './pages/error/404'
 import Home from './pages/home'
 import Login from './pages/login'
 import { Routes, Route } from 'react-router-dom'
+import RegisterPage from './pages/register'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           //grupo de rutas públicas
           <Route element={<PublicRoute />}>
             <Route path='/login' element={<Login />} />
+            <Route path='/registro' element={<RegisterPage />} />
           </Route>
 
           //grupo de rutas privadas
