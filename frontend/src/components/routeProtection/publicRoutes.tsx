@@ -2,7 +2,7 @@ import { Outlet, Navigate } from 'react-router-dom'
 import { useUserContext } from '../../contex/user'
 
 function PublicRoute() {
-    const { isLogged } = useUserContext()
+    const { userStatus: { isLogged } } = useUserContext()
 
     if (!isLogged) {
         return <>{<Outlet />}</>

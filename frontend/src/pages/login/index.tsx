@@ -1,9 +1,11 @@
 import { useForm } from 'react-hook-form'
-import { NavLink } from 'react-router-dom'
+import { useNavigate, NavLink } from 'react-router-dom'
 import FlexCenter from '../../components/flexCenter'
 import InputComponent from '../../components/input/texts'
 import type { LoginFormData } from '../../interfaces/login/loginForm'
 import { inputsLogin as inputs } from '../../utils/login'
+import { login } from '../../api/auth'
+import { useUserContext } from '../../contex/user'
 
 
 function Login() {
@@ -11,8 +13,26 @@ function Login() {
 
     const inputsLogin = inputs(register)
 
-    const onSubmit = (data: LoginFormData) => {
-        console.log(data)
+    const navigate = useNavigate()
+
+    const { setUserStatus } = useUserContext();
+
+    const onSubmit = async (data: LoginFormData) => {
+        try {
+            const dataResponse = await login(data.correo, data.contraseña)
+
+            setUserStatus({
+                isLogged: true,
+                userId: dataResponse.datosUsuario.id,
+                userName: dataResponse.datosUsuario.nombre,
+                userEmail: dataResponse.datosUsuario.correo,
+                userPhone: dataResponse.datosUsuario.telefono
+            })
+
+            navigate('/')
+        } catch (error) {
+            console.error("Error al iniciar sesión:", error)
+        }
     }
 
     return (

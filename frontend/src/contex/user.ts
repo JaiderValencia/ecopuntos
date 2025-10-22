@@ -1,21 +1,27 @@
 import { createContext, createElement, useContext, useState } from 'react'
 
 type UserContextValue = {
-    isLogged: boolean,
-    setIsLogged?: (isLogged: boolean) => void
+    userStatus: {
+        isLogged: boolean,
+        userId: string
+        userName: string
+        userEmail: string
+        userPhone: string
+    },
+    setUserStatus: (userStatus: UserContextValue['userStatus']) => void
 }
 
-export const UserContext = createContext<UserContextValue>({ isLogged: false })
+export const UserContext = createContext<UserContextValue>({ userStatus: { isLogged: false, userId: '', userName: '', userEmail: '', userPhone: '' }, setUserStatus: () => {} })
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-    const [isLogged, setIsLogged] = useState(false)
+    const [userStatus, setUserStatus] = useState({ isLogged: false, userId: '', userName: '', userEmail: '', userPhone: '' })
 
     return createElement(
         UserContext.Provider,
         {
             value: {
-                isLogged,
-                setIsLogged
+                userStatus,
+                setUserStatus
             }
         },
         children
