@@ -1,4 +1,6 @@
-﻿namespace webapicsharp.Modelos
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace webapicsharp.Modelos
 {
     public class Cliente : Usuario
     {

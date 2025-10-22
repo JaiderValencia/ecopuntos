@@ -102,12 +102,14 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCrud,
                            webapicsharp.Servicios.ServicioCrud>();
-
 builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCliente,
                            webapicsharp.Servicios.ServicioCliente>();
-
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioJwt,
-                           webapicsharp.Servicios.ServicioJwt>();
+                           webapicsharp.Servicios.ServicioJwt>(); 
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioTrabajador,
+                           webapicsharp.Servicios.ServicioTrabajador>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioAdministrador,
+                           webapicsharp.Servicios.ServicioAdministrador>();
 
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
@@ -127,9 +129,13 @@ switch (proveedorBD.ToLower())
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEscrituraTabla,
         webapicsharp.Repositorios.RepositorioEscrituraSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioActualizarTabla,
-        webapicsharp.Repositorios.RepositorioActualizarSqlServer>(); 
+        webapicsharp.Repositorios.RepositorioActualizarSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEliminarTabla,
         webapicsharp.Repositorios.RepositorioEliminarSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioBuscarUltimoTabla,
+        webapicsharp.Repositorios.RepositorioBuscarUltimoSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioLecturaJoin,
+        webapicsharp.Repositorios.RepositorioJoinTresTablasSqlServer>();
         break;
 }
 
