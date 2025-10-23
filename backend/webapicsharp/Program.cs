@@ -102,15 +102,21 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCrud,
                            webapicsharp.Servicios.ServicioCrud>();
-
-builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioUsuario,
-                           webapicsharp.Servicios.ServicioUsuario>();
-
+builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioCliente,
+                           webapicsharp.Servicios.ServicioCliente>();
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioJwt,
-                           webapicsharp.Servicios.ServicioJwt>();
+                           webapicsharp.Servicios.ServicioJwt>(); 
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioTrabajador,
+                           webapicsharp.Servicios.ServicioTrabajador>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioAdministrador,
+                           webapicsharp.Servicios.ServicioAdministrador>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioMaterial,
+                           webapicsharp.Servicios.ServicioMaterial>();
 
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioEcoPunto,
+                           webapicsharp.Servicios.ServicioEcoPunto>();
 
 var proveedorBD = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 
@@ -127,9 +133,15 @@ switch (proveedorBD.ToLower())
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEscrituraTabla,
         webapicsharp.Repositorios.RepositorioEscrituraSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioActualizarTabla,
-        webapicsharp.Repositorios.RepositorioActualizarSqlServer>(); 
+        webapicsharp.Repositorios.RepositorioActualizarSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioEliminarTabla,
         webapicsharp.Repositorios.RepositorioEliminarSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioBuscarUltimoTabla,
+        webapicsharp.Repositorios.RepositorioBuscarUltimoSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioSubconsulta,
+        webapicsharp.Repositorios.RepositorioSubconsultaSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioJoinTresTablasFiltrado,
+        webapicsharp.Repositorios.RepositorioJoinTresTablasFiltradoSqlServer>();
         break;
 }
 

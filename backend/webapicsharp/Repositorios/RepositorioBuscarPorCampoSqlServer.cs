@@ -14,29 +14,48 @@ namespace webapicsharp.Repositorios
             _proveedor = proveedor;
         }
 
-        public async Task<Dictionary<string, object?>?> BuscarPorCampoAsync(string tabla, string campo, object valor)
+        public async Task<List<Dictionary<string, object?>>?> BuscarPorCampoAsync(string tabla, string campo, object valor)
         {
-            if (string.IsNullOrWhiteSpace(tabla))
-                throw new ArgumentException("El nombre de la tabla no puede estar vacío.");
+            try
+            {
+                if (string.IsNullOrWhiteSpace(tabla))
+                    throw new ArgumentException("El nombre de la tabla no puede estar vacío.");
 
-            if (campo == null )
-                throw new ArgumentException("Debe proporcionar un campo donde buscar.");
+                if (campo == null)
+                    throw new ArgumentException("Debe proporcionar un campo donde buscar.");
 
-            using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
-            var consulta = new SqlCommand($"SELECT * FROM [{tabla}] WHERE [{campo}] = @valor", conexion);
-            consulta.Parameters.AddWithValue("@valor", valor ?? DBNull.Value);
+                using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
+                var consulta = new SqlCommand($"SELECT * FROM [{tabla}] WHERE [{campo}] = @valor", conexion);
+                consulta.Parameters.AddWithValue("@valor", valor ?? DBNull.Value);
 
-            await conexion.OpenAsync();
-            using var lector = await consulta.ExecuteReaderAsync(CommandBehavior.SingleRow);
+                await conexion.OpenAsync();
+                using var lector = await consulta.ExecuteReaderAsync();
 
-            if (!await lector.ReadAsync())
-                return null;
+                var resultados = new List<Dictionary<string, object?>>();
 
-            var resultado = new Dictionary<string, object?>();
-            for (int i = 0; i < lector.FieldCount; i++)
-                resultado[lector.GetName(i)] = await lector.IsDBNullAsync(i) ? null : lector.GetValue(i);
+                while (await lector.ReadAsync())
+                {
+                    var registro = new Dictionary<string, object?>();
+                    for (int i = 0; i < lector.FieldCount; i++)
+                        registro[lector.GetName(i)] = await lector.IsDBNullAsync(i) ? null : lector.GetValue(i);
 
-            return resultado;
+                    resultados.Add(registro);
+                }
+
+                if (resultados.Count == 0)
+                    return null;
+
+                return resultados;
+            }
+            catch (SqlException excepcionSql)
+            {
+                throw new InvalidOperationException(
+                   $"Error de SQL Server al consultar la subconsulta: {excepcionSql.Message}. " +
+                   $"Código de error SQL Server: {excepcionSql.Number}. " +
+                   $"Verificar que la tabla existe y se tienen permisos de actualizacion.",
+                   excepcionSql
+                );
+            }
         }
     }
 }

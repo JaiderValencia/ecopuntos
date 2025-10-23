@@ -5,6 +5,6 @@ namespace webapicsharp.Repositorios.Abstracciones
 {
     public interface IRepositorioActualizarTabla
     {
-        Task<bool> ActualizarPorCampoAsync(string tabla, string campoFiltro, object valorFiltro, Dictionary<string, object?> nuevosValores);
+        Task<Dictionary<string, object?>> ActualizarPorCampoAsync(string tabla, string campoFiltro, object valorFiltro, Dictionary<string, object?> nuevosValores);
     }
 }
