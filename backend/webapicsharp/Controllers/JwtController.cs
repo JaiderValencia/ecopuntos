@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using webapicsharp.Interface.Servicios.Abstracciones;
 using webapicsharp.Modelos;
+using webapicsharp.Repositorios.Abstracciones;
 using webapicsharp.Servicios.Abstracciones;
 
 
@@ -17,12 +18,14 @@ namespace webapicsharp.Controllers
     public class JwtController : ControllerBase
     {
         private readonly IServicioJwt _jwt;
+        private readonly IRepositorioBusquedaPorCampoTabla _repoBuscar;
         private readonly IServicioCliente _servicioCliente;
-    
-        public JwtController(IServicioJwt jwt, IServicioCliente servicioCliente)
+
+        public JwtController(IServicioJwt jwt, IRepositorioBusquedaPorCampoTabla repoBuscar, IServicioCliente servicioCliente)
         {
             _jwt = jwt;
-            _servicioCliente= servicioCliente;
+            _repoBuscar = repoBuscar;
+            _servicioCliente = servicioCliente;
         }
 
         [HttpPost]
@@ -30,22 +33,24 @@ namespace webapicsharp.Controllers
         {
             try
             {
+                var rol = _jwt.ValidacionCorreoRol(request.Email!);
+                if (string.IsNullOrEmpty(rol))
+                    return BadRequest(new {mensaje = "Debe proporcionar un correo valido" });
 
-                var usuario = await _servicioCliente.BuscarClientePorCorreoAsync(request.Email);
+                var usuario = await _repoBuscar.BuscarPorCampoAsync("Usuario", "Correo", request.Email);
 
                 if (usuario == null )
                 {
                     return BadRequest(new { mensaje = "No existe esa cuenta" });
                 }
 
-                var resultado = usuario.LogIn(request.Email!, request.Password!);
+                var resultado = _jwt.CompararContrasenas(usuario[0]["Contrasena"]!.ToString()!, request.Password);
 
                 if (!resultado)
                 {
                     return Unauthorized(new { mensaje = "Correo o contraseña erroneos" });
                 }
 
-                var rol = _jwt.ValidacionRol(request.Email!);
 
                 var token = _jwt.GenerarToken(request.Email!);
 
@@ -55,11 +60,11 @@ namespace webapicsharp.Controllers
                     Bearer = token,
                     datosUsuario = new
                     {
-                        Id = usuario.Id,
-                        Nombre = usuario.ObtenerNombre(),
+                        Id = usuario[0]["Id"],
+                        Nombre = usuario[0]["Nombre"],
                         Correo = request.Email!,
                         Rol = rol,
-                        Telefono = usuario.ObtenerTelefono()
+                        Telefono = usuario[0]["Telefono"]
                     }
                 });
 
