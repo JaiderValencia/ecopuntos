@@ -4,7 +4,7 @@ import FlexCenter from '../../components/flexCenter'
 import InputComponent from '../../components/input/texts'
 import { inputsRegister as inputs } from '../../utils/register'
 import { NavLink } from 'react-router-dom'
-import type { registerForm } from '../../interfaces/register/registerForm'
+import type { registerForm } from '../../interfaces/register'
 import { useForm } from 'react-hook-form'
 
 function RegisterPage() {

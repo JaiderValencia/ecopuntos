@@ -1,4 +1,4 @@
-import type { LoginResponse } from '../interfaces/login/loginForm'
+import type { LoginResponse } from '../interfaces/login'
 import axios from './axios'
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {

@@ -1,4 +1,4 @@
-import type { InputProps } from '../../../interfaces/inputComponent/InputProps'
+import type { InputProps } from '../../../interfaces/Input'
 
 function InputComponent({ label, inputType: type, inputPlaceholder: placeholder, inputId: id, inputName, divClassName, inputClassName, register, spanAlert, classNameSpanAlert }: InputProps) {
     return (

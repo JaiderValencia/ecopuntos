@@ -1,4 +1,4 @@
-import type { TableProps } from '../../interfaces/table/tableProps'
+import type { TableProps } from '../../interfaces/table'
 
 function Table({ columns, children }: TableProps) {
 

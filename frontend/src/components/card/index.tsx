@@ -1,4 +1,4 @@
-import type { CardProps } from '../../interfaces/card/cardProps'
+import type { CardProps } from '../../interfaces/card'
 
 function Card({ className, children: children }: CardProps) {
     return (
