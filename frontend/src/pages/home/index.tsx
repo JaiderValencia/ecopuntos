@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Card from '../../components/card'
 import Table from '../../components/table'
+import Map from '../../components/map'
 
 function Inicio() {
     const [sucursales] = useState([
@@ -100,7 +101,7 @@ function Inicio() {
         <div className='p-7 flex flex-col'>
             <section className='flex gap-10 flex-col lg:flex-row mb-8'>
                 <Card className='h-[416px] lg:w-[557%]'>
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2174.726093940677!2d-75.56143847353155!3d6.281689146120537!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e4429c63d3c110f%3A0xf09de83123a50796!2sChoco%20Freseo%20-%20Aranjuez!5e0!3m2!1ses!2sco!4v1760833952713!5m2!1ses!2sco" width="100%" height="100%" style={{ border: 0 }} loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+                    <Map className='h-full w-full' />
                 </Card>
                 <Card className='flex flex-col'>
                     <h2 className="text-2xl md:text-3xl font-semibold tracking-tight mb-3">Sobre nosotros:</h2>
