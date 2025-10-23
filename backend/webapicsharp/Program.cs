@@ -51,19 +51,6 @@ builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioUsuario
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
 
-
-builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioAuditoria,
-                           webapicsharp.Servicios.ServicioAuditoria>();
-
-builder.Services.AddScoped<webapicsharp.Servicios.Abstracciones.IServicioUsuario>(sp =>
-{
-    var repo = sp.GetRequiredService<webapicsharp.Repositorios.Abstracciones.IRepositorioEscrituraTabla>();
-    var real = new webapicsharp.Servicios.ServicioUsuario(repo);
-    var auditoria = sp.GetRequiredService<webapicsharp.Servicios.Abstracciones.IServicioAuditoria>();
-    return new webapicsharp.Servicios.ServicioUsuarioProxy(real, auditoria);
-});
-
-
 var proveedorBD = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 
 switch (proveedorBD.ToLower())
