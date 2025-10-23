@@ -6,15 +6,16 @@ type UserContextValue = {
         userId: string
         userName: string
         userEmail: string
-        userPhone: string
+        userPhone: string,
+        userRole: string
     },
     setUserStatus: (userStatus: UserContextValue['userStatus']) => void
 }
 
-export const UserContext = createContext<UserContextValue>({ userStatus: { isLogged: false, userId: '', userName: '', userEmail: '', userPhone: '' }, setUserStatus: () => {} })
+export const UserContext = createContext<UserContextValue>({ userStatus: { isLogged: false, userId: '', userName: '', userEmail: '', userPhone: '', userRole: '' }, setUserStatus: () => {} })
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-    const [userStatus, setUserStatus] = useState({ isLogged: false, userId: '', userName: '', userEmail: '', userPhone: '' })
+    const [userStatus, setUserStatus] = useState({ isLogged: false, userId: '', userName: '', userEmail: '', userPhone: '', userRole: '' })
 
     return createElement(
         UserContext.Provider,

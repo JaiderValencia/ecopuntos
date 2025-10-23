@@ -9,7 +9,8 @@ export interface LoginResponse {
         id: string
         nombre: string
         correo: string
-        telefono: string
+        telefono: string,
+        rol: string
     },
     mensaje: string
 }

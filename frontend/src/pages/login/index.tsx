@@ -27,7 +27,8 @@ function Login() {
                 userId: dataResponse.datosUsuario.id,
                 userName: dataResponse.datosUsuario.nombre,
                 userEmail: dataResponse.datosUsuario.correo,
-                userPhone: dataResponse.datosUsuario.telefono
+                userPhone: dataResponse.datosUsuario.telefono,
+                userRole: dataResponse.datosUsuario.rol
             })
 
             navigate('/')
