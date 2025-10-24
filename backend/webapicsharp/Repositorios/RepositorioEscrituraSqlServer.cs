@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
+using webapicsharp.Modelos;
 using webapicsharp.Repositorios.Abstracciones;
 using webapicsharp.Servicios.Abstracciones;
 
@@ -17,27 +18,52 @@ namespace webapicsharp.Repositorios
             _proveedor = proveedor;
         }
 
-        public async Task<bool> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores)
+        public async Task<Dictionary<string, object?>> InsertarAsync(string nombreTabla, Dictionary<string, object?> valores)
         {
-            if (string.IsNullOrWhiteSpace(nombreTabla))
-                throw new ArgumentException("El nombre de la tabla no puede estar vacío.");
+            try
+            {
+                if (string.IsNullOrWhiteSpace(nombreTabla))
+                    throw new ArgumentException("El nombre de la tabla no puede estar vacío.");
 
-            if (valores == null || valores.Count == 0)
-                throw new ArgumentException("Debe proporcionar al menos una columna con valor.");
+                if (valores == null || valores.Count == 0)
+                    throw new ArgumentException("Debe proporcionar al menos una columna con valor.");
 
-            var columnas = string.Join(", ", valores.Keys);
-            var parametros = string.Join(", ", valores.Keys.Select(k => $"@{k}"));
-            var sql = $"INSERT INTO [{nombreTabla}] ({columnas}) VALUES ({parametros});";
+                var columnas = string.Join(", ", valores.Keys);
+                var parametros = string.Join(", ", valores.Keys.Select(k => $"@{k}"));
 
-            using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
-            using var comando = new SqlCommand(sql, conexion);
+                var sql = $"INSERT INTO [{nombreTabla}] ({columnas}) OUTPUT INSERTED.* VALUES ({parametros});";
 
-            foreach (var kvp in valores)
-                comando.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value ?? DBNull.Value);
+                using var conexion = new SqlConnection(_proveedor.ObtenerCadenaConexion());
+                using var comando = new SqlCommand(sql, conexion);
 
-            await conexion.OpenAsync();
-            var filas = await comando.ExecuteNonQueryAsync();
-            return filas > 0;
+                foreach (var kvp in valores)
+                    comando.Parameters.AddWithValue($"@{kvp.Key}", kvp.Value ?? DBNull.Value);
+
+                await conexion.OpenAsync();
+
+                using var reader = await comando.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    var resultado = new Dictionary<string, object?>();
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        resultado[reader.GetName(i)] = await reader.IsDBNullAsync(i) ? null : reader.GetValue(i);
+                    }
+                    return resultado;
+                }
+
+                throw new InvalidOperationException("No se pudo insertar el registro o recuperar los datos insertados.");
+            }
+            catch (SqlException excepcionSql)
+            {
+                throw new InvalidOperationException(
+                    $"Error de SQL Server al insertar en la tabla '{nombreTabla}': {excepcionSql.Message}. " +
+                    $"Código SQL: {excepcionSql.Number}. Verifique permisos y existencia de la tabla.",
+                    excepcionSql
+                );
+            }
         }
+
     }
 }
