@@ -90,5 +90,26 @@ namespace webapicsharp.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ObtenerEcopuntos([FromQuery] int limite)
+        {
+            try
+            {
+                var ecoPuntos = await _servicioEcoPunto.ObtenerEcoPuntosAsync(limite);
+
+                return Ok(new
+                {
+                    Mensaje = "Lista de ecopuntos",
+                    limite = limite,
+                    Total = ecoPuntos.Count,
+                    Ecopuntos = ecoPuntos
+                });
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
     }
 }
