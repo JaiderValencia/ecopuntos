@@ -10,6 +10,7 @@ namespace webapicsharp.Interface.Servicios.Abstracciones
             string longitud,
             string direccion,
             string horario,
+            string nombre,
             List<Material> materiales);
         public Task<EcoPunto> ActualizarEcoPuntoPorIDAsync(
             int idEcoPunto,
@@ -18,11 +19,12 @@ namespace webapicsharp.Interface.Servicios.Abstracciones
             string longitud,
             string direccion,
             string horario,
+            string nombre,
             List<Material> materiales);
         
 
         public  Task<EcoPunto> BuscarEcoPuntoPorIDAsync(int id);
-        public Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int limite);
+        public Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int? limite);
         public Task ActualizarRelacionesMaterialEcoPunto(int idEcoPunto, List<Material> materiales);
         }
 

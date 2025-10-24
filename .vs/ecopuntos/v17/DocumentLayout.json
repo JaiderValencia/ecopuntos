@@ -1,21 +1,21 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\",
+  "WorkspaceRootPath": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\BaseDeDatosOpcionA.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\BaseDeDatosOpcionA.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:BaseDeDatosOpcionA.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\BaseDeDatosOpcionB.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\BaseDeDatosOpcionB.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:BaseDeDatosOpcionB.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:README.md||{EFC0BB08-EA7D-40C6-A696-C870411A895B}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\backend\\backend.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\backend\\backend.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:backend\\backend.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
     }
   ],
@@ -48,9 +48,9 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "BaseDeDatosOpcionA.txt",
-              "DocumentMoniker": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\BaseDeDatosOpcionA.txt",
+              "DocumentMoniker": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\BaseDeDatosOpcionA.txt",
               "RelativeDocumentMoniker": "BaseDeDatosOpcionA.txt",
-              "ToolTip": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\BaseDeDatosOpcionA.txt",
+              "ToolTip": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\BaseDeDatosOpcionA.txt",
               "RelativeToolTip": "BaseDeDatosOpcionA.txt",
               "ViewState": "AgIAAC0AAAAAAAAAAAAAADcAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
@@ -61,9 +61,9 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "BaseDeDatosOpcionB.txt",
-              "DocumentMoniker": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\BaseDeDatosOpcionB.txt",
+              "DocumentMoniker": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\BaseDeDatosOpcionB.txt",
               "RelativeDocumentMoniker": "BaseDeDatosOpcionB.txt",
-              "ToolTip": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\BaseDeDatosOpcionB.txt",
+              "ToolTip": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\BaseDeDatosOpcionB.txt",
               "RelativeToolTip": "BaseDeDatosOpcionB.txt",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
@@ -73,9 +73,9 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "README.md",
-              "DocumentMoniker": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\README.md",
+              "DocumentMoniker": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\README.md",
               "RelativeDocumentMoniker": "README.md",
-              "ToolTip": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\README.md",
+              "ToolTip": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\README.md",
               "RelativeToolTip": "README.md",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001818|",
@@ -85,9 +85,9 @@
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "backend.txt",
-              "DocumentMoniker": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\backend\\backend.txt",
+              "DocumentMoniker": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\backend\\backend.txt",
               "RelativeDocumentMoniker": "backend\\backend.txt",
-              "ToolTip": "C:\\Users\\sebas\\OneDrive\\Escritorio\\ecopuntos\\backend\\backend.txt",
+              "ToolTip": "C:\\Users\\Samuel\\source\\repos\\JaiderValencia\\ecopuntos\\backend\\backend.txt",
               "RelativeToolTip": "backend\\backend.txt",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
