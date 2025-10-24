@@ -6,7 +6,7 @@ function Map({ className, ecopuntos = [] }: { className?: string, ecopuntos?: Ec
     const center: [number, number] = [6.2710241, -75.55652]
     return (
         <div className={className}>
-            <MapContainer center={center} zoom={13} style={{ width: '100%', height: '100%' }}>
+            <MapContainer center={center} zoom={13} style={{ width: '100%', height: '100%' , zIndex: 0}}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

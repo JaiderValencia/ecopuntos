@@ -50,7 +50,7 @@ function ListEcopuntos() {
                     <Table columns={['ID', 'Direccion', 'Responsable', 'Materiales']} >
                         {sucursales.map((sucursal, index) => (
                             <tr className='border-b' key={index}>
-                                <td className='px-4 py-2'>{sucursal.id}</td>
+                                <td className='px-4 py-2'>{`Eco-${sucursal.id}`}</td>
                                 <td className='px-4 py-2'>{sucursal.ubicacion.direccion}</td>
                                 <td className='px-4 py-2'>{sucursal.trabajador.nombre}</td>
                                 <td className='px-4 py-2'>{materialsAcceptedJoined(sucursal.materialesAceptados)}</td>
