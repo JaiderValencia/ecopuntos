@@ -145,7 +145,7 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task<IReadOnlyList<Dictionary<string, object?>>> ObtenerTrabajadoresAsync(int limite)
+        public async Task<IReadOnlyList<Dictionary<string, object?>>> ObtenerTrabajadoresAsync(int? limite = 15)
         {
             try
             {

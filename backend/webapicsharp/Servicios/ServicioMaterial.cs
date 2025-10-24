@@ -67,7 +67,7 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task<IReadOnlyList<Dictionary<string, object?>>> ObtenerMaterialesAsync(int limite)
+        public async Task<IReadOnlyList<Dictionary<string, object?>>> ObtenerMaterialesAsync(int? limite = 15)
         {
             try
             {

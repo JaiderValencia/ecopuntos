@@ -91,7 +91,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerEcopuntos([FromQuery] int limite)
+        public async Task<IActionResult> ObtenerEcopuntos([FromQuery] int? limite)
         {
             try
             {
@@ -100,7 +100,6 @@ namespace webapicsharp.Controllers
                 return Ok(new
                 {
                     Mensaje = "Lista de ecopuntos",
-                    limite = limite,
                     Total = ecoPuntos.Count,
                     Ecopuntos = ecoPuntos
                 });
