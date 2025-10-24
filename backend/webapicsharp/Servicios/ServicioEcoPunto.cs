@@ -313,7 +313,7 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int limite)
+        public async Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int? limite = 15)
         {
             try
             {

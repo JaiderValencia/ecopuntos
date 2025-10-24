@@ -22,7 +22,7 @@ namespace webapicsharp.Interface.Servicios.Abstracciones
         
 
         public  Task<EcoPunto> BuscarEcoPuntoPorIDAsync(int id);
-        public Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int limite);
+        public Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int? limite);
         public Task ActualizarRelacionesMaterialEcoPunto(int idEcoPunto, List<Material> materiales);
         }
 

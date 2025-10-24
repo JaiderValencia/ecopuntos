@@ -44,7 +44,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerMateriales([FromQuery] int limite)
+        public async Task<IActionResult> ObtenerMateriales([FromQuery] int? limite)
         {
             try
             {
@@ -59,7 +59,6 @@ namespace webapicsharp.Controllers
                     new
                     {
                         Mensaje = "Lista de materiales actuales",
-                        Limite = limite,
                         Total = lista.Count(),
                         Materiales = lista
                     });

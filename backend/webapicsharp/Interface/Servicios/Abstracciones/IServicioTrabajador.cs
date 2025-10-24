@@ -7,7 +7,7 @@ namespace webapicsharp.Interface.Servicios.Abstracciones
         public Task<Trabajador?> CrearTrabajadorAsync(Trabajador trabajador);
         public string CalculadorCodigoEmpleado(string codigoEmpleado);
         public Task<Trabajador?> BuscarTrabajadorPorCorreoAsync(string correo);
-        public Task<IReadOnlyList<Dictionary<string, object?>>> ObtenerTrabajadoresAsync(int limite);
+        public Task<IReadOnlyList<Dictionary<string, object?>>> ObtenerTrabajadoresAsync(int? limite);
 
     }
 }
