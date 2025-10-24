@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
+﻿
 using webapicsharp.Interface.Servicios.Abstracciones;
 using webapicsharp.Modelos;
 using webapicsharp.Repositorios.Abstracciones;
@@ -311,6 +310,116 @@ namespace webapicsharp.Servicios
             catch (Exception e)
             {
                 throw new Exception($"Ocurrio un error al eliminar las relaciones entre materiales y ecopunto: {e.Message}");
+            }
+        }
+
+        public async Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int limite)
+        {
+            try
+            {
+                // 🔹 1. Traemos los EcoPuntos con su Trabajador y Usuario, usando alias para evitar conflicto de nombres
+                var columnas = @"
+                    t1.Id AS IdEcoPunto,
+                    t1.Latitud,
+                    t1.Longitud,
+                    t1.Direccion,
+                    t1.Horario AS HorarioEcoPunto,
+                    t1.IdTrabajador,
+                    t2.Id AS IdTrabajador,
+                    t2.Horario AS HorarioTrabajador,
+                    t3.Id AS IdUsuario,
+                    t3.Nombre,
+                    t3.Cedula,
+                    t3.Correo,
+                    t3.Direccion AS DireccionUsuario,
+                    t3.Telefono
+                ";
+
+                var ecoPuntosDatos = await _repoJoinTresFiltrado.JoinTresTablasAsync(
+                    "EcoPunto",
+                    "Trabajador",
+                    "Usuario",
+                    "IdTrabajador",
+                    "Id",
+                    "Id",
+                    "Id",
+                    columnasSeleccionadas: columnas,
+                    tipoJoin: "INNER",
+                    limite: limite,
+                    campoFiltro: null,
+                    valorFiltro: null
+                );
+
+                if (ecoPuntosDatos is null || ecoPuntosDatos.Count == 0)
+                    throw new Exception("No se encontraron EcoPuntos registrados.");
+
+                var listaEcoPuntos = new List<EcoPunto>();
+
+                foreach (var ecoDict in ecoPuntosDatos)
+                {
+                    int idEcoPunto = Convert.ToInt32(ecoDict["IdEcoPunto"]);
+
+                    var materialesDatos = await _repoSubconsulta.EjecutarSubconsultaAsync(
+                        "Material",
+                        "MaterialEcoPunto",
+                        "Id",
+                        "IdMaterial",
+                        "IdEcoPunto",
+                        idEcoPunto
+                    );
+
+                    var materialesAceptados = new List<Material>();
+
+                    if (materialesDatos is not null)
+                    {
+                        foreach (var materialDict in materialesDatos)
+                        {
+                            int idMaterial = Convert.ToInt32(materialDict["Id"]);
+                            string nombre = materialDict?["Nombre"]?.ToString() ?? "";
+                            double peso = Convert.ToDouble(materialDict?["Peso"] ?? 0);
+
+                            materialesAceptados.Add(new Material(
+                                id: idMaterial,
+                                nombre: nombre,
+                                peso: peso
+                            ));
+                        }
+                    }
+
+                    var trabajador = new Trabajador(
+                        id: Convert.ToInt32(ecoDict["IdTrabajador"]),
+                        nombre: ecoDict["Nombre"]?.ToString() ?? "",
+                        cedula: ecoDict["Cedula"]?.ToString() ?? "",
+                        correo: ecoDict["Correo"]?.ToString() ?? "",
+                        direccion: ecoDict["DireccionUsuario"]?.ToString() ?? "",
+                        telefono: ecoDict["Telefono"]?.ToString() ?? "",
+                        contrasena: "",
+                        codigoDeEmpleado: "",
+                        horario: ecoDict["HorarioTrabajador"]?.ToString() ?? ""
+                    );
+
+                    var ecoPunto = new EcoPunto
+                    {
+                        Id = idEcoPunto,
+                        Horario = ecoDict["HorarioEcoPunto"]?.ToString() ?? "",
+                        Ubicacion = new Ubicacion
+                        {
+                            Latitud = ecoDict["Latitud"]?.ToString() ?? "",
+                            Longitud = ecoDict["Longitud"]?.ToString() ?? "",
+                            Direccion = ecoDict["Direccion"]?.ToString() ?? "",
+                        },
+                        Trabajador = trabajador,
+                        MaterialesAceptados = materialesAceptados
+                    };
+
+                    listaEcoPuntos.Add(ecoPunto);
+                }
+
+                return listaEcoPuntos;
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error al obtener los EcoPuntos: {e.Message}");
             }
         }
 
