@@ -5,7 +5,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     const response = await axios.post('/Jwt/Login', { email, password })
 
     sessionStorage.setItem('userSession', JSON.stringify({
-        bearer: response.data.token,
+        bearer: response.data.bearer,
         datosUsuario: response.data.datosUsuario
     }))
 
