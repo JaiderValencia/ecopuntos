@@ -14,7 +14,7 @@ function Header() {
                 <nav className="flex items-center">
                     {userStatus.isLogged && (
                         <>
-                            <a className="text-white mx-4" href="#">ECO puntos</a>
+                            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
                             <a className="text-white mx-4" href="#">Mapa</a>
                             <a className='text-white mx-4' href="#">Registrar entrega</a>
                         </>

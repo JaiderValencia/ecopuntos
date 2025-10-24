@@ -4,6 +4,7 @@ import { useUserContext } from '../../contex/user'
 function PublicRoute() {
     const { userStatus: { isLogged } } = useUserContext()
 
+    // Si el usuario no está autenticado, permite el acceso
     if (!isLogged) {
         return <>{<Outlet />}</>
     }
