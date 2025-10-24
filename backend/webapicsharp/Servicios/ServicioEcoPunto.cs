@@ -93,6 +93,7 @@ namespace webapicsharp.Servicios
                 {
                     Id = id,
                     Horario = dictEcoPuntoFiltrado[0]?["Horario"]!.ToString() ?? "",
+                    Nombre = dictEcoPuntoFiltrado[0]?["NombreEcopunto"]!.ToString() ?? "",
                     Ubicacion = new Ubicacion
                     {
                         Latitud = dictEcoPuntoFiltrado[0]?["Latitud"]!.ToString() ?? "",
@@ -126,6 +127,7 @@ namespace webapicsharp.Servicios
             string longitud,
             string direccion,
             string horario,
+            string nombre,
             List<Material> materiales)
         {
             try
@@ -144,7 +146,8 @@ namespace webapicsharp.Servicios
                     { "Latitud", latitud },
                     { "Longitud", longitud },
                     { "Direccion", direccion },
-                    { "Horario", horario }
+                    { "Horario", horario },
+                    { "NombreEcopunto", nombre }
                 };
 
                 var ecoPuntoCreado = await _repoEscritura.InsertarAsync("EcoPunto", datosEcoPunto);
@@ -178,12 +181,12 @@ namespace webapicsharp.Servicios
                         var materialDict = materialesDatos[i];
 
                         int idMaterial = Convert.ToInt32(materialDict["Id"]);
-                        string nombre = materialDict?["Nombre"]!.ToString() ?? "";
+                        string nombreMaterial = materialDict?["Nombre"]!.ToString() ?? "";
                         double peso = Convert.ToDouble(materialDict!["Peso"] ?? 0);
 
                         materialesAceptados.Add(new Material(
                             id: idMaterial,
-                            nombre: nombre,
+                            nombre: nombreMaterial,
                             peso: peso
                             ));
                     }
@@ -210,6 +213,7 @@ namespace webapicsharp.Servicios
             string longitud,
             string direccion,
             string horario,
+            string nombre,
             List<Material> materiales)
         {
             try
@@ -241,7 +245,8 @@ namespace webapicsharp.Servicios
                         { "Latitud", latitud },
                         { "Longitud", longitud },
                         { "Direccion", direccion },
-                        { "Horario", horario }
+                        { "Horario", horario },
+                        { "NombreEcopunto", nombre }
                     };
 
                 await _repoActualizar.ActualizarPorCampoAsync(
@@ -325,6 +330,7 @@ namespace webapicsharp.Servicios
                     t1.Direccion,
                     t1.Horario AS HorarioEcoPunto,
                     t1.IdTrabajador,
+                    t1.NombreEcopunto,
                     t2.Id AS IdTrabajador,
                     t2.Horario AS HorarioTrabajador,
                     t3.Id AS IdUsuario,
@@ -402,6 +408,7 @@ namespace webapicsharp.Servicios
                     {
                         Id = idEcoPunto,
                         Horario = ecoDict["HorarioEcoPunto"]?.ToString() ?? "",
+                        Nombre = ecoDict["NombreEcopunto"]?.ToString() ?? "",
                         Ubicacion = new Ubicacion
                         {
                             Latitud = ecoDict["Latitud"]?.ToString() ?? "",

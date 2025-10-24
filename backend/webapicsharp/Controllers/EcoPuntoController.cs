@@ -36,7 +36,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CrearEcoPunto([FromBody] EcoPuntoDto ecoPunto)
+        public async Task<IActionResult> CrearEcoPunto([FromBody] EcoPunto ecoPunto)
         {
             try
             {
@@ -46,6 +46,7 @@ namespace webapicsharp.Controllers
                     ecoPunto.Ubicacion!.Longitud!,
                     ecoPunto.Ubicacion!.Direccion!,
                     ecoPunto.Horario!,
+                    ecoPunto.Nombre!,
                     ecoPunto.MaterialesAceptados!
                     );
                 return Ok(new
@@ -73,6 +74,7 @@ namespace webapicsharp.Controllers
                     longitud: dto.Longitud!,
                     direccion: dto.Direccion!,
                     horario: dto.Horario!,
+                    nombre: dto.Nombre!,
                     materiales: dto.Materiales
                 );
 
