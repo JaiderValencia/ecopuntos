@@ -62,7 +62,7 @@ function InsertEcopuntos() {
 
     useEffect(() => {
         setValue('encargado', "")
-    }, [])
+    }, [setValue])
 
     const handleDias = (dia: string): void => {
         if (!diasState.includes(dia)) {
