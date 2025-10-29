@@ -24,11 +24,19 @@ export interface MaterialesAceptado {
 }
 
 interface Ubicacion {
-    latitud: number
-    longitud: number
+    latitud: number | string
+    longitud: number | string
     direccion: string
 }
 
-export interface EcopuntoRequest {
+export interface EcopuntoRequestGet {
     limite: number
+}
+
+export interface formData {
+    direccion: string
+    latitud: number
+    longitud: number
+    materiales: string[]
+    encargado: string
 }

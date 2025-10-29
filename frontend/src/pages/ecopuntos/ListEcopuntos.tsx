@@ -3,6 +3,7 @@ import Table from '../../components/table'
 import type { Ecopunto } from '../../interfaces/ecopunto'
 import { getEcopuntos } from '../../api/ecopuntos'
 import { materialsAcceptedJoined } from '../../utils/ecopunto'
+import { NavLink } from 'react-router-dom'
 
 function ListEcopuntos() {
     const [isLoading, setIsLoading] = useState(false)
@@ -35,9 +36,9 @@ function ListEcopuntos() {
                     <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                         Actualizar Ecopunto
                     </button>
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    <NavLink to="/ecopuntos/registrar" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                         Registrar Ecopunto
-                    </button>
+                    </NavLink>
                 </div>
             </div>
 

@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from 'react-router-dom'
-import { useUserContext } from '../../contex/user'
+import { useUserContext } from '../../contex/user/user'
 
 function PrivateRoute() {
     const { userStatus: { isLogged } } = useUserContext()

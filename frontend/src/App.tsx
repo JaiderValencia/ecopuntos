@@ -7,6 +7,8 @@ import Login from './pages/login'
 import { Routes, Route } from 'react-router-dom'
 import RegisterPage from './pages/register'
 import ListEcopuntos from './pages/ecopuntos/ListEcopuntos'
+import InsertEcopuntos from './pages/ecopuntos/insertEcopuntos'
+import { MapProvider } from './contex/map/provider'
 
 function App() {
   return (
@@ -25,6 +27,12 @@ function App() {
           <Route element={<PrivateRoute />}>
             <Route path='/' element={<Home />} />
             <Route path='/ecopuntos' element={<ListEcopuntos />} />
+
+            <Route path='/ecopuntos/registrar' element={
+              <MapProvider>
+                <InsertEcopuntos />
+              </MapProvider>
+            } />
           </Route>
 
           <Route path='*' element={<PageNotFound />} />

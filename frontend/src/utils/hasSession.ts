@@ -1,4 +1,4 @@
-import type { UserContextValue } from '../contex/user'
+import type { UserContextValue } from '../contex/user/user'
 
 function hasSession(): UserContextValue['userStatus'] | undefined {
     const storedSession = sessionStorage.getItem('userSession')

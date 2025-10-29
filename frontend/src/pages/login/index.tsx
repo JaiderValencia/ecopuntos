@@ -5,7 +5,7 @@ import InputComponent from '../../components/input/texts'
 import type { LoginFormData } from '../../interfaces/login'
 import { inputsLogin as inputs } from '../../utils/login'
 import { login } from '../../api/auth'
-import { useUserContext } from '../../contex/user'
+import { useUserContext } from '../../contex/user/user'
 import Card from '../../components/card'
 
 

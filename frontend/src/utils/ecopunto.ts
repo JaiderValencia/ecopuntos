@@ -33,3 +33,44 @@ export const materialsAcceptedJoined = (materialsAccepted: MaterialesAceptado[])
 
   return materials.slice(0, -2) // Remove trailing comma and space  
 }
+
+export const diasAtencion = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo']
+export const horasAtencion = ['8:00-17:00', '7:00-16:00', '6:00-12:00', '10:00-19:00']
+
+export const formatearHorariosAtencion = (dias: string[], horas: string): string => {
+  if (dias.length === 0) return horas
+  if (dias.length === 1) return dias[0] + ' ' + horas
+  
+  // Convertir días a índices
+  const indices = dias.map(dia => diasAtencion.indexOf(dia)).sort((a, b) => a - b)
+
+  // Agrupar días consecutivos
+  const grupos: string[] = []
+  let inicio = indices[0]
+  let fin = indices[0]
+
+  for (let i = 1; i <= indices.length; i++) {
+    if (i < indices.length && indices[i] === fin + 1) {
+      // Día consecutivo
+      fin = indices[i]
+    } else {
+      // Fin de grupo
+      if (inicio === fin) {
+        grupos.push(diasAtencion[inicio])
+      } else if (fin === inicio + 1) {
+        // Solo dos días consecutivos, mejor separarlos con coma
+        grupos.push(diasAtencion[inicio])
+        grupos.push(diasAtencion[fin])
+      } else {
+        grupos.push(`De ${diasAtencion[inicio]} a ${diasAtencion[fin]}`)
+      }
+
+      if (i < indices.length) {
+        inicio = indices[i]
+        fin = indices[i]
+      }
+    }
+  }
+
+  return grupos.join(', ') + ' ' + horas
+}
