@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react'
+import hasSession from '../../utils/hasSession'
 
 export type UserContextValue = {
     userStatus: {
@@ -13,12 +14,14 @@ export type UserContextValue = {
 }
 
 export const defaultUserStatus: UserContextValue['userStatus'] = {
-    isLogged: false,
-    userId: '',
-    userName: '',
-    userEmail: '',
-    userPhone: '',
-    userRole: ''
+    ...hasSession() || {
+        isLogged: false,
+        userId: '',
+        userName: '',
+        userEmail: '',
+        userPhone: '',
+        userRole: ''
+    }
 }
 
 export const UserContext = createContext<UserContextValue>({ userStatus: defaultUserStatus, setUserStatus: () => { } })
