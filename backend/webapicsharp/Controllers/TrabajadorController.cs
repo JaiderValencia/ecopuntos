@@ -113,7 +113,7 @@ namespace webapicsharp.Controllers
                     limit = limit,
                     total = lista.Count(),
                     mensaje = "Lista de trabajadores",
-                    Cliente = lista
+                    Empleados = lista
                 });
             }
             catch(Exception e)
