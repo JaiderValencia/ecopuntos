@@ -10,9 +10,7 @@ export const getEcopuntos = async ({ limite }: EcopuntoRequestGet) => {
     return response.data
 }
 
-export const createEcopunto = async (formData: Ecopunto) => {
-    console.log(formData)
-
+export const createEcopunto = async (formData: Ecopunto) => {    
     const response = await axios.post('/EcoPunto/CrearEcopunto', formData)
 
     return response.data
