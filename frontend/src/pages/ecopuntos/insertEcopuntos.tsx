@@ -38,10 +38,31 @@ function InsertEcopuntos() {
 
     }, [materialesInput, materiales])
 
+    const fetchMateriales = async () => {
+        const { materiales } = await getMateriales({ limite: 100 })
+        setMateriales(materiales)
+    }
+
+    const fetchEmpleados = async () => {
+        const { empleados } = await getEmpleados({ limit: 100 })
+        setEmpleados(empleados)
+    }
+
+    //cargar datos iniciales
+    useEffect(() => {
+        fetchMateriales()
+        fetchEmpleados()
+    }, [])
+
+    // Actualizar latitud y longitud cuando cambian las coordenadas
     useEffect(() => {
         setValue('latitud', coordinates.lat)
         setValue('longitud', coordinates.lng)
     }, [coordinates, setValue])
+
+    useEffect(() => {
+        setValue('encargado', "")
+    }, [])
 
     const handleDias = (dia: string): void => {
         if (!diasState.includes(dia)) {
@@ -60,21 +81,6 @@ function InsertEcopuntos() {
 
         setHorasState('')
     }
-
-    const fetchMateriales = async () => {
-        const { materiales } = await getMateriales({ limite: 100 })
-        setMateriales(materiales)
-    }
-
-    const fetchEmpleados = async () => {
-        const { empleados } = await getEmpleados({ limit: 100 })
-        setEmpleados(empleados)
-    }
-
-    useEffect(() => {
-        fetchMateriales()
-        fetchEmpleados()
-    }, [])
 
     const onCancel = () => {
         return Navigate('/ecopuntos')

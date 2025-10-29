@@ -9,7 +9,7 @@ function SelectComponent({ label, inputId: id, inputName, divClassName, selectCl
                 name={inputName}
                 {...register}                
             >
-                <option disabled>Seleccione una opción</option>
+                <option value="" disabled>Seleccione una opción</option>
                 {children}
             </select>
 
