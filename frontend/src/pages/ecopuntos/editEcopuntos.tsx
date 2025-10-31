@@ -1,16 +1,16 @@
 import { useForm } from 'react-hook-form'
 import InputComponent from '../../components/input/texts'
 import DraggableMarker from '../../components/map/DraggableMarker'
-import type { Ecopunto, formDataUpdate } from '../../interfaces/ecopunto'
+import type { Ecopunto, formDataUpdateForm, formDataUpdateRequest } from '../../interfaces/ecopunto'
 import { useEffect, useState } from 'react'
 import type { Material } from '../../interfaces/materiales'
 import SelectComponent from '../../components/input/select'
 import ButtonForm from '../../components/ecopuntos/buttonForm'
-import { diasAtencion, horasAtencion } from '../../utils/ecopunto'
+import { diasAtencion, formatearHorariosAtencion, horasAtencion, parsearHorarioEcopunto } from '../../utils/ecopunto'
 import type { Empleado } from '../../interfaces/empleados'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/button'
-import { searchEcopuntoById } from '../../api/ecopuntos'
+import { searchEcopuntoById, updateEcopunto } from '../../api/ecopuntos'
 import { useMapContext } from '../../contex/map/map'
 import { getMateriales } from '../../api/materiales'
 import { getEmpleados } from '../../api/empleados'
@@ -27,7 +27,7 @@ function EditEcopuntos() {
     const [diasState, setDiasState] = useState<string[]>([])
     const [horasState, setHorasState] = useState<string>('')
 
-    const { register, handleSubmit, watch, setValue } = useForm<formDataUpdate>()
+    const { register, handleSubmit, watch, setValue } = useForm<formDataUpdateForm>()
 
     const fetchMateriales = async () => {
         const { materiales } = await getMateriales({ limite: 100 })
@@ -73,8 +73,14 @@ function EditEcopuntos() {
             setValue('direccion', ecopunto.ubicacion.direccion)
             setValue('latitud', ecopunto.ubicacion.latitud as number)
             setValue('longitud', ecopunto.ubicacion.longitud as number)
-            setValue('encargado', ecopunto.trabajador.codigoDeEmpleado.toString())
+            setValue('codigoDeEmpleado', ecopunto.trabajador.codigoDeEmpleado.toString())
             setValue('materiales', ecopunto.materialesAceptados.map(material => material.id.toString()))
+
+            const { diasAtencionEcopunto, horasAtencionEcopunto } = parsearHorarioEcopunto(ecopunto.horario)
+
+            setDiasState(diasAtencionEcopunto)
+            setHorasState(horasAtencionEcopunto)
+
         }
     }, [ecopunto, setValue])
 
@@ -106,8 +112,29 @@ function EditEcopuntos() {
         return Navigate('/ecopuntos')
     }
 
-    const onSubmit = (data: formDataUpdate) => {
-        console.log(data)
+    const onSubmit = async (data: formDataUpdateForm) => {
+        const formData: formDataUpdateRequest = {
+            id: ecopunto?.id || 0,
+            horario: formatearHorariosAtencion(diasState, horasState),
+            direccion: data.direccion,
+            latitud: `${data.latitud}`,
+            longitud: `${data.longitud}`,
+            materiales: selectedMateriales.map(material => ({
+                id: material.Id,
+                nombre: '',
+                peso: 0
+            })),
+            codigoDeEmpleado: data.codigoDeEmpleado,
+        }
+
+        try {
+            await updateEcopunto(formData)
+
+            return Navigate('/ecopuntos')
+
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return (
@@ -178,7 +205,7 @@ function EditEcopuntos() {
                             </SelectComponent>
                         </div>
                         <div>
-                            <SelectComponent register={register('encargado')} inputId='Encargado' inputName='encargado' label='Encargado' >
+                            <SelectComponent register={register('codigoDeEmpleado')} inputId='codigoEmpleado' inputName='codigoDeEmpleado' label='Responsable encargado' >
                                 {empleados.map((empleado) => (
                                     <option key={empleado.Id} value={empleado.CodigoDeEmpleado}>{empleado.Nombre}</option>
                                 ))}
@@ -203,7 +230,7 @@ function EditEcopuntos() {
                             </div>
                         </div>
                         <div className="flex justify-between space-x-4 pt-4">
-                            <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">Registrar Ecopunto</Button>
+                            <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">Actualizar Ecopunto</Button>
                             <Button type="button" onClick={onCancel} className="bg-red-600 text-white hover:bg-red-700">Cancelar</Button>
                         </div>
                     </div>

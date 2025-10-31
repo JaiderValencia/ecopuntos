@@ -74,3 +74,39 @@ export const formatearHorariosAtencion = (dias: string[], horas: string): string
 
   return grupos.join(', ') + ' ' + horas
 }
+
+export const parsearHorarioEcopunto = (horarioTexto: string): { diasAtencionEcopunto: string[], horasAtencionEcopunto: string } => {
+  // Extraer las horas (ejemplo: "8:00-17:00")
+  const matchHoras = horarioTexto.match(/(\d{1,2}:\d{2}-\d{1,2}:\d{2})/)
+  const horasAtencionEcopunto = matchHoras ? matchHoras[1] : ''
+
+  const diasAtencionEcopunto: string[] = []
+
+  // Detectar rangos: "De Lunes a Miércoles"
+  const matchRango = horarioTexto.match(/De\s+(\w+)\s+a\s+(\w+)/i)
+  if (matchRango) {
+    const diaInicio = matchRango[1]
+    const diaFin = matchRango[2]
+    
+    const indiceInicio = diasAtencion.indexOf(diaInicio)
+    const indiceFin = diasAtencion.indexOf(diaFin)
+    
+    if (indiceInicio !== -1 && indiceFin !== -1) {
+      for (let i = indiceInicio; i <= indiceFin; i++) {
+        diasAtencionEcopunto.push(diasAtencion[i])
+      }
+    }
+  } else {
+    // Detectar lista de días separados por comas
+    // Primero eliminar las horas del texto para evitar confusión
+    const textoSinHoras = horarioTexto.replace(/\d{1,2}:\d{2}-\d{1,2}:\d{2}/, '')
+    
+    for (const dia of diasAtencion) {
+      if (textoSinHoras.includes(dia)) {
+        diasAtencionEcopunto.push(dia)
+      }
+    }
+  }
+
+  return { diasAtencionEcopunto, horasAtencionEcopunto }
+}

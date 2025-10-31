@@ -61,7 +61,7 @@ function InsertEcopuntos() {
     }, [coordinates, setValue])
 
     useEffect(() => {
-        setValue('encargado', "")
+        setValue('codigoDeEmpleado', "")
     }, [setValue])
 
     const handleDias = (dia: string): void => {
@@ -103,7 +103,7 @@ function InsertEcopuntos() {
             })),
             trabajador: {
                 id: 0,
-                codigoDeEmpleado: data.encargado,
+                codigoDeEmpleado: data.codigoDeEmpleado,
                 nombre: '',
                 cedula: '',
                 correo: '',
@@ -185,7 +185,7 @@ function InsertEcopuntos() {
                             </SelectComponent>
                         </div>
                         <div>
-                            <SelectComponent register={register('encargado')} inputId='Encargado' inputName='encargado' label='Encargado' >
+                            <SelectComponent register={register('codigoDeEmpleado')} inputId='codigoEmpleado' inputName='codigoDeEmpleado' label='Responsable encargado' >
                                 {empleados.map((empleado) => (
                                     <option key={empleado.Id} value={empleado.CodigoDeEmpleado}>{empleado.Nombre}</option>
                                 ))}
