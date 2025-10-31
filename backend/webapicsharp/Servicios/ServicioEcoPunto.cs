@@ -330,7 +330,7 @@ namespace webapicsharp.Servicios
                     t1.Direccion,
                     t1.Horario AS HorarioEcoPunto,
                     t1.IdTrabajador,
-                    t1.NombreEcopunto,
+                    t1.Nombre as NombreEcopunto,
                     t2.Id AS IdTrabajador,
                     t2.Horario AS HorarioTrabajador,
                     t3.Id AS IdUsuario,
