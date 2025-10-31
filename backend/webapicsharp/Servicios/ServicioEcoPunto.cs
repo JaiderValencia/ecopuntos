@@ -110,13 +110,15 @@ namespace webapicsharp.Servicios
                         trabajadorDatos[0]["Contrasena"]?.ToString() ?? "",
                         trabajadorDatos[0]["CodigoDeEmpleado"]?.ToString() ?? "",
                         trabajadorDatos[0]["Horario"]?.ToString() ?? ""
-                    ){},
+                    )
+                    { },
                     MaterialesAceptados = materialesAceptados,
                 };
 
                 return respuesta;
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 throw new Exception($"Ocurrio un error al buscar el EcoPunto: ${e.Message}");
             }
         }
@@ -268,7 +270,7 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task ActualizarRelacionesMaterialEcoPunto( int idEcoPunto, List<Material> materiales)
+        public async Task ActualizarRelacionesMaterialEcoPunto(int idEcoPunto, List<Material> materiales)
         {
             try
             {
@@ -427,6 +429,30 @@ namespace webapicsharp.Servicios
             catch (Exception e)
             {
                 throw new Exception($"Error al obtener los EcoPuntos: {e.Message}");
+            }
+        }
+
+        public async Task<bool> EliminarEcoPuntoPorIDAsync(int id)
+        {
+            try
+            {
+                await _repoEliminar.EliminarPorCampoAsync(
+                    "MaterialEcoPunto",
+                    "IdEcoPunto",
+                    id
+                );
+
+                await _repoEliminar.EliminarPorCampoAsync(
+                    "EcoPunto",
+                    "Id",
+                    id
+                );
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Ocurrio un error al eliminar el EcoPunto: {e.Message}");
             }
         }
 
