@@ -1,4 +1,4 @@
-import type { Ecopunto, EcopuntoRequestGet } from '../interfaces/ecopunto'
+import type { Ecopunto, EcopuntoRequestGet, searchEcopuntoByIdResponse } from '../interfaces/ecopunto'
 import axios from './axios'
 
 export const getEcopuntos = async ({ limite }: EcopuntoRequestGet) => {
@@ -10,8 +10,14 @@ export const getEcopuntos = async ({ limite }: EcopuntoRequestGet) => {
     return response.data
 }
 
-export const createEcopunto = async (formData: Ecopunto) => {    
+export const createEcopunto = async (formData: Ecopunto) => {
     const response = await axios.post('/EcoPunto/CrearEcopunto', formData)
+
+    return response.data
+}
+
+export const searchEcopuntoById = async (id: number): Promise<searchEcopuntoByIdResponse> => {
+    const response = await axios.post(`/EcoPunto/BuscarEcoPuntoPorID?id=${id}`)
 
     return response.data
 }

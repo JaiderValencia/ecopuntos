@@ -33,10 +33,19 @@ export interface EcopuntoRequestGet {
     limite: number
 }
 
-export interface formData {
+export interface formDataInsert {
     direccion: string
     latitud: number
     longitud: number
     materiales: string[]
     encargado: string
+}
+
+export interface formDataUpdate extends formDataInsert {
+    id: number
+}
+
+export interface searchEcopuntoByIdResponse {
+    mensaje: string
+    ecoPunto: Ecopunto
 }

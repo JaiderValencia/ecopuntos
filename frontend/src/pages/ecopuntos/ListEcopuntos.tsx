@@ -33,9 +33,9 @@ function ListEcopuntos() {
                 <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-4 sm:mb-0">Ecopuntos Registrados
                 </h2>
                 <div className="flex space-x-2">
-                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    <NavLink to={`/ecopuntos/editar/`} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                         Actualizar Ecopunto
-                    </button>
+                    </NavLink>
                     <NavLink to="/ecopuntos/registrar" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                         Registrar Ecopunto
                     </NavLink>
@@ -50,8 +50,8 @@ function ListEcopuntos() {
                 <section>
                     <Table columns={['ID', 'Direccion', 'Responsable', 'Materiales']} >
                         {sucursales.map((sucursal, index) => (
-                            <tr className='border-b' key={index}>
-                                <td className='px-4 py-2'>{`Eco-${sucursal.id}`}</td>
+                            <tr className={`border-b cursor-pointer hover:bg-gray-100`} key={index}>
+                                <td className='px-4 py-2'>{`${sucursal.id}`}</td>
                                 <td className='px-4 py-2'>{sucursal.ubicacion.direccion}</td>
                                 <td className='px-4 py-2'>{sucursal.trabajador.nombre}</td>
                                 <td className='px-4 py-2'>{materialsAcceptedJoined(sucursal.materialesAceptados)}</td>

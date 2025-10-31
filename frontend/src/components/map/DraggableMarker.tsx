@@ -4,7 +4,7 @@ import type { Marker as LeafletMarker } from 'leaflet'
 import { useMapContext } from '../../contex/map/map'
 
 function DraggableMarker({ className }: { className?: string }) {
-    const { setCoordinates, coordinates: { lat, lng } } = useMapContext()    
+    const { setCoordinates, coordinates: { lat, lng } } = useMapContext()
 
     const center: [number, number] = [lat || 6.2710241, lng || -75.556521]
     const [draggable, setDraggable] = useState(false)
@@ -16,7 +16,6 @@ function DraggableMarker({ className }: { className?: string }) {
                 const marker = markerRef.current
                 if (marker != null) {
                     const { lat, lng } = marker.getLatLng()
-
                     setCoordinates({ lat, lng })
                 }
             },

@@ -9,6 +9,7 @@ import RegisterPage from './pages/register'
 import ListEcopuntos from './pages/ecopuntos/ListEcopuntos'
 import InsertEcopuntos from './pages/ecopuntos/insertEcopuntos'
 import { MapProvider } from './contex/map/provider'
+import EditEcopuntos from './pages/ecopuntos/editEcopuntos'
 
 function App() {
   return (
@@ -31,6 +32,12 @@ function App() {
             <Route path='/ecopuntos/registrar' element={
               <MapProvider>
                 <InsertEcopuntos />
+              </MapProvider>
+            } />
+
+            <Route path='/ecopuntos/editar/' element={
+              <MapProvider>
+                <EditEcopuntos />
               </MapProvider>
             } />
           </Route>

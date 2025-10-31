@@ -1,30 +1,38 @@
 import { useForm } from 'react-hook-form'
-import SelectComponent from '../../components/input/select'
 import InputComponent from '../../components/input/texts'
 import DraggableMarker from '../../components/map/DraggableMarker'
+import type { Ecopunto, formDataUpdate } from '../../interfaces/ecopunto'
 import { useEffect, useState } from 'react'
-import ButtonForm from '../../components/ecopuntos/buttonForm'
-import { diasAtencion, formatearHorariosAtencion, horasAtencion } from '../../utils/ecopunto'
-import { getMateriales } from '../../api/materiales'
 import type { Material } from '../../interfaces/materiales'
+import SelectComponent from '../../components/input/select'
+import ButtonForm from '../../components/ecopuntos/buttonForm'
+import { diasAtencion, horasAtencion } from '../../utils/ecopunto'
 import type { Empleado } from '../../interfaces/empleados'
-import { getEmpleados } from '../../api/empleados'
-import { createEcopunto } from '../../api/ecopuntos'
-import type { Ecopunto, formDataInsert } from '../../interfaces/ecopunto'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/button'
+import { searchEcopuntoById } from '../../api/ecopuntos'
 import { useMapContext } from '../../contex/map/map'
+import { getMateriales } from '../../api/materiales'
+import { getEmpleados } from '../../api/empleados'
 
-function InsertEcopuntos() {
+
+function EditEcopuntos() {
     const Navigate = useNavigate()
 
-    const { coordinates } = useMapContext()
-    const { register, handleSubmit, watch, setValue } = useForm<formDataInsert>()
+    const { coordinates, setCoordinates } = useMapContext()
+    const [ecopunto, setEcopunto] = useState<Ecopunto | null>(null)
     const [materiales, setMateriales] = useState<Material[]>([])
     const [selectedMateriales, setSelectedMateriales] = useState<Material[]>([])
     const [empleados, setEmpleados] = useState<Empleado[]>([])
     const [diasState, setDiasState] = useState<string[]>([])
     const [horasState, setHorasState] = useState<string>('')
+
+    const { register, handleSubmit, watch, setValue } = useForm<formDataUpdate>()
+
+    const fetchMateriales = async () => {
+        const { materiales } = await getMateriales({ limite: 100 })
+        setMateriales(materiales)
+    }
 
     const materialesInput = watch('materiales')
 
@@ -38,11 +46,6 @@ function InsertEcopuntos() {
 
     }, [materialesInput, materiales])
 
-    const fetchMateriales = async () => {
-        const { materiales } = await getMateriales({ limite: 100 })
-        setMateriales(materiales)
-    }
-
     const fetchEmpleados = async () => {
         const { empleados } = await getEmpleados({ limit: 100 })
         setEmpleados(empleados)
@@ -54,15 +57,32 @@ function InsertEcopuntos() {
         fetchEmpleados()
     }, [])
 
+    const idEcopunto = watch('id')
+    const fetchEcopuntoById = async () => {
+        const response = await searchEcopuntoById(idEcopunto)
+        setEcopunto(response.ecoPunto)
+
+        setCoordinates({
+            lat: response.ecoPunto.ubicacion.latitud as number,
+            lng: response.ecoPunto.ubicacion.longitud as number
+        })
+    }
+
+    useEffect(() => {
+        if (ecopunto) {
+            setValue('direccion', ecopunto.ubicacion.direccion)
+            setValue('latitud', ecopunto.ubicacion.latitud as number)
+            setValue('longitud', ecopunto.ubicacion.longitud as number)
+            setValue('encargado', ecopunto.trabajador.codigoDeEmpleado.toString())
+            setValue('materiales', ecopunto.materialesAceptados.map(material => material.id.toString()))
+        }
+    }, [ecopunto, setValue])
+
     // Actualizar latitud y longitud cuando cambian las coordenadas
     useEffect(() => {
         setValue('latitud', coordinates.lat)
         setValue('longitud', coordinates.lng)
     }, [coordinates, setValue])
-
-    useEffect(() => {
-        setValue('encargado', "")
-    }, [setValue])
 
     const handleDias = (dia: string): void => {
         if (!diasState.includes(dia)) {
@@ -86,49 +106,22 @@ function InsertEcopuntos() {
         return Navigate('/ecopuntos')
     }
 
-
-    const onSubmit = async (data: formDataInsert) => {
-        const formData: Ecopunto = {
-            id: 0,
-            horario: formatearHorariosAtencion(diasState, horasState),
-            ubicacion: {
-                direccion: data.direccion,
-                latitud: `${data.latitud}`,
-                longitud: `${data.longitud}`
-            },
-            materialesAceptados: selectedMateriales.map(material => ({
-                id: material.Id,
-                nombre: '',
-                peso: 0
-            })),
-            trabajador: {
-                id: 0,
-                codigoDeEmpleado: data.encargado,
-                nombre: '',
-                cedula: '',
-                correo: '',
-                direccion: '',
-                telefono: '',
-                horario: ''
-            }
-        }
-
-        try {
-            await createEcopunto(formData)
-
-            return Navigate('/ecopuntos')
-
-        } catch (error) {
-            console.log(error)
-        }
+    const onSubmit = (data: formDataUpdate) => {
+        console.log(data)
     }
 
     return (
         <>
-            <h2 className="text-3xl font-bold mb-8 text-text-light dark:text-text-dark">Registrar Ecopuntos</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> 
+            <h2 className="text-3xl font-bold mb-8 text-text-light dark:text-text-dark">Actualizar Ecopuntos</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
                 <div className="space-y-8">
+                    <div>
+                        <InputComponent label="Buscar ecopunto (ID):" register={register('id')} inputName='id' inputId='id' inputType="text" inputPlaceholder="Ingrese el ID del ecopunto" />
+                        <Button type="button" className='bg-blue-600 text-white hover:bg-blue-700' onClick={() => fetchEcopuntoById()}>Buscar Ecopunto</Button>
+                    </div>
+
                     <DraggableMarker className="h-96 w-full rounded-lg shadow-md" />
+
                     <div className="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-md">
                         <table className="w-full border-collapse">
                             <thead>
@@ -150,8 +143,8 @@ function InsertEcopuntos() {
                         </table>
                     </div>
                 </div>
-                <div className="bg-background-light dark:bg-card-dark p-6 rounded-lg shadow-lg">
-                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className='bg-background-light dark:bg-card-dark p-6 rounded-lg shadow-lg'>
+                    <div className="space-y-6">
                         <div>
                             <InputComponent
                                 label="Direccion del Ecopunto"
@@ -213,11 +206,11 @@ function InsertEcopuntos() {
                             <Button type="submit" className="bg-blue-600 text-white hover:bg-blue-700">Registrar Ecopunto</Button>
                             <Button type="button" onClick={onCancel} className="bg-red-600 text-white hover:bg-red-700">Cancelar</Button>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </>
     )
 }
 
-export default InsertEcopuntos
+export default EditEcopuntos
