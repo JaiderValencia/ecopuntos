@@ -22,28 +22,28 @@ interface MapProps {
 
 const Map = memo(({ className, ecopuntos = [] }: MapProps) => {
     const center: [number, number] = useMemo(() => [6.2710241, -75.55652], [])
-    
-    const markers = useMemo(() => 
+
+    const markers = useMemo(() =>
         ecopuntos.map((ecopunto) => (
-            <Marker 
-                key={ecopunto.id} 
+            <Marker
+                key={ecopunto.id}
                 position={[Number(ecopunto.ubicacion.latitud), Number(ecopunto.ubicacion.longitud)]}
                 icon={defaultIcon}
             >
                 <Popup>
-                    <strong>{ecopunto.ubicacion.direccion || 'Ecopunto'}</strong>
+                    <strong>{ecopunto.nombre || 'Ecopunto'}</strong>
                     <br />
                     {ecopunto.ubicacion.direccion}
                 </Popup>
             </Marker>
-        )), 
-    [ecopuntos])
+        )),
+        [ecopuntos])
 
     return (
         <div className={className}>
-            <MapContainer 
-                center={center} 
-                zoom={13} 
+            <MapContainer
+                center={center}
+                zoom={13}
                 style={{ width: '100%', height: '100%', zIndex: 0 }}
                 scrollWheelZoom={true}
                 preferCanvas={true}

@@ -80,6 +80,7 @@ function EditEcopuntos() {
 
     useEffect(() => {
         if (ecopunto) {
+            setValue('nombre', ecopunto.nombre)
             setValue('direccion', ecopunto.ubicacion.direccion)
             setValue('latitud', ecopunto.ubicacion.latitud as number)
             setValue('longitud', ecopunto.ubicacion.longitud as number)
@@ -125,6 +126,7 @@ function EditEcopuntos() {
     const onSubmit = async (data: formDataUpdateForm) => {
         const formData: formDataUpdateRequest = {
             id: ecopunto?.id || 0,
+            nombre: data.nombre,
             horario: formatearHorariosAtencion(diasState, horasState),
             direccion: data.direccion,
             latitud: `${data.latitud}`,
@@ -185,6 +187,15 @@ function EditEcopuntos() {
                 </div>
                 <div className='bg-background-light dark:bg-card-dark p-6 rounded-lg shadow-lg'>
                     <div className="space-y-6">
+                        <div>
+                            <InputComponent
+                                label="Nombre del Ecopunto"
+                                inputType="text"
+                                inputId="nombre-ecopunto"
+                                inputName='nombre'
+                                register={register('nombre')}
+                            />
+                        </div>
                         <div>
                             <InputComponent
                                 label="Direccion del Ecopunto"

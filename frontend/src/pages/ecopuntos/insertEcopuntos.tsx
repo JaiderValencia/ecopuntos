@@ -90,6 +90,7 @@ function InsertEcopuntos() {
     const onSubmit = async (data: formDataInsert) => {
         const formData: Ecopunto = {
             id: 0,
+            nombre: data.nombre,
             horario: formatearHorariosAtencion(diasState, horasState),
             ubicacion: {
                 direccion: data.direccion,
@@ -126,7 +127,7 @@ function InsertEcopuntos() {
     return (
         <>
             <h2 className="text-3xl font-bold mb-8 text-text-light dark:text-text-dark">Registrar Ecopuntos</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8"> 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-8">
                     <DraggableMarker className="h-96 w-full rounded-lg shadow-md" />
                     <div className="bg-card-light dark:bg-card-dark p-4 rounded-lg shadow-md">
@@ -152,6 +153,15 @@ function InsertEcopuntos() {
                 </div>
                 <div className="bg-background-light dark:bg-card-dark p-6 rounded-lg shadow-lg">
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        <div>
+                            <InputComponent
+                                label="Nombre del Ecopunto"
+                                inputType="text"
+                                inputId="nombre-ecopunto"
+                                inputName='nombre'
+                                register={register('nombre')}
+                            />
+                        </div>
                         <div>
                             <InputComponent
                                 label="Direccion del Ecopunto"

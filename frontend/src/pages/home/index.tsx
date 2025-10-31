@@ -4,7 +4,7 @@ import Table from '../../components/table'
 import Map from '../../components/map'
 import { getEcopuntos } from '../../api/ecopuntos'
 import type { Ecopunto } from '../../interfaces/ecopunto'
-import { isOpen } from '../../utils/ecopunto'
+import { isOpen, materialsAcceptedJoined } from '../../utils/ecopunto'
 import SpanState from '../../components/spanState'
 
 function Inicio() {
@@ -16,7 +16,7 @@ function Inicio() {
         try {
             setIsLoading(true)
             const data = await getEcopuntos({ limite: 50 })
-            setSucursales(data.ecopuntos)            
+            setSucursales(data.ecopuntos)
         } catch (error) {
             console.error('Error al obtener sucursales:', error)
         } finally {
@@ -49,11 +49,12 @@ function Inicio() {
                 {!sucursales.length && !isLoading && 'No hay sucursales disponibles, vuelve más tarde.'}
 
                 {sucursales.length > 0 && (
-                    <Table columns={['Dirección', 'Horario', 'Responsable', 'Estado']}>
+                    <Table columns={['Nombre', 'Dirección', 'Materiales', 'Responsable', 'Estado']}>
                         {sucursales.map((sucursal, index) => (
                             <tr key={index} className="border-b">
+                                <td className="px-4 py-2">{sucursal.nombre}</td>
                                 <td className="px-4 py-2">{sucursal.ubicacion.direccion}</td>
-                                <td className="px-4 py-2">{sucursal.horario}</td>
+                                <td className="px-4 py-2">{materialsAcceptedJoined(sucursal.materialesAceptados)}</td>
                                 <td className="px-4 py-2">{sucursal.trabajador.nombre}</td>
                                 <td className="px-4 py-2"><SpanState isOpen={isOpen(sucursal.horario)} /></td>
                             </tr>

@@ -1,5 +1,6 @@
 export interface Ecopunto {
     id: number
+    nombre: string
     horario: string
     trabajador: Trabajador
     materialesAceptados: MaterialesAceptado[]
@@ -34,6 +35,7 @@ export interface EcopuntoRequestGet {
 }
 
 export interface formDataInsert {
+    nombre: string
     direccion: string
     latitud: number | string
     longitud: number | string
@@ -47,6 +49,7 @@ export interface formDataUpdateForm extends formDataInsert {
 
 export interface formDataUpdateRequest {
     id: number
+    nombre: string
     direccion: string
     latitud: string
     longitud: string

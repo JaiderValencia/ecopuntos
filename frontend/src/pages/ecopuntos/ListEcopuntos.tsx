@@ -48,11 +48,12 @@ function ListEcopuntos() {
 
             {sucursales.length > 0 && (
                 <section>
-                    <Table columns={['ID', 'Direccion', 'Responsable', 'Materiales']} >
+                    <Table columns={['ID', 'Direccion', 'Ecopunto', 'Responsable', 'Materiales']} >
                         {sucursales.map((sucursal, index) => (
                             <tr className={`border-b cursor-pointer hover:bg-gray-100`} key={index}>
                                 <td className='px-4 py-2'>{`${sucursal.id}`}</td>
                                 <td className='px-4 py-2'>{sucursal.ubicacion.direccion}</td>
+                                <td className='px-4 py-2'>{sucursal.nombre}</td>
                                 <td className='px-4 py-2'>{sucursal.trabajador.nombre}</td>
                                 <td className='px-4 py-2'>{materialsAcceptedJoined(sucursal.materialesAceptados)}</td>
                             </tr>
