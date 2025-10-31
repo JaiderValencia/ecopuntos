@@ -10,13 +10,14 @@ import { diasAtencion, formatearHorariosAtencion, horasAtencion, parsearHorarioE
 import type { Empleado } from '../../interfaces/empleados'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../components/button'
-import { searchEcopuntoById, updateEcopunto } from '../../api/ecopuntos'
+import { deleteEcopunto, searchEcopuntoById, updateEcopunto } from '../../api/ecopuntos'
 import { useMapContext } from '../../contex/map/map'
 import { getMateriales } from '../../api/materiales'
 import { getEmpleados } from '../../api/empleados'
 
 
 function EditEcopuntos() {
+    const { register, handleSubmit, watch, setValue } = useForm<formDataUpdateForm>()
     const Navigate = useNavigate()
 
     const { coordinates, setCoordinates } = useMapContext()
@@ -26,15 +27,24 @@ function EditEcopuntos() {
     const [empleados, setEmpleados] = useState<Empleado[]>([])
     const [diasState, setDiasState] = useState<string[]>([])
     const [horasState, setHorasState] = useState<string>('')
+    const materialesInput = watch('materiales')
 
-    const { register, handleSubmit, watch, setValue } = useForm<formDataUpdateForm>()
+
+    const deleteEcopuntoHandle = async () => {
+        try {
+            if (!ecopunto) return
+
+            await deleteEcopunto(ecopunto.id)
+            return Navigate('/ecopuntos')
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const fetchMateriales = async () => {
         const { materiales } = await getMateriales({ limite: 100 })
         setMateriales(materiales)
     }
-
-    const materialesInput = watch('materiales')
 
     useEffect(() => {
         if (materialesInput) {
@@ -144,7 +154,10 @@ function EditEcopuntos() {
                 <div className="space-y-8">
                     <div>
                         <InputComponent label="Buscar ecopunto (ID):" register={register('id')} inputName='id' inputId='id' inputType="text" inputPlaceholder="Ingrese el ID del ecopunto" />
-                        <Button type="button" className='bg-blue-600 text-white hover:bg-blue-700' onClick={() => fetchEcopuntoById()}>Buscar Ecopunto</Button>
+                        <div className="flex gap-4">
+                            <Button type="button" className='bg-blue-600 text-white hover:bg-blue-700' onClick={() => fetchEcopuntoById()}>Buscar Ecopunto</Button>
+                            <Button type="button" className='bg-rose-600 text-white hover:bg-rose-700' onClick={() => deleteEcopuntoHandle()}>Eliminar Ecopunto</Button>
+                        </div>
                     </div>
 
                     <DraggableMarker className="h-96 w-full rounded-lg shadow-md" />

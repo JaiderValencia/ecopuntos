@@ -27,3 +27,9 @@ export const updateEcopunto = async (formData: formDataUpdateRequest) => {
 
     return response.data
 }
+
+export const deleteEcopunto = async (id: number) => {
+    const response = await axios.delete(`/EcoPunto/EliminarEcoPuntoPorID?id=${id}`)
+
+    return response.data
+}
