@@ -54,14 +54,15 @@ namespace webapicsharp.Controllers
                     mensaje = "EcoPunto registrado correctamente",
                     EcoPunto = resultado
                 });
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> ActualizarEcoPuntoPorID([FromBody] ActualizarEcoPuntoDto dto, [FromQuery]int id)
+        public async Task<IActionResult> ActualizarEcoPuntoPorID([FromBody] ActualizarEcoPuntoDto dto, [FromQuery] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -109,6 +110,23 @@ namespace webapicsharp.Controllers
             catch (Exception e)
             {
                 throw new Exception(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> EliminarEcoPuntoPorID([FromQuery] int id)
+        {
+            try
+            {
+                await _servicioEcoPunto.EliminarEcoPuntoPorIDAsync(id);
+                return Ok(new
+                {
+                    mensaje = "EcoPunto eliminado correctamente"
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
         }
 
