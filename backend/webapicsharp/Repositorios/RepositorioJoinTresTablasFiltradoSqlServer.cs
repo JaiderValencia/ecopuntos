@@ -24,13 +24,15 @@ namespace webapicsharp.Repositorios
             string campoRelacion23Tabla3,
             string columnasSeleccionadas = "*",
             string tipoJoin = "INNER",
-            int? limite = null,
+            int? limite = 15,
             string? campoFiltro = null,
             object? valorFiltro = null)
         {
             try
             {
                 var resultados = new List<Dictionary<string, object?>>();
+                int limiteFinal = limite ?? 15;
+
 
                 if (string.IsNullOrWhiteSpace(tabla1) ||
                     string.IsNullOrWhiteSpace(tabla2) ||
