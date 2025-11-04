@@ -75,12 +75,10 @@ namespace webapicsharp.Servicios
 
                         int idMaterial = Convert.ToInt32(materialDict["Id"]);
                         string nombre = materialDict?["Nombre"]!.ToString() ?? "";
-                        double peso = Convert.ToDouble(materialDict!["Peso"] ?? 0);
 
                         materialesAceptados.Add(new Material(
                             id: idMaterial,
-                            nombre: nombre,
-                            peso: peso
+                            nombre: nombre
                             ));
                     }
                 }
@@ -184,12 +182,10 @@ namespace webapicsharp.Servicios
 
                         int idMaterial = Convert.ToInt32(materialDict["Id"]);
                         string nombreMaterial = materialDict?["Nombre"]!.ToString() ?? "";
-                        double peso = Convert.ToDouble(materialDict!["Peso"] ?? 0);
 
                         materialesAceptados.Add(new Material(
                             id: idMaterial,
-                            nombre: nombreMaterial,
-                            peso: peso
+                            nombre: nombreMaterial
                             ));
                     }
                 }
@@ -296,7 +292,6 @@ namespace webapicsharp.Servicios
                     );
                 }
 
-                //Inserta los materiales nuevos si existen
                 foreach (var material in materiales)
                 {
                     int idMat = material.Id;
@@ -324,7 +319,6 @@ namespace webapicsharp.Servicios
         {
             try
             {
-                // 🔹 1. Traemos los EcoPuntos con su Trabajador y Usuario, usando alias para evitar conflicto de nombres
                 var columnas = @"
                     t1.Id AS IdEcoPunto,
                     t1.Latitud,
@@ -384,12 +378,10 @@ namespace webapicsharp.Servicios
                         {
                             int idMaterial = Convert.ToInt32(materialDict["Id"]);
                             string nombre = materialDict?["Nombre"]?.ToString() ?? "";
-                            double peso = Convert.ToDouble(materialDict?["Peso"] ?? 0);
 
                             materialesAceptados.Add(new Material(
                                 id: idMaterial,
-                                nombre: nombre,
-                                peso: peso
+                                nombre: nombre
                             ));
                         }
                     }

@@ -73,7 +73,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new() { Title = "Web API EntrenoSAS", Version = "v1" });
+    options.SwaggerDoc("v1", new() { Title = "Web API EcoMedellinSAS", Version = "v1" });
 
     options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
@@ -112,11 +112,11 @@ builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServi
                            webapicsharp.Servicios.ServicioAdministrador>();
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioMaterial,
                            webapicsharp.Servicios.ServicioMaterial>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioEcoPunto,
+                           webapicsharp.Servicios.ServicioEcoPunto>();
 
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
-builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioEcoPunto,
-                           webapicsharp.Servicios.ServicioEcoPunto>();
 
 var proveedorBD = builder.Configuration.GetValue<string>("DatabaseProvider") ?? "SqlServer";
 
