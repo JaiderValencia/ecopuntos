@@ -14,7 +14,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioBuscarUltimoTabla _repoBuscarUltimo;
         private readonly IRepositorioEliminarTabla _repoEliminar;
-        private readonly IRepositorioJoinTresTablasFiltrado _repoJoinTresFiltrado;
+        private readonly IRepositorioJoin _repoJoinTresFiltrado;
 
         public ServicioTrabajador(
             IRepositorioEscrituraTabla repoEscritura,
@@ -22,7 +22,7 @@ namespace webapicsharp.Servicios
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda, 
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
-            IRepositorioJoinTresTablasFiltrado repoJoinTresFiltrado
+            IRepositorioJoin repoJoinTresFiltrado
             )
         {
             _repoEscritura = repoEscritura;

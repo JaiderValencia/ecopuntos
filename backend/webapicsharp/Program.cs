@@ -114,6 +114,8 @@ builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServi
                            webapicsharp.Servicios.ServicioMaterial>();
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioEcoPunto,
                            webapicsharp.Servicios.ServicioEcoPunto>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioEntrega,
+                           webapicsharp.Servicios.ServicioEntrega>();
 
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
@@ -140,8 +142,8 @@ switch (proveedorBD.ToLower())
         webapicsharp.Repositorios.RepositorioBuscarUltimoSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioSubconsulta,
         webapicsharp.Repositorios.RepositorioSubconsultaSqlServer>();
-        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioJoinTresTablasFiltrado,
-        webapicsharp.Repositorios.RepositorioJoinTresTablasFiltradoSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioJoin,
+        webapicsharp.Repositorios.RepositorioJoinSqlServer>();
         break;
 }
 

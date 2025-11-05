@@ -11,7 +11,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioEscrituraTabla _repoEscritura;
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioEliminarTabla _repoEliminar;
-        private readonly IRepositorioJoinTresTablasFiltrado _repoJoinTresFiltrado;
+        private readonly IRepositorioJoin _repoJoinTresFiltrado;
         private readonly IRepositorioSubconsulta _repoSubconsulta;
         private readonly IRepositorioBusquedaPorCampoTabla _repoBuqueda;
 
@@ -19,7 +19,7 @@ namespace webapicsharp.Servicios
             IRepositorioEscrituraTabla repoEscritura,
             IRepositorioActualizarTabla repoActualizar,
             IRepositorioEliminarTabla repoEliminar,
-            IRepositorioJoinTresTablasFiltrado repoJoinTresFiltrado,
+            IRepositorioJoin repoJoinTresFiltrado,
             IRepositorioSubconsulta repoSubconsulta,
             IRepositorioBusquedaPorCampoTabla repoBuqueda)
         {
