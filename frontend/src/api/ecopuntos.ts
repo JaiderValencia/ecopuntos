@@ -17,7 +17,7 @@ export const createEcopunto = async (formData: Ecopunto) => {
 }
 
 export const searchEcopuntoById = async (id: number): Promise<searchEcopuntoByIdResponse> => {
-    const response = await axios.post(`/EcoPunto/BuscarEcoPuntoPorID?id=${id}`)
+    const response = await axios.get(`/EcoPunto/BuscarEcoPuntoPorID?id=${id}`)    
 
     return response.data
 }
