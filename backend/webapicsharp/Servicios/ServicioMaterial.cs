@@ -35,8 +35,6 @@ namespace webapicsharp.Servicios
                 if (string.IsNullOrWhiteSpace(material.Nombre))
                     throw new Exception ("El nombre del material es obligatorio.");
 
-                if (material.Peso <= 0)
-                    throw new Exception ("El peso del material debe ser mayor que cero.");
                 
                 var existe = await _repoBusqueda.BuscarPorCampoAsync("Material", "Nombre", material.Nombre);
                 if (existe != null)
@@ -45,7 +43,6 @@ namespace webapicsharp.Servicios
                 var valores = new Dictionary<string, object?>
                 {
                     { "Nombre", material.Nombre },
-                    { "Peso", material.Peso }
                 };
 
                 var dictCreado = await _repoEscritura.InsertarAsync("Material", valores);
@@ -55,8 +52,7 @@ namespace webapicsharp.Servicios
 
                 var clienteFiltrado = new Material(
                     int.TryParse(dictCreado["Id"]?.ToString(), out var id) ? id : 0,
-                    dictCreado["Nombre"]?.ToString() ?? "",
-                    double.TryParse(dictCreado["Peso"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
+                    dictCreado["Nombre"]?.ToString() ?? ""
                 );
 
                 return clienteFiltrado;
@@ -99,8 +95,7 @@ namespace webapicsharp.Servicios
 
                 var materialFiltrado = new Material(
                     int.TryParse(material[0]["Id"]?.ToString(), out var id) ? id : 0,
-                    material[0]["Nombre"]?.ToString() ?? "",
-                    double.TryParse(material[0]["Peso"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
+                    material[0]["Nombre"]?.ToString() ?? ""
                 );
 
                 return materialFiltrado;

@@ -1,0 +1,211 @@
+CREATE DATABASE DBEcoPuntos;
+go
+
+-- Usar la base de datos DBEcoPuntos
+USE DBEcoPuntos;
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'dbo')
+BEGIN
+    EXEC('CREATE SCHEMA [dbo]');
+END;
+
+CREATE TABLE [dbo].[Usuario] (
+    [Id] int NOT NULL IDENTITY(1,1),
+    [Nombre] nvarchar(100) NOT NULL,
+    [Cedula] nvarchar(100) NOT NULL UNIQUE,
+    [Correo] nvarchar(255) NOT NULL UNIQUE,
+    [Direccion] nvarchar(255),
+    [Telefono] nvarchar(20),
+    [Contrasena] nvarchar(255),
+    PRIMARY KEY ([Id])
+);
+
+
+CREATE TABLE [dbo].[Empleado] (
+    [Id] int NOT NULL,
+    [CodigoDeEmpleado] nvarchar(50) NOT NULL UNIQUE,
+    PRIMARY KEY ([Id])
+);
+
+
+CREATE TABLE [dbo].[Cliente] (
+    [Id] int NOT NULL,
+    [EcoPuntos] int DEFAULT 0,
+    PRIMARY KEY ([Id])
+);
+
+
+CREATE TABLE [dbo].[Trabajador] (
+    [Id] int NOT NULL,
+    [Horario] nvarchar(100) NOT NULL,
+    PRIMARY KEY ([Id])
+);
+
+
+CREATE TABLE [dbo].[EcoPunto] (
+    [Id] int NOT NULL IDENTITY(1,1),
+    [IdTrabajador] int NOT NULL,
+    [Latitud] nvarchar(255),
+    [Longitud] nvarchar(255),
+    [Direccion] nvarchar(255) NOT NULL,
+    [Horario] nvarchar(100) NOT NULL,
+    [NombreEcopunto] nvarchar(255) NOT NULL,
+    PRIMARY KEY ([Id])
+);
+
+
+CREATE TABLE [dbo].[Material] (
+    [Id] int NOT NULL IDENTITY(1,1),
+    [Nombre] nvarchar(150) NOT NULL,
+    CONSTRAINT [pk_Material_Id] PRIMARY KEY ([Id])
+);
+
+-- Indexes
+CREATE UNIQUE INDEX [dbo_pk_Material_Id]
+ON [dbo].[Material] ([Id]);
+
+
+CREATE TABLE [dbo].[MaterialEntrega] (
+    [IdEntrega] int NOT NULL,
+    [IdMaterial] int NOT NULL,
+    [Peso] float NOT NULL,
+    [Puntos] int NOT NULL,
+    [Estado] bit NOT NULL,
+    CONSTRAINT [pk_MaterialEntrega] PRIMARY KEY ([IdEntrega], [IdMaterial])
+);
+
+
+CREATE TABLE [dbo].[Entrega] (
+    [Id] int NOT NULL IDENTITY(1,1),
+    [IdCliente] int NOT NULL,
+    [IdTrabajador] int,
+    [IdEcopunto] int,
+    CONSTRAINT [pk_Entrega_id] PRIMARY KEY ([Id])
+);
+
+-- Indexes
+CREATE UNIQUE INDEX [dbo_pk_Entrega_id]
+ON [dbo].[Entrega] ([Id]);
+
+
+CREATE TABLE [dbo].[MaterialEcoPunto] (
+    [IdEcoPunto] int NOT NULL,
+    [IdMaterial] int NOT NULL,
+    PRIMARY KEY ([IdEcoPunto], [IdMaterial])
+);
+
+-- Tabla Administrador
+CREATE TABLE [dbo].[Administrador] (
+    Id INT PRIMARY KEY,
+    NivelAcceso INT NOT NULL DEFAULT 1
+);
+
+
+-- Foreign key constraints CORREGIDAS
+-- Schema: dbo
+ALTER TABLE [dbo].[Cliente] ADD CONSTRAINT [FK_Cliente_Id] FOREIGN KEY([Id]) REFERENCES [dbo].[Usuario]([Id]);
+ALTER TABLE [dbo].[Empleado] ADD CONSTRAINT [FK_Empleado_Id] FOREIGN KEY([Id]) REFERENCES [dbo].[Usuario]([Id]);
+ALTER TABLE [dbo].[Trabajador] ADD CONSTRAINT [FK_Trabajador_Id] FOREIGN KEY([Id]) REFERENCES [dbo].[Empleado]([Id]);
+ALTER TABLE [dbo].[Administrador] ADD CONSTRAINT [FK_Administrador_Id] FOREIGN KEY([Id]) REFERENCES [dbo].[Empleado]([Id]);
+
+ALTER TABLE [dbo].[EcoPunto] ADD CONSTRAINT [FK_EcoPunto_IdTrabajador] FOREIGN KEY([IdTrabajador]) REFERENCES [dbo].[Trabajador]([Id]);
+
+ALTER TABLE [dbo].[Entrega] ADD CONSTRAINT [FK_Entrega_IdCliente] FOREIGN KEY([IdCliente]) REFERENCES [dbo].[Cliente]([Id]);
+ALTER TABLE [dbo].[Entrega] ADD CONSTRAINT [FK_Entrega_IdTrabajador] FOREIGN KEY([IdTrabajador]) REFERENCES [dbo].[Trabajador]([Id]);
+ALTER TABLE [dbo].[Entrega] ADD CONSTRAINT [FK_Entrega_IdEcopunto] FOREIGN KEY([IdEcopunto]) REFERENCES [dbo].[EcoPunto]([Id]);
+
+ALTER TABLE [dbo].[MaterialEntrega] ADD CONSTRAINT [FK_MaterialEntrega_IdEntrega] FOREIGN KEY([IdEntrega]) REFERENCES [dbo].[Entrega]([Id]);
+ALTER TABLE [dbo].[MaterialEntrega] ADD CONSTRAINT [FK_MaterialEntrega_IdMaterial] FOREIGN KEY([IdMaterial]) REFERENCES [dbo].[Material]([Id]);
+
+ALTER TABLE [dbo].[MaterialEcoPunto] ADD CONSTRAINT [FK_MaterialEcoPunto_IdEcoPunto] FOREIGN KEY([IdEcoPunto]) REFERENCES [dbo].[EcoPunto]([Id]);
+ALTER TABLE [dbo].[MaterialEcoPunto] ADD CONSTRAINT [FK_MaterialEcoPunto_IdMaterial] FOREIGN KEY([IdMaterial]) REFERENCES [dbo].[Material]([Id]);
+
+GO
+
+
+-- ===========================
+-- INSERCIÓN DE DATOS DE PRUEBA
+-- ===========================
+
+-- 1️⃣ Insertar un Cliente
+DECLARE @IdCliente INT;
+
+INSERT INTO [dbo].[Usuario] (Nombre, Cedula, Correo, Direccion, Telefono, Contrasena)
+VALUES ('Juan Pérez', '100001', 'juanperez@correo.com', 'Calle 10 #5', '+57 3001112233', '$2a$11$UrqfChS9gO0v5vwIVmNEw.0YCJQaXvur2ZYjk0Vrc6hL.W2ey0j0S');
+
+SET @IdCliente = SCOPE_IDENTITY();
+
+INSERT INTO [dbo].[Cliente] (Id, EcoPuntos)
+VALUES (@IdCliente, 150);
+
+-- =====================================
+-- 2️⃣ Insertar un Trabajador (Empleado)
+-- =====================================
+DECLARE @IdTrabajador INT;
+
+INSERT INTO [dbo].[Usuario] (Nombre, Cedula, Correo, Direccion, Telefono, Contrasena)
+VALUES ('Carlos Gómez', '100002', 'carlosgomez@ecomedellin.com', 'Carrera 20 #15', '+57 3012223344', '$2a$11$RXhhtijkl23nMse3sf0kXOTZSusuRlPu/ThynXjUCQb88YlmhBeie');
+
+SET @IdTrabajador = SCOPE_IDENTITY();
+
+INSERT INTO [dbo].[Empleado] (Id, CodigoDeEmpleado)
+VALUES (@IdTrabajador, 'EMP-001');
+
+INSERT INTO [dbo].[Trabajador] (Id, Horario)
+VALUES (@IdTrabajador, 'Lunes a Viernes 8:00-17:00');
+
+-- Crear un EcoPunto asociado a ese Trabajador
+DECLARE @IdEcopunto INT;
+
+INSERT INTO [dbo].[EcoPunto] (IdTrabajador, Latitud, Longitud, Direccion, Horario, NombreEcopunto)
+VALUES (@IdTrabajador, '6.2442', '-75.5812', 'Carrera 50 #30', 'Lunes a Viernes 8:00-17:00', 'Ecopunto Norte');
+
+SET @IdEcopunto = SCOPE_IDENTITY();
+
+-- =====================================
+-- 3️⃣ Insertar un Administrador (Empleado)
+-- =====================================
+DECLARE @IdAdmin INT;
+
+INSERT INTO [dbo].[Usuario] (Nombre, Cedula, Correo, Direccion, Telefono, Contrasena)
+VALUES ('María López', '100003', 'marialopez@admin.com', 'Avenida Siempre Viva 742', '+57 3023334455', '$2a$11$Z.CRS1YHDDugvvWZNVeWUO4csUnSp2GVM/G6gjrcIW8QiuLCFUJMK');
+
+SET @IdAdmin = SCOPE_IDENTITY();
+
+INSERT INTO [dbo].[Empleado] (Id, CodigoDeEmpleado)
+VALUES (@IdAdmin, 'EMP-002');
+
+INSERT INTO [dbo].[Administrador] (Id, NivelAcceso)
+VALUES (@IdAdmin, 5);
+
+-- =====================================
+-- 4️⃣ Insertar Materiales
+-- =====================================
+INSERT INTO [dbo].[Material] (Nombre)
+VALUES ('Plástico'),
+       ('Vidrio'),
+       ('Cartón');
+
+-- Asociar materiales al EcoPunto
+INSERT INTO [dbo].[MaterialEcoPunto] (IdEcoPunto, IdMaterial)
+VALUES (@IdEcopunto, 1),
+       (@IdEcopunto, 2),
+       (@IdEcopunto, 3);
+
+-- =====================================
+-- 5️⃣ Insertar una Entrega
+-- =====================================
+
+-- Insertar la Entrega primero
+INSERT INTO [dbo].[Entrega] (IdCliente, IdTrabajador, IdEcopunto)
+VALUES (@IdCliente, @IdTrabajador, @IdEcopunto);
+
+DECLARE @IdEntrega INT = SCOPE_IDENTITY();
+
+-- Ahora insertar MaterialEntrega
+INSERT INTO [dbo].[MaterialEntrega] (IdEntrega, IdMaterial, Peso, Puntos, Estado)
+VALUES (@IdEntrega, 1, 2.5, 50, 1);
+
+PRINT 'Datos de prueba insertados correctamente en DBEcoPuntos';
+GO

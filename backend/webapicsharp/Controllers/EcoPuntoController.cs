@@ -17,7 +17,7 @@ namespace webapicsharp.Controllers
             _servicioEcoPunto = servicioEcoPunto;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> BuscarEcoPuntoPorID([FromQuery] int id)
         {
             try
