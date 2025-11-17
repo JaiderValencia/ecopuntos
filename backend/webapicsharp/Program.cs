@@ -116,6 +116,8 @@ builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServi
                            webapicsharp.Servicios.ServicioEcoPunto>();
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioEntrega,
                            webapicsharp.Servicios.ServicioEntrega>();
+builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioReporte,
+                           webapicsharp.Servicios.ServicioReporte>();
 
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();

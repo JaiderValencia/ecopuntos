@@ -81,6 +81,7 @@ CREATE TABLE [dbo].[Entrega] (
     [IdCliente] int NOT NULL,
     [IdTrabajador] int,
     [IdEcopunto] int,
+    [FechaCreacion] datetime NOT NULL DEFAULT GETDATE(),
     CONSTRAINT [pk_Entrega_id] PRIMARY KEY ([Id])
 );
 

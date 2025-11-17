@@ -12,7 +12,7 @@
 
     public class CrearEntregaDto
     {
-        public int IdCliente { get; set; }
+        public string? CedulaCliente { get; set; }
         public int IdTrabajador { get; set; }
         public int IdEcoPunto { get; set; }
         public List<CrearEntregaMaterialDto>? MaterialesEntrega { get; set; } = new List<CrearEntregaMaterialDto>();
@@ -25,5 +25,7 @@
         public Cliente? Cliente { get; set; }
         public Trabajador? Trabajador { get; set; }
         public List<EntregaMaterial>? MaterialesEntrega { get; set; } = new List<EntregaMaterial>();
+        public Dictionary<string, string>? Top3 { get; set; }
+        public Dictionary<string, double>? Totales { get; set; }
     }
 }
