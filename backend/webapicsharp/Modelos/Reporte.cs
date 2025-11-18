@@ -2,7 +2,7 @@
 {
     public class Reporte
     {
-        public int Id { get;set }
+        public int Id { get; set; }
         public Cliente? Cliente { get; set; }
         public Trabajador? Trabajador { get; set; }
         public List<Dictionary<string, object>?>? MaterialesEntrega { get; set; }
