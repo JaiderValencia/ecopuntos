@@ -12,6 +12,7 @@ import type { ReporteForm } from '../../interfaces/reporte'
 import { registrarReporte } from '../../api/reporte'
 import { useUserContext } from '../../contex/user/user'
 import { useNavigate } from 'react-router-dom'
+import { validarReporteForm } from '../../utils/reporte'
 
 function RegistrarReporte() {
     const { userStatus } = useUserContext()
@@ -141,8 +142,10 @@ function RegistrarReporte() {
                             label='Ecopunto'
                             inputId='idEcoPunto'
                             inputName='idEcoPunto'
-                            register={register('idEcoPunto')}
-                            spanAlert={errors['idEcoPunto']?.message ?? ''}>
+                            register={register('idEcoPunto', { ...validarReporteForm.idEcoPunto })}
+                            spanAlert={errors['idEcoPunto']?.message ?? ''}
+                            classNameSpanAlert='text-red-500 text-sm'
+                            >
 
                             {ecoPuntos.map((eco) => (
                                 <option key={eco.id} value={eco.id}>{eco.nombre}</option>
@@ -157,7 +160,7 @@ function RegistrarReporte() {
                             inputId='cedulaCliente'
                             inputName='cedulaCliente'
                             inputType='text'
-                            register={register('cedulaCliente')}
+                            register={register('cedulaCliente', { ...validarReporteForm.cedulaCliente })}
                             spanAlert={errors['cedulaCliente']?.message ?? ''}
                             classNameSpanAlert='text-red-500 text-sm'
                         />
@@ -171,8 +174,9 @@ function RegistrarReporte() {
                                     label='Tipo de material'
                                     inputId='materialesEntrega'
                                     inputName='materialesEntrega'
-                                    register={register('materialesEntrega')}
+                                    register={register('materialesEntrega',{ ...validarReporteForm.materialesEntrega })}
                                     spanAlert={errors['materialesEntrega']?.message ?? ''}
+                                    classNameSpanAlert='text-red-500 text-sm'
                                 >
 
                                     {materiales.map((material) => (
@@ -188,8 +192,9 @@ function RegistrarReporte() {
                                     inputId='cantidad'
                                     inputName='cantidad'
                                     inputType='number'
-                                    register={register('cantidad')}
+                                    register={register('cantidad', { ...validarReporteForm.cantidad })}
                                     spanAlert={errors['cantidad']?.message ?? ''}
+                                    classNameSpanAlert='text-red-500 text-sm'
                                 />
                             </div>
 
