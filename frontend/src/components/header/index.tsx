@@ -30,13 +30,13 @@ function Header() {
                             Registrar entrega
                         </NavLink>
 
-                        <NavLink
+                        {/* <NavLink
                             to="/reportes/listar"
                             className="block px-4 py-2 text-gray-800 hover:bg-green-100 rounded-md"
                             onClick={() => setIsDropdownOpen(false)}
                         >
                             Lista de entregas
-                        </NavLink>
+                        </NavLink> */}
                     </div>
                 )}
             </div>
@@ -52,7 +52,7 @@ function Header() {
     }
 
     const opcionesAdministrador = () => {
-        if (userStatus.userRole !== 'Administrador') return null
+        if (userStatus.userRole !== 'Admin') return null
 
         return (<>
             <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
@@ -69,7 +69,7 @@ function Header() {
                 <nav className="flex items-center">
                     {userStatus.isLogged && (
                         <>
-                            <NavLink className="text-white mx-4" to="#">Mapa</NavLink>
+                            <NavLink className="text-white mx-4" to="/">Mapa</NavLink>
                             {opcionesAdministrador()}
                             {opcionesTrabajador()}
                             {opcionesCliente()}
