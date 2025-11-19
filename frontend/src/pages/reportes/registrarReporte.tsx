@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 
 function RegistrarReporte() {
     const { userStatus } = useUserContext()
-    const { register, handleSubmit, watch, setValue } = useForm<ReporteForm>()
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ReporteForm>()
     const navigate = useNavigate()
 
     const [ecoPuntos, setEcoPuntos] = useState<Ecopunto[]>([])
@@ -53,12 +53,14 @@ function RegistrarReporte() {
     useEffect(() => {
         setValue('materialesEntrega', 0)
     }, [setValue])
-    
+
     const handleAgregarMaterial = () => {
         const materialId = watch('materialesEntrega')
 
+        if (!materialId) return
+
         const nombre = materiales.find((mat) => mat.Id == materialId)?.Nombre || 'N/A'
-        const cantidad = watch('cantidad')
+        const cantidad = parseInt(watch('cantidad').toString()) || 0
         const estado = watch('estado')
         const puntos = 100
 
@@ -78,13 +80,17 @@ function RegistrarReporte() {
         setTotalAceptado(totalAceptado + cantidad)
     }
 
-    const onSubmit = (data: ReporteForm) => {
-        registrarReporte({
-            idCliente: data.idCliente,
-            idTrabajador: userStatus.userId,
-            idEcoPunto: data.idEcoPunto,
-            materialesEntrega: [...aceptados, ...rechazados]
-        })
+    const onSubmit = async (data: ReporteForm) => {
+        try {
+            await registrarReporte({
+                cedulaCliente: data.cedulaCliente,
+                idTrabajador: userStatus.userId,
+                idEcoPunto: data.idEcoPunto,
+                materialesEntrega: [...aceptados, ...rechazados]
+            })
+        } catch (error) {
+            alert(`Error al registrar el reporte: ${error}`)
+        }
     }
 
     const handleCancelar = () => {
@@ -131,20 +137,29 @@ function RegistrarReporte() {
 
                 <form onSubmit={handleSubmit(onSubmit)} className='bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-6 lg:p-8 flex flex-col space-y-8 shadow-lg'>
                     <div>
-                        <SelectComponent label='Ecopunto' inputId='idEcoPunto' inputName='idEcoPunto' register={register('idEcoPunto')}>
+                        <SelectComponent
+                            label='Ecopunto'
+                            inputId='idEcoPunto'
+                            inputName='idEcoPunto'
+                            register={register('idEcoPunto')}
+                            spanAlert={errors['idEcoPunto']?.message ?? ''}>
+
                             {ecoPuntos.map((eco) => (
                                 <option key={eco.id} value={eco.id}>{eco.nombre}</option>
                             ))}
+
                         </SelectComponent>
                     </div>
 
                     <div>
                         <InputComponent
-                            label='Numero de identificacion del cliente'
-                            inputId='idCliente'
-                            inputName='idCliente'
+                            label='Identificacion del cliente'
+                            inputId='cedulaCliente'
+                            inputName='cedulaCliente'
                             inputType='text'
-                            register={register('idCliente')}
+                            register={register('cedulaCliente')}
+                            spanAlert={errors['cedulaCliente']?.message ?? ''}
+                            classNameSpanAlert='text-red-500 text-sm'
                         />
                     </div>
 
@@ -156,7 +171,9 @@ function RegistrarReporte() {
                                     label='Tipo de material'
                                     inputId='materialesEntrega'
                                     inputName='materialesEntrega'
-                                    register={register('materialesEntrega')}>
+                                    register={register('materialesEntrega')}
+                                    spanAlert={errors['materialesEntrega']?.message ?? ''}
+                                >
 
                                     {materiales.map((material) => (
                                         <option key={material.Id} value={material.Id}>{material.Nombre}</option>
@@ -172,6 +189,7 @@ function RegistrarReporte() {
                                     inputName='cantidad'
                                     inputType='number'
                                     register={register('cantidad')}
+                                    spanAlert={errors['cantidad']?.message ?? ''}
                                 />
                             </div>
 
@@ -182,6 +200,7 @@ function RegistrarReporte() {
                                     inputName='estado'
                                     inputType='checkbox'
                                     register={register('estado')}
+                                    spanAlert={errors['estado']?.message ?? ''}
                                 />
                             </div>
 
