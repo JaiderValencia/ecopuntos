@@ -12,3 +12,10 @@ export interface ReporteForm extends Pick<Reporte, 'idEcoPunto' | 'cedulaCliente
     cantidad: number
     estado: boolean    
 }
+
+export interface ReporteAllDto {
+    idReporte: number
+    fechaCreacion: string
+    nombreEcopunto: string
+    responsable: string
+}
