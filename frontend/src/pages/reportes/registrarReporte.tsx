@@ -16,7 +16,7 @@ import { validarReporteForm } from '../../utils/reporte'
 
 function RegistrarReporte() {
     const { userStatus } = useUserContext()
-    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ReporteForm>()
+    const { register, handleSubmit, watch, setValue, formState: { errors }, setError } = useForm<ReporteForm>()
     const navigate = useNavigate()
 
     const [ecoPuntos, setEcoPuntos] = useState<Ecopunto[]>([])
@@ -81,7 +81,19 @@ function RegistrarReporte() {
         setTotalAceptado(totalAceptado + cantidad)
     }
 
+    const handleMaterialesEntregaError = (message: string) => {
+        setError('materialesEntrega', { type: 'required', message })
+    }
+
     const onSubmit = async (data: ReporteForm) => {
+        console.log('a')
+
+        if (aceptados.length + rechazados.length === 0) {
+            handleMaterialesEntregaError('Debe agregar al menos un material a la entrega.')
+
+            return
+        }
+
         try {
             await registrarReporte({
                 cedulaCliente: data.cedulaCliente,
@@ -145,7 +157,7 @@ function RegistrarReporte() {
                             register={register('idEcoPunto', { ...validarReporteForm.idEcoPunto })}
                             spanAlert={errors['idEcoPunto']?.message ?? ''}
                             classNameSpanAlert='text-red-500 text-sm'
-                            >
+                        >
 
                             {ecoPuntos.map((eco) => (
                                 <option key={eco.id} value={eco.id}>{eco.nombre}</option>
@@ -174,9 +186,7 @@ function RegistrarReporte() {
                                     label='Tipo de material'
                                     inputId='materialesEntrega'
                                     inputName='materialesEntrega'
-                                    register={register('materialesEntrega',{ ...validarReporteForm.materialesEntrega })}
-                                    spanAlert={errors['materialesEntrega']?.message ?? ''}
-                                    classNameSpanAlert='text-red-500 text-sm'
+                                    register={register('materialesEntrega')}
                                 >
 
                                     {materiales.map((material) => (
@@ -192,9 +202,7 @@ function RegistrarReporte() {
                                     inputId='cantidad'
                                     inputName='cantidad'
                                     inputType='number'
-                                    register={register('cantidad', { ...validarReporteForm.cantidad })}
-                                    spanAlert={errors['cantidad']?.message ?? ''}
-                                    classNameSpanAlert='text-red-500 text-sm'
+                                    register={register('cantidad')}
                                 />
                             </div>
 
@@ -205,11 +213,15 @@ function RegistrarReporte() {
                                     inputName='estado'
                                     inputType='checkbox'
                                     register={register('estado')}
-                                    spanAlert={errors['estado']?.message ?? ''}
                                 />
                             </div>
 
                             <Button type='button' onClick={handleAgregarMaterial} className='w-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark'>Agregar material</Button>
+
+
+                            {errors['materialesEntrega'] && (
+                                <span className='text-red-500 text-sm col-span-3'>{errors['materialesEntrega']?.message}</span>
+                            )}
                         </div>
                     </div>
 
