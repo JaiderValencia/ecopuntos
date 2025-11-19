@@ -12,7 +12,7 @@ function Header() {
         return (
             <div className="relative mx-4">
                 <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}                    
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     className="text-white flex items-center focus:outline-none"
                 >
                     Entregas
@@ -51,6 +51,14 @@ function Header() {
         </>)
     }
 
+    const opcionesAdministrador = () => {
+        if (userStatus.userRole !== 'Administrador') return null
+
+        return (<>
+            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
+        </>)
+    }
+
     return (
         <header className="bg-green-600 shadow-md fixed top-0 left-0 right-0 z-10">
             <div className="container mx-auto px-6 py-3 flex justify-between items-center">
@@ -61,8 +69,8 @@ function Header() {
                 <nav className="flex items-center">
                     {userStatus.isLogged && (
                         <>
-                            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
                             <NavLink className="text-white mx-4" to="#">Mapa</NavLink>
+                            {opcionesAdministrador()}
                             {opcionesTrabajador()}
                             {opcionesCliente()}
                         </>
