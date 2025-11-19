@@ -86,8 +86,6 @@ function RegistrarReporte() {
     }
 
     const onSubmit = async (data: ReporteForm) => {
-        console.log('a')
-
         if (aceptados.length + rechazados.length === 0) {
             handleMaterialesEntregaError('Debe agregar al menos un material a la entrega.')
 

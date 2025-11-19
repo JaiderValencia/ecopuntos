@@ -12,6 +12,7 @@ import { MapProvider } from './contex/map/provider'
 import EditEcopuntos from './pages/ecopuntos/editEcopuntos'
 import RegistrarReporte from './pages/reportes/registrarReporte'
 import ListReportes from './pages/reportes/listReportes'
+import DetalleReporte from './pages/reportes/detalleReporte'
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
             } />
 
             <Route path='/reportes/registrar' element={<RegistrarReporte />} />
+            <Route path='/mis-reportes/:id' element={<DetalleReporte />} />
             <Route path='/mis-reportes' element={<ListReportes />} />
           </Route>
 

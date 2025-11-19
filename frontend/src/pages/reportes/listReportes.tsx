@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Table from '../../components/table'
 import type { ReporteAllDto } from '../../interfaces/reporte'
 import { obtenerReportesPorIdCliente } from '../../api/reporte'
@@ -6,6 +7,7 @@ import { useUserContext } from '../../contex/user/user'
 
 function ListReportes() {
     const { userStatus } = useUserContext()
+    const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [reportes, setReportes] = useState<ReporteAllDto[]>([])
     const [error, setError] = useState<string | null>(null)
@@ -75,7 +77,11 @@ function ListReportes() {
                 <section>
                     <Table columns={['ID Reporte', 'Fecha de Creación', 'Ecopunto', 'Responsable']}>
                         {reportes.map((reporte) => (
-                            <tr className="border-b cursor-pointer hover:bg-gray-100" key={reporte.idReporte}>
+                            <tr 
+                                className="border-b cursor-pointer hover:bg-gray-100" 
+                                key={reporte.idReporte}
+                                onClick={() => navigate(`/mis-reportes/${reporte.idReporte}`)}
+                            >
                                 <td className="px-4 py-2">{reporte.idReporte}</td>
                                 <td className="px-4 py-2">{formatDate(reporte.fechaCreacion)}</td>
                                 <td className="px-4 py-2">{reporte.nombreEcopunto}</td>

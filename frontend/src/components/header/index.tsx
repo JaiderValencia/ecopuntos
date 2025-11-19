@@ -1,15 +1,46 @@
 import { NavLink } from 'react-router-dom'
 import { useUserContext } from '../../contex/user/user'
+import { useState } from 'react'
 
 function Header() {
     const { userStatus } = useUserContext()
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
     const opcionesTrabajador = () => {
         if (userStatus.userRole !== 'Empleado') return null
 
-        return (<>
-            <NavLink className='text-white mx-4' to="/reportes/registrar">Registrar entrega</NavLink>
-        </>)
+        return (
+            <div className="relative mx-4">
+                <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}                    
+                    className="text-white flex items-center focus:outline-none"
+                >
+                    Entregas
+                    <span className="material-icons ml-1 text-sm">
+                        {isDropdownOpen ? 'expand_less' : 'expand_more'}
+                    </span>
+                </button>
+                {isDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-1 bg-white rounded-md shadow-lg min-w-[200px]">
+                        <NavLink
+                            to="/reportes/registrar"
+                            className="block px-4 py-2 text-gray-800 hover:bg-green-100 rounded-md"
+                            onClick={() => setIsDropdownOpen(false)}
+                        >
+                            Registrar entrega
+                        </NavLink>
+
+                        <NavLink
+                            to="/reportes/listar"
+                            className="block px-4 py-2 text-gray-800 hover:bg-green-100 rounded-md"
+                            onClick={() => setIsDropdownOpen(false)}
+                        >
+                            Lista de entregas
+                        </NavLink>
+                    </div>
+                )}
+            </div>
+        )
     }
 
     const opcionesCliente = () => {

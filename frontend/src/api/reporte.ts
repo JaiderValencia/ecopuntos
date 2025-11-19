@@ -1,4 +1,4 @@
-import type { Reporte, ReporteAllDto } from '../interfaces/reporte'
+import type { Reporte, ReporteAllDto, ReporteDetalle } from '../interfaces/reporte'
 import axios from './axios'
 
 export const registrarReporte = async (data: Reporte): Promise<void> => {
@@ -13,4 +13,12 @@ export const obtenerReportesPorIdCliente = async (idCliente: number): Promise<Re
     })
 
     return response.data.reportes
+}
+
+export const obtenerInformacionReportePorId = async (idReporte: number): Promise<ReporteDetalle> => {
+    const response = await axios.get('/Reporte/ObtenerInformacionReportePorId', {
+        params: { idReporte }
+    })
+
+    return response.data.reporte
 }
