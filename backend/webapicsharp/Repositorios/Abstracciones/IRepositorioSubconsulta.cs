@@ -8,7 +8,9 @@
             string campoRelacionExterna,
             string campoRelacionInterna,
             string campoFiltro,
-            object valorFiltro
+            object valorFiltro,
+            string uColumnas = "u.*",
+            string cColumnas = "c.*"
         );
     }
 }

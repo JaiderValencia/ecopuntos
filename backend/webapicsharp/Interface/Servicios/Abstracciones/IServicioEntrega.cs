@@ -6,7 +6,10 @@ namespace webapicsharp.Interface.Servicios.Abstracciones
     {
         public Task<EntregaResponse> CrearEntregAsync(CrearEntregaDto entrega);
 
-        public Task<EntregaResponse> ObtenerResultadoOperacion(Dictionary<string, object?> entrega, List<EntregaMaterial> materiales);
+        public Task<EntregaResponse> ObtenerResultadoOperacion(
+            Dictionary<string, object?> entrega, 
+            List<EntregaMaterial> materiales, 
+            List<Dictionary<string, object?>> cliente);
 
     }
 }

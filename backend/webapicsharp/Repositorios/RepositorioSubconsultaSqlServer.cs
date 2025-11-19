@@ -20,7 +20,9 @@ namespace webapicsharp.Repositorios
             string campoRelacionExterna,
             string campoRelacionInterna,
             string campoFiltro,
-            object valorFiltro
+            object valorFiltro,
+            string uColumnas = "u.*",
+            string cColumnas = "c.*"
         )
         {
             try
@@ -30,8 +32,8 @@ namespace webapicsharp.Repositorios
 
                 string consulta = $@"
                     SELECT 
-                        u.*, 
-                        c.*
+                        {uColumnas}, 
+                        {cColumnas}
                     FROM [{tablaExterna}] AS c
                     INNER JOIN [{tablaInterna}] AS u
                         ON c.[{campoRelacionExterna}] = u.[{campoRelacionInterna}]

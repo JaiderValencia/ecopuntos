@@ -1,10 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Azure.Core;
 using Microsoft.IdentityModel.Tokens;
 using webapicsharp.Interface.Servicios.Abstracciones;
-using webapicsharp.Modelos;
 using webapicsharp.Repositorios.Abstracciones;
 
 namespace webapicsharp.Servicios
@@ -18,96 +16,58 @@ namespace webapicsharp.Servicios
             IRepositorioBusquedaPorCampoTabla repoBusqueda)
         {
             _config = config;
-            _repoBusqueda =repoBusqueda;
+            _repoBusqueda = repoBusqueda;
         }
 
         public string GenerarToken(string correo)
         {
-            try
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var rol = ValidacionCorreoRol(correo);
+
+            var claims = new[]
             {
-                //clave secreta del appsettings.json
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:key"]!));
-                var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+                new Claim(JwtRegisteredClaimNames.Sub, correo),
+                new Claim(ClaimTypes.Role, rol),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
 
-                var rol = ValidacionCorreoRol(correo);
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(2),
+                signingCredentials: creds
+            );
 
-                //Creamos los claims para el token
-                var claims = new[]
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, correo),
-                    new Claim(ClaimTypes.Role, rol),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-                var token = new JwtSecurityToken(
-                    issuer: _config["Jwt:Issuer"],
-                    audience: _config["Jwt:audience"],
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddHours(2),
-                    signingCredentials: creds
-                );
-
-                return new JwtSecurityTokenHandler().WriteToken(token);
-            }
-            catch(Exception e)
-            {
-                return e.Message;
-            }
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public string ValidacionCorreoRol(string correo)
         {
-            try
+            if (string.IsNullOrWhiteSpace(correo) || !correo.Contains("@"))
             {
-                if (!correo.Contains("@"))
-                {
-                    return null!;
-                }
-
-                var split = correo.Split("@").ToList();
-                if (split[1].ToUpper() == "ECOMEDELLIN.COM")
-                {
-                    return "Empleado";
-                }
-
-                if (split[1].ToUpper() == "ADMIN.COM".ToUpper())
-                {
-                    return "Admin";
-                }
-
-                return "Cliente";
+                throw new ArgumentException("Correo inválido", nameof(correo));
             }
-            catch (Exception e)
+
+            var dominio = correo.Split("@")[1].ToUpperInvariant();
+
+            return dominio switch
             {
-                throw new Exception(e.Message);
-            }
+                "ECOMEDELLIN.COM" => "Empleado",
+                "ADMIN.COM" => "Admin",
+                _ => "Cliente"
+            };
         }
 
         public string HashearContrasena(string contrasena)
         {
-            try
-            {
-                return BCrypt.Net.BCrypt.HashPassword(contrasena);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            return BCrypt.Net.BCrypt.HashPassword(contrasena);
         }
 
         public bool CompararContrasenas(string hashContrasena, string contrasenaPlana)
         {
-            try
-            {
-                bool esValido = BCrypt.Net.BCrypt.Verify(contrasenaPlana, hashContrasena);
-
-                return esValido;
-            }
-            catch(Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            return BCrypt.Net.BCrypt.Verify(contrasenaPlana, hashContrasena);
         }
-
     }
 }

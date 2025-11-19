@@ -35,14 +35,30 @@ namespace webapicsharp.Servicios
         {
             try
             {
-                if (entrega.IdCliente == 0 || entrega.IdEcoPunto == 0 || entrega.IdTrabajador == 0)
+                if (entrega.IdEcoPunto == 0 || entrega.IdTrabajador == 0)
                 {
                     throw new Exception("Los ids deben ser validos");
                 }
 
+                if (entrega.MaterialesEntrega!.Count() < 1)
+                {
+                    throw new Exception("La entrega debe tener minimo un material");
+
+                }
+
+                var clienteDb = await _repoSubconsulta.EjecutarSubconsultaAsync("Cliente", "Usuario", "Id", "Id", "Cedula", entrega.CedulaCliente!);
+
+                if (clienteDb![0] == null)
+                {
+                    throw new Exception("No existe cliente con esa cedula");
+                }
+
+                var idClienteDb = int.Parse(clienteDb![0]["Id"]!.ToString()!);
+
+
                 var datosEntrega = new Dictionary<string, object?>
                 {
-                    ["IdCliente"] = entrega.IdCliente,
+                    ["IdCliente"] = idClienteDb,
                     ["IdTrabajador"] = entrega.IdTrabajador,
                     ["IdEcopunto"] = entrega.IdEcoPunto
                 };
@@ -79,7 +95,7 @@ namespace webapicsharp.Servicios
                     ));
                 }
 
-                return await ObtenerResultadoOperacion(entrega: entregaDB, materiales: materialesDB);
+                return await ObtenerResultadoOperacion(entrega: entregaDB, materiales: materialesDB, cliente: clienteDb);
 
             }
             catch (Exception e)
@@ -88,18 +104,13 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task<EntregaResponse> ObtenerResultadoOperacion(Dictionary<string, object?> entrega, List<EntregaMaterial>materiales)
+        public async Task<EntregaResponse> ObtenerResultadoOperacion(
+            Dictionary<string, object?> entrega, 
+            List<EntregaMaterial>materiales, 
+            List<Dictionary<string, object?>> cliente)
         {
             try
             {
-                var cliente = await _repoSubconsulta.EjecutarSubconsultaAsync(
-                    "Cliente",
-                    "Usuario",
-                    campoRelacionExterna: "Id",
-                    campoRelacionInterna: "Id",
-                    campoFiltro: "Id",
-                    valorFiltro: Convert.ToInt32(entrega["IdCliente"])
-                    );
                 var trabajadorDatos = await _repoJoinTresFiltrado.JoinTresTablasAsync(
                    "Usuario",
                    "Empleado",
