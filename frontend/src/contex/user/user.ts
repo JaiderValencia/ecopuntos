@@ -4,7 +4,7 @@ import hasSession from '../../utils/hasSession'
 export type UserContextValue = {
     userStatus: {
         isLogged: boolean,
-        userId: string
+        userId: number
         userName: string
         userEmail: string
         userPhone: string,
@@ -16,7 +16,7 @@ export type UserContextValue = {
 export const defaultUserStatus: UserContextValue['userStatus'] = {
     ...hasSession() || {
         isLogged: false,
-        userId: '',
+        userId: 0,
         userName: '',
         userEmail: '',
         userPhone: '',

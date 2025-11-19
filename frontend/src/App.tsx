@@ -10,6 +10,7 @@ import ListEcopuntos from './pages/ecopuntos/ListEcopuntos'
 import InsertEcopuntos from './pages/ecopuntos/insertEcopuntos'
 import { MapProvider } from './contex/map/provider'
 import EditEcopuntos from './pages/ecopuntos/editEcopuntos'
+import RegistrarReporte from './pages/reportes/registrarReporte'
 
 function App() {
   return (
@@ -40,6 +41,8 @@ function App() {
                 <EditEcopuntos />
               </MapProvider>
             } />
+
+            <Route path='/reportes/registrar' element={<RegistrarReporte />} />
           </Route>
 
           <Route path='*' element={<PageNotFound />} />

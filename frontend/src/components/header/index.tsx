@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom'
-import { useUserContext } from '../../contex/user/user';
+import { useUserContext } from '../../contex/user/user'
 
 function Header() {
-    const { userStatus } = useUserContext();
+    const { userStatus } = useUserContext()
 
     return (
         <header className="bg-green-600 shadow-md fixed top-0 left-0 right-0 z-10">
@@ -15,8 +15,8 @@ function Header() {
                     {userStatus.isLogged && (
                         <>
                             <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
-                            <a className="text-white mx-4" href="#">Mapa</a>
-                            <a className='text-white mx-4' href="#">Registrar entrega</a>
+                            <NavLink className="text-white mx-4" to="#">Mapa</NavLink>
+                            <NavLink className='text-white mx-4' to="/reportes/registrar">Registrar entrega</NavLink>
                         </>
                     )}
                     <NavLink className="text-white mx-4 flex items-center" to={userStatus.isLogged ? '/perfil' : '/login'}>

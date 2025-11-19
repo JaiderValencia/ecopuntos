@@ -10,3 +10,11 @@ export interface MaterialResponse {
     total: number
     materiales: Material[]
 }
+
+export interface MaterialEntrega {
+    IdMaterial: number
+    nombre?: string
+    peso: number
+    puntos: number
+    estado: boolean
+}
