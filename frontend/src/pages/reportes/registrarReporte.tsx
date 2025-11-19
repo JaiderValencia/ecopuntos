@@ -63,7 +63,7 @@ function RegistrarReporte() {
         const nombre = materiales.find((mat) => mat.Id == materialId)?.Nombre || 'N/A'
         const cantidad = parseInt(watch('cantidad').toString()) || 0
         const estado = watch('estado')
-        const puntos = 100
+        const puntos = estado ? 100 * cantidad : 0
 
         setValue('materialesEntrega', 0)
         setValue('cantidad', 0)
@@ -103,6 +103,9 @@ function RegistrarReporte() {
             })
         } catch (error) {
             alert(`Error al registrar el reporte: ${error}`)
+        } finally {
+            alert('Reporte registrado con exito')
+            navigate('/')
         }
     }
 
