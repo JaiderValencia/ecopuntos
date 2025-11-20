@@ -17,7 +17,7 @@ namespace webapicsharp.Controllers
             _servicioEcoPunto = servicioEcoPunto;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> BuscarEcoPuntoPorID([FromQuery] int id)
         {
             try
@@ -36,7 +36,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CrearEcoPunto([FromBody] EcoPuntoDto ecoPunto)
+        public async Task<IActionResult> CrearEcoPunto([FromBody] EcoPunto ecoPunto)
         {
             try
             {
@@ -46,6 +46,7 @@ namespace webapicsharp.Controllers
                     ecoPunto.Ubicacion!.Longitud!,
                     ecoPunto.Ubicacion!.Direccion!,
                     ecoPunto.Horario!,
+                    ecoPunto.Nombre!,
                     ecoPunto.MaterialesAceptados!
                     );
                 return Ok(new
@@ -53,14 +54,15 @@ namespace webapicsharp.Controllers
                     mensaje = "EcoPunto registrado correctamente",
                     EcoPunto = resultado
                 });
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
         }
 
         [HttpPut]
-        public async Task<IActionResult> ActualizarEcoPuntoPorID([FromBody] ActualizarEcoPuntoDto dto, [FromQuery]int id)
+        public async Task<IActionResult> ActualizarEcoPuntoPorID([FromBody] ActualizarEcoPuntoDto dto, [FromQuery] int id)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -73,6 +75,7 @@ namespace webapicsharp.Controllers
                     longitud: dto.Longitud!,
                     direccion: dto.Direccion!,
                     horario: dto.Horario!,
+                    nombre: dto.Nombre!,
                     materiales: dto.Materiales
                 );
 
@@ -91,7 +94,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerEcopuntos([FromQuery] int limite)
+        public async Task<IActionResult> ObtenerEcopuntos([FromQuery] int? limite)
         {
             try
             {
@@ -100,7 +103,6 @@ namespace webapicsharp.Controllers
                 return Ok(new
                 {
                     Mensaje = "Lista de ecopuntos",
-                    limite = limite,
                     Total = ecoPuntos.Count,
                     Ecopuntos = ecoPuntos
                 });
@@ -108,6 +110,23 @@ namespace webapicsharp.Controllers
             catch (Exception e)
             {
                 throw new Exception(e.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> EliminarEcoPuntoPorID([FromQuery] int id)
+        {
+            try
+            {
+                await _servicioEcoPunto.EliminarEcoPuntoPorIDAsync(id);
+                return Ok(new
+                {
+                    mensaje = "EcoPunto eliminado correctamente"
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
         }
 

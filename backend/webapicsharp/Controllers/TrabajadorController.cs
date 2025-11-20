@@ -97,7 +97,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerTrabajadores([FromQuery] int limit)
+        public async Task<IActionResult> ObtenerTrabajadores([FromQuery] int? limit)
         {
             try
             {
@@ -110,7 +110,6 @@ namespace webapicsharp.Controllers
 
                 return Ok(new
                 {
-                    limit = limit,
                     total = lista.Count(),
                     mensaje = "Lista de trabajadores",
                     Cliente = lista

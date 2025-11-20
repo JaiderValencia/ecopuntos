@@ -11,7 +11,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioEscrituraTabla _repoEscritura;
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioEliminarTabla _repoEliminar;
-        private readonly IRepositorioJoinTresTablasFiltrado _repoJoinTresFiltrado;
+        private readonly IRepositorioJoin _repoJoinTresFiltrado;
         private readonly IRepositorioSubconsulta _repoSubconsulta;
         private readonly IRepositorioBusquedaPorCampoTabla _repoBuqueda;
 
@@ -19,7 +19,7 @@ namespace webapicsharp.Servicios
             IRepositorioEscrituraTabla repoEscritura,
             IRepositorioActualizarTabla repoActualizar,
             IRepositorioEliminarTabla repoEliminar,
-            IRepositorioJoinTresTablasFiltrado repoJoinTresFiltrado,
+            IRepositorioJoin repoJoinTresFiltrado,
             IRepositorioSubconsulta repoSubconsulta,
             IRepositorioBusquedaPorCampoTabla repoBuqueda)
         {
@@ -75,12 +75,10 @@ namespace webapicsharp.Servicios
 
                         int idMaterial = Convert.ToInt32(materialDict["Id"]);
                         string nombre = materialDict?["Nombre"]!.ToString() ?? "";
-                        double peso = Convert.ToDouble(materialDict!["Peso"] ?? 0);
 
                         materialesAceptados.Add(new Material(
                             id: idMaterial,
-                            nombre: nombre,
-                            peso: peso
+                            nombre: nombre
                             ));
                     }
                 }
@@ -93,6 +91,7 @@ namespace webapicsharp.Servicios
                 {
                     Id = id,
                     Horario = dictEcoPuntoFiltrado[0]?["Horario"]!.ToString() ?? "",
+                    Nombre = dictEcoPuntoFiltrado[0]?["NombreEcopunto"]!.ToString() ?? "",
                     Ubicacion = new Ubicacion
                     {
                         Latitud = dictEcoPuntoFiltrado[0]?["Latitud"]!.ToString() ?? "",
@@ -109,13 +108,15 @@ namespace webapicsharp.Servicios
                         trabajadorDatos[0]["Contrasena"]?.ToString() ?? "",
                         trabajadorDatos[0]["CodigoDeEmpleado"]?.ToString() ?? "",
                         trabajadorDatos[0]["Horario"]?.ToString() ?? ""
-                    ){},
+                    )
+                    { },
                     MaterialesAceptados = materialesAceptados,
                 };
 
                 return respuesta;
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 throw new Exception($"Ocurrio un error al buscar el EcoPunto: ${e.Message}");
             }
         }
@@ -126,6 +127,7 @@ namespace webapicsharp.Servicios
             string longitud,
             string direccion,
             string horario,
+            string nombre,
             List<Material> materiales)
         {
             try
@@ -144,7 +146,8 @@ namespace webapicsharp.Servicios
                     { "Latitud", latitud },
                     { "Longitud", longitud },
                     { "Direccion", direccion },
-                    { "Horario", horario }
+                    { "Horario", horario },
+                    { "NombreEcopunto", nombre }
                 };
 
                 var ecoPuntoCreado = await _repoEscritura.InsertarAsync("EcoPunto", datosEcoPunto);
@@ -178,13 +181,11 @@ namespace webapicsharp.Servicios
                         var materialDict = materialesDatos[i];
 
                         int idMaterial = Convert.ToInt32(materialDict["Id"]);
-                        string nombre = materialDict?["Nombre"]!.ToString() ?? "";
-                        double peso = Convert.ToDouble(materialDict!["Peso"] ?? 0);
+                        string nombreMaterial = materialDict?["Nombre"]!.ToString() ?? "";
 
                         materialesAceptados.Add(new Material(
                             id: idMaterial,
-                            nombre: nombre,
-                            peso: peso
+                            nombre: nombreMaterial
                             ));
                     }
                 }
@@ -210,6 +211,7 @@ namespace webapicsharp.Servicios
             string longitud,
             string direccion,
             string horario,
+            string nombre,
             List<Material> materiales)
         {
             try
@@ -241,7 +243,8 @@ namespace webapicsharp.Servicios
                         { "Latitud", latitud },
                         { "Longitud", longitud },
                         { "Direccion", direccion },
-                        { "Horario", horario }
+                        { "Horario", horario },
+                        { "NombreEcopunto", nombre }
                     };
 
                 await _repoActualizar.ActualizarPorCampoAsync(
@@ -263,7 +266,7 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task ActualizarRelacionesMaterialEcoPunto( int idEcoPunto, List<Material> materiales)
+        public async Task ActualizarRelacionesMaterialEcoPunto(int idEcoPunto, List<Material> materiales)
         {
             try
             {
@@ -289,7 +292,6 @@ namespace webapicsharp.Servicios
                     );
                 }
 
-                //Inserta los materiales nuevos si existen
                 foreach (var material in materiales)
                 {
                     int idMat = material.Id;
@@ -313,11 +315,10 @@ namespace webapicsharp.Servicios
             }
         }
 
-        public async Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int limite)
+        public async Task<List<EcoPunto>> ObtenerEcoPuntosAsync(int? limite = 15)
         {
             try
             {
-                // 🔹 1. Traemos los EcoPuntos con su Trabajador y Usuario, usando alias para evitar conflicto de nombres
                 var columnas = @"
                     t1.Id AS IdEcoPunto,
                     t1.Latitud,
@@ -325,6 +326,7 @@ namespace webapicsharp.Servicios
                     t1.Direccion,
                     t1.Horario AS HorarioEcoPunto,
                     t1.IdTrabajador,
+                    t1.NombreEcopunto,
                     t2.Id AS IdTrabajador,
                     t2.Horario AS HorarioTrabajador,
                     t3.Id AS IdUsuario,
@@ -376,12 +378,10 @@ namespace webapicsharp.Servicios
                         {
                             int idMaterial = Convert.ToInt32(materialDict["Id"]);
                             string nombre = materialDict?["Nombre"]?.ToString() ?? "";
-                            double peso = Convert.ToDouble(materialDict?["Peso"] ?? 0);
 
                             materialesAceptados.Add(new Material(
                                 id: idMaterial,
-                                nombre: nombre,
-                                peso: peso
+                                nombre: nombre
                             ));
                         }
                     }
@@ -402,6 +402,7 @@ namespace webapicsharp.Servicios
                     {
                         Id = idEcoPunto,
                         Horario = ecoDict["HorarioEcoPunto"]?.ToString() ?? "",
+                        Nombre = ecoDict["NombreEcopunto"]?.ToString() ?? "",
                         Ubicacion = new Ubicacion
                         {
                             Latitud = ecoDict["Latitud"]?.ToString() ?? "",
@@ -420,6 +421,30 @@ namespace webapicsharp.Servicios
             catch (Exception e)
             {
                 throw new Exception($"Error al obtener los EcoPuntos: {e.Message}");
+            }
+        }
+
+        public async Task<bool> EliminarEcoPuntoPorIDAsync(int id)
+        {
+            try
+            {
+                await _repoEliminar.EliminarPorCampoAsync(
+                    "MaterialEcoPunto",
+                    "IdEcoPunto",
+                    id
+                );
+
+                await _repoEliminar.EliminarPorCampoAsync(
+                    "EcoPunto",
+                    "Id",
+                    id
+                );
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Ocurrio un error al eliminar el EcoPunto: {e.Message}");
             }
         }
 
