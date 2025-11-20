@@ -4,7 +4,7 @@ using webapicsharp.Repositorios.Abstracciones;
 
 namespace webapicsharp.Servicios
 {
-    public class ServicioReporte: IServicioReporte
+    public class ServicioReporte : IServicioReporte
     {
 
         private readonly IRepositorioBusquedaPorCampoTabla _repoBusqueda;
@@ -40,7 +40,7 @@ namespace webapicsharp.Servicios
                 }
 
                 var entregasDb = await _repoBusqueda.BuscarPorCampoAsync("Entrega", "IdCliente", IdCliente);
-                
+
                 if (entregasDb![0] == null)
                 {
                     throw new Exception("El cliente no tiene reportes para obtener");
@@ -48,8 +48,9 @@ namespace webapicsharp.Servicios
 
                 List<ReporteAllDto> listaReportes = new List<ReporteAllDto>();
 
-                foreach(var entrega in entregasDb){
-                    
+                foreach (var entrega in entregasDb)
+                {
+
                     var idEntregaDB = int.Parse(entrega["Id"]!.ToString()!);
                     var fechaCreacion = DateTime.Parse(entrega["FechaCreacion"]!.ToString()!);
 
@@ -59,7 +60,7 @@ namespace webapicsharp.Servicios
                     var ecopuntoDB = await _repoBusqueda.BuscarPorCampoAsync("EcoPunto", "Id", idEcopuntoDB);
                     var trabajadorDB = await _repoBusqueda.BuscarPorCampoAsync("Usuario", "Id", idEmpleadoDB);
 
-                    if(ecopuntoDB == null || trabajadorDB == null)
+                    if (ecopuntoDB == null || trabajadorDB == null)
                     {
                         throw new Exception("El ecopunto o el trabajador no existe");
                     }
@@ -81,6 +82,57 @@ namespace webapicsharp.Servicios
             catch (Exception e)
             {
                 throw new Exception($"Error inesperado al obtener el reporte: {e.Message}");
+            }
+        }
+
+        public async Task<List<ReporteAllDto>> ObtenerReportesPorIdTrabajadorAsync(int IdTrabajador)
+        {
+            try
+            {
+                if (IdTrabajador <= 0)
+                {
+                    throw new Exception("El id del trabajador debe ser valido");
+                }
+
+                var entregasDb = await _repoBusqueda.BuscarPorCampoAsync("Entrega", "IdTrabajador", IdTrabajador);
+
+                if (entregasDb![0] == null)
+                {
+                    throw new Exception("El trabajador no tiene reportes para obtener");
+                }
+
+                List<ReporteAllDto> listaReportes = new List<ReporteAllDto>();
+
+                foreach (var entrega in entregasDb)
+                {
+
+                    var idEntregaDB = int.Parse(entrega["Id"]!.ToString()!);
+                    var fechaCreacion = DateTime.Parse(entrega["FechaCreacion"]!.ToString()!);
+
+                    var idEcopuntoDB = int.Parse(entrega["IdEcopunto"]!.ToString()!);
+
+                    var ecopuntoDB = await _repoBusqueda.BuscarPorCampoAsync("EcoPunto", "Id", idEcopuntoDB);
+
+                    if (ecopuntoDB == null)
+                    {
+                        throw new Exception("El ecopunto no existe");
+                    }
+
+                    var reporte = new ReporteAllDto()
+                    {
+                        IdReporte = idEntregaDB,
+                        FechaCreacion = fechaCreacion,
+                        NombreEcopunto = ecopuntoDB![0]["NombreEcopunto"]!.ToString(),
+                        Responsable = "" // No es necesario incluir el nombre del empleado en este caso
+                    };
+                    listaReportes.Add(reporte);
+                }
+
+                return listaReportes;
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error inesperado al obtener los reportes: {e.Message}");
             }
         }
 
@@ -106,11 +158,11 @@ namespace webapicsharp.Servicios
                     t3.[Cedula] AS CedulaEmpleado";
 
                 var entregaDB = await _repoJoins.JoinTresTablasFiltradoAsync(
-                    "Entrega", 
-                    "Usuario", 
-                    "Usuario", 
-                    "IdCliente", 
-                    "Id", 
+                    "Entrega",
+                    "Usuario",
+                    "Usuario",
+                    "IdCliente",
+                    "Id",
                     "IdTrabajador",
                     "Id",
                     Columnas,
@@ -122,12 +174,12 @@ namespace webapicsharp.Servicios
                 var cColumnas = @"c.[Nombre] as NombreMaterial";
 
                 var materialesEntregaDB = await _repoSubconsulta.EjecutarSubconsultaAsync(
-                    "Material", 
-                    "MaterialEntrega", 
+                    "Material",
+                    "MaterialEntrega",
                     "Id",
-                    "IdMaterial", 
-                    "IdEntrega", 
-                    idReporte, 
+                    "IdMaterial",
+                    "IdEntrega",
+                    idReporte,
                     cColumnas: cColumnas
                 );
 
@@ -136,7 +188,7 @@ namespace webapicsharp.Servicios
                     throw new Exception($"No hay suficientes materiales entregados para calcular el top 3 y los totales");
                 }
 
-                var top3 =  CalcularTop3(materialesEntregaDB!);
+                var top3 = CalcularTop3(materialesEntregaDB!);
                 var totales = CalcularTotales(materialesEntregaDB!);
 
                 var reporte = new Reporte()
@@ -228,7 +280,7 @@ namespace webapicsharp.Servicios
                 var totalRechazado = 0.0;
                 var totalPuntos = 0;
 
-                foreach(var material in materialesDB)
+                foreach (var material in materialesDB)
                 {
                     var peso = Convert.ToDouble(material["Peso"]);
                     var aceptado = Convert.ToBoolean(material["Estado"]);
@@ -237,7 +289,8 @@ namespace webapicsharp.Servicios
                     if (!aceptado)
                     {
                         totalRechazado += peso;
-                    } else
+                    }
+                    else
                     {
                         totalAceptado += peso;
                     }
@@ -255,7 +308,7 @@ namespace webapicsharp.Servicios
 
                 return totales;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception($"Error inesperado al calcular los totales del reporte: {e.Message}");
             }
