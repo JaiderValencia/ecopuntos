@@ -15,6 +15,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioBuscarUltimoTabla _repoBuscarUltimo;
         private readonly IRepositorioEliminarTabla _repoEliminar;
         private readonly IRepositorioJoin _repoJoinTresFiltrado;
+        private readonly IServicioJwt _servicioJwt;
 
         public ServicioTrabajador(
             IRepositorioEscrituraTabla repoEscritura,
@@ -22,7 +23,8 @@ namespace webapicsharp.Servicios
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda, 
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
-            IRepositorioJoin repoJoinTresFiltrado
+            IRepositorioJoin repoJoinTresFiltrado,
+            IServicioJwt servicioJwt
             )
         {
             _repoEscritura = repoEscritura;
@@ -31,6 +33,7 @@ namespace webapicsharp.Servicios
             _repoEliminar = repoEliminar;
             _repoBuscarUltimo = repoBuscarUltimo;
             _repoJoinTresFiltrado = repoJoinTresFiltrado;
+            _servicioJwt = servicioJwt;
         }
 
         public async Task<Trabajador?> CrearTrabajadorAsync(Trabajador trabajador)
@@ -56,7 +59,7 @@ namespace webapicsharp.Servicios
                     ["Correo"] = trabajador.ObtenerCorreo(),
                     ["Direccion"] = trabajador.ObtenerDireccion(),
                     ["Telefono"] = trabajador.ObtenerTelefono(),
-                    ["Contrasena"] = trabajador.ObtenerContrasena(),
+                    ["Contrasena"] = _servicioJwt.HashearContrasena(trabajador.ObtenerContrasena()!),
                 };
                 var dictUsuario = await _repoEscritura.InsertarAsync("Usuario", datosUsuario);
                 if (dictUsuario is null)
