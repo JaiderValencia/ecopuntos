@@ -45,8 +45,8 @@ function App() {
             } />
 
             <Route path='/reportes/registrar' element={<RegistrarReporte />} />
-            <Route path='/mis-reportes/:id' element={<DetalleReporte />} />
-            <Route path='/mis-reportes' element={<ListReportes />} />
+            <Route path='/reportes/mis-reportes/:id' element={<DetalleReporte />} />
+            <Route path='/reportes/mis-reportes' element={<ListReportes />} />
           </Route>
 
           <Route path='*' element={<PageNotFound />} />

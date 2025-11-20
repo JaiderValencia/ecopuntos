@@ -31,7 +31,7 @@ function Header() {
                         </NavLink>
 
                         <NavLink
-                            to="/mis-reportes"
+                            to="/reportes/mis-reportes"
                             className="block px-4 py-2 text-gray-800 hover:bg-green-100 rounded-md"
                             onClick={() => setIsDropdownOpen(false)}
                         >
@@ -47,7 +47,7 @@ function Header() {
         if (userStatus.userRole !== 'Cliente') return null
 
         return (<>
-            <NavLink className='text-white mx-4' to="/mis-reportes">Mis reportes</NavLink>
+            <NavLink className='text-white mx-4' to="/reportes/mis-reportes">Mis reportes</NavLink>
         </>)
     }
 

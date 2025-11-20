@@ -85,12 +85,12 @@ function ListReportes() {
                             <tr
                                 className="border-b cursor-pointer hover:bg-gray-100"
                                 key={reporte.idReporte}
-                                onClick={() => navigate(`/mis-reportes/${reporte.idReporte}`)}
+                                onClick={() => navigate(`/reportes/mis-reportes/${reporte.idReporte}`)}
                             >
                                 <td className="px-4 py-2">{reporte.idReporte}</td>
                                 <td className="px-4 py-2">{formatDate(reporte.fechaCreacion)}</td>
                                 <td className="px-4 py-2">{reporte.nombreEcopunto}</td>
-                                <td className="px-4 py-2">{reporte.responsable || 'N/A'}</td>
+                                <td className="px-4 py-2">{reporte.responsable || userStatus.userName}</td>
                             </tr>
                         ))}
                     </Table>
