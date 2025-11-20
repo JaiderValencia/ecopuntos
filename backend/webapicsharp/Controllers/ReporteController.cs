@@ -37,7 +37,26 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerInformacionReportePorId([FromQuery]int idReporte)
+        public async Task<IActionResult> ObtenerReportesPorIdTrabajador([FromQuery] int idTrabajador)
+        {
+            try
+            {
+                var resultado = await _servicioReporte.ObtenerReportesPorIdTrabajadorAsync(idTrabajador);
+
+                return Ok(new
+                {
+                    Mensaje = "Reportes obtenidos correctamente",
+                    Reportes = resultado
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerInformacionReportePorId([FromQuery] int idReporte)
         {
             try
             {
