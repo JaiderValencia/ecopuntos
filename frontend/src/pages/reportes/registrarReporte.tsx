@@ -128,7 +128,7 @@ function RegistrarReporte() {
 
             <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
 
-                <section className='bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-6 lg:p-8 shadow-lg'>
+                <section className='bg-card-light dark:bg-card-dark rounded-lg p-6 lg:p-8 shadow-lg'>
                     <Table columns={['Material', 'Cantidad', 'Estado', 'Puntos']}>
                         {aceptados.map((material, index) => (
                             <tr key={index} className='border-b border-border-light dark:border-border-dark'>
@@ -149,7 +149,7 @@ function RegistrarReporte() {
                     </Table>
                 </section>
 
-                <form onSubmit={handleSubmit(onSubmit)} className='bg-card-light dark:bg-card-dark rounded-lg shadow-sm p-6 lg:p-8 flex flex-col space-y-8 shadow-lg'>
+                <form onSubmit={handleSubmit(onSubmit)} className='bg-card-light dark:bg-card-dark rounded-lg p-6 lg:p-8 flex flex-col space-y-8 shadow-lg'>
                     <div>
                         <SelectComponent
                             label='Ecopunto'

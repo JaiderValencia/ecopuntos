@@ -15,6 +15,14 @@ export const obtenerReportesPorIdCliente = async (idCliente: number): Promise<Re
     return response.data.reportes
 }
 
+export const obtenerReportesPorIdTrabajador = async (idTrabajador: number): Promise<ReporteAllDto[]> => {
+    const response = await axios.get('/Reporte/ObtenerReportesPorIdTrabajador', {
+        params: { idTrabajador }
+    })
+    
+    return response.data.reportes
+}
+
 export const obtenerInformacionReportePorId = async (idReporte: number): Promise<ReporteDetalle> => {
     const response = await axios.get('/Reporte/ObtenerInformacionReportePorId', {
         params: { idReporte }

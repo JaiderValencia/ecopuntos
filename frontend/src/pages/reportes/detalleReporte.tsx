@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { obtenerInformacionReportePorId } from '../../api/reporte'
 import type { ReporteDetalle } from '../../interfaces/reporte'
+import Card from '../../components/card'
 
 function DetalleReporte() {
     const { id } = useParams<{ id: string }>()
@@ -71,7 +72,7 @@ function DetalleReporte() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Columna izquierda - Tabla de materiales */}
-                <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+                <Card className="bg-white border-2 border-gray-200 p-6">
                     <table className="w-full">
                         <thead>
                             <tr className="border-b-2 border-gray-300">
@@ -92,12 +93,12 @@ function DetalleReporte() {
                             ))}
                         </tbody>
                     </table>
-                </div>
+                </Card>
 
                 {/* Columna derecha - Datos y resumen */}
                 <div className="space-y-6">
                     {/* Datos Cliente y Empleado */}
-                    <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+                    <Card className="bg-white border-2 border-gray-200 p-6">
                         <div className="grid grid-cols-2 gap-8">
                             {/* Datos Cliente */}
                             <div>
@@ -121,45 +122,48 @@ function DetalleReporte() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Card>
 
-                    {/* Top 3 materiales */}
-                    {reporte.top3 && Object.keys(reporte.top3).length > 0 && (
-                        <div className="bg-green-50 rounded-lg border-2 border-gray-200 p-6">
-                            <h3 className="font-bold text-lg mb-4 text-center">Top 3 materiales entregados</h3>
-                            <div className="flex justify-center gap-8 text-sm">
-                                {Object.entries(reporte.top3).map(([key, value], index) => (
-                                    <div key={key}>
-                                        <span className="font-semibold">{index + 1}. {value}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
+                    <Card className="bg-white border-2 border-gray-200 space-y-6">
 
-                    {/* Resumen de la entrega */}
-                    {reporte.totales && Object.keys(reporte.totales).length > 0 && (
-                        <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
-                            <h3 className="font-bold text-lg mb-4 text-center">Resumen de la entrega</h3>
-                            <div className="grid grid-cols-4 gap-4 text-center">
-                                {Object.entries(reporte.totales).map(([key, value]) => (
-                                    <div key={key}>
-                                        <p className="text-sm mb-1 capitalize">
-                                            {key.replace(/([A-Z])/g, ' $1').trim()}
-                                        </p>
-                                        <p className="text-2xl font-bold">
-                                            {key.toLowerCase().includes('puntos') ? value : `${value} Kg`}
-                                        </p>
-                                    </div>
-                                ))}
+                        {/* Top 3 materiales */}
+                        {reporte.top3 && Object.keys(reporte.top3).length > 0 && (
+                            <div className="bg-green-50 rounded-lg border-2 border-gray-200 p-6">
+                                <h3 className="font-bold text-lg mb-4 text-center">Top 3 materiales entregados</h3>
+                                <div className="flex justify-center gap-8 text-sm">
+                                    {Object.entries(reporte.top3).map(([key, value], index) => (
+                                        <div key={key}>
+                                            <span className="font-semibold">{index + 1}. {value}</span>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="flex justify-center mt-6">
-                                <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded">
-                                    Imprimir Reporte
-                                </button>
-                            </div>
-                        </div>
-                    )}
+                        )}
+
+                        {/* Resumen de la entrega */}
+                        {reporte.totales && Object.keys(reporte.totales).length > 0 && (
+                            <>
+                                <h3 className="font-bold text-lg mb-4 text-center">Resumen de la entrega</h3>
+                                <div className="grid grid-cols-4 gap-4 text-center">
+                                    {Object.entries(reporte.totales).map(([key, value]) => (
+                                        <div key={key}>
+                                            <p className="text-sm mb-1 capitalize">
+                                                {key.replace(/([A-Z])/g, ' $1').trim()}
+                                            </p>
+                                            <p className="text-2xl font-bold">
+                                                {key.toLowerCase().includes('puntos') ? value : `${value} Kg`}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="flex justify-center mt-6">
+                                    <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded">
+                                        Descargar Reporte
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </Card>
                 </div>
             </div>
         </div>

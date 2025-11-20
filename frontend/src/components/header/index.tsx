@@ -30,13 +30,13 @@ function Header() {
                             Registrar entrega
                         </NavLink>
 
-                        {/* <NavLink
-                            to="/reportes/listar"
+                        <NavLink
+                            to="/mis-reportes"
                             className="block px-4 py-2 text-gray-800 hover:bg-green-100 rounded-md"
                             onClick={() => setIsDropdownOpen(false)}
                         >
                             Lista de entregas
-                        </NavLink> */}
+                        </NavLink>
                     </div>
                 )}
             </div>

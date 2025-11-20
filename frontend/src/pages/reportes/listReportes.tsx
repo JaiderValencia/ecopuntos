@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Table from '../../components/table'
 import type { ReporteAllDto } from '../../interfaces/reporte'
-import { obtenerReportesPorIdCliente } from '../../api/reporte'
+import { obtenerReportesPorIdCliente, obtenerReportesPorIdTrabajador } from '../../api/reporte'
 import { useUserContext } from '../../contex/user/user'
 
 function ListReportes() {
@@ -13,6 +13,11 @@ function ListReportes() {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
+        const obtenerReportesPorRol = {
+            'Cliente': obtenerReportesPorIdCliente(userStatus.userId!),
+            'Empleado': obtenerReportesPorIdTrabajador(userStatus.userId!)
+        }
+
         const getReportes = async () => {
             if (!userStatus.userId) {
                 setError('Usuario no identificado')
@@ -21,9 +26,9 @@ function ListReportes() {
 
             setIsLoading(true)
             setError(null)
-            
+
             try {
-                const data = await obtenerReportesPorIdCliente(userStatus.userId)
+                const data = await obtenerReportesPorRol[userStatus.userRole as 'Cliente' | 'Empleado']
                 setReportes(data)
             } catch (error) {
                 console.error('Error fetching reportes:', error)
@@ -34,7 +39,7 @@ function ListReportes() {
         }
 
         getReportes()
-    }, [userStatus.userId])
+    }, [userStatus.userId, userStatus.userRole])
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
@@ -77,15 +82,15 @@ function ListReportes() {
                 <section>
                     <Table columns={['ID Reporte', 'Fecha de Creación', 'Ecopunto', 'Responsable']}>
                         {reportes.map((reporte) => (
-                            <tr 
-                                className="border-b cursor-pointer hover:bg-gray-100" 
+                            <tr
+                                className="border-b cursor-pointer hover:bg-gray-100"
                                 key={reporte.idReporte}
                                 onClick={() => navigate(`/mis-reportes/${reporte.idReporte}`)}
                             >
                                 <td className="px-4 py-2">{reporte.idReporte}</td>
                                 <td className="px-4 py-2">{formatDate(reporte.fechaCreacion)}</td>
                                 <td className="px-4 py-2">{reporte.nombreEcopunto}</td>
-                                <td className="px-4 py-2">{reporte.responsable}</td>
+                                <td className="px-4 py-2">{reporte.responsable || 'N/A'}</td>
                             </tr>
                         ))}
                     </Table>
