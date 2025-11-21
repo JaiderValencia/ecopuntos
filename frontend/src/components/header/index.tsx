@@ -5,7 +5,7 @@ import { useState } from 'react'
 function Header() {
     const { userStatus } = useUserContext()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-
+    
     const opcionesTrabajador = () => {
         if (userStatus.userRole !== 'Empleado') return null
 
@@ -55,7 +55,8 @@ function Header() {
         if (userStatus.userRole !== 'Admin') return null
 
         return (<>
-            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
+            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>            
+            <NavLink className="text-white mx-4" to="/trabajadores/lista">Trabajadores</NavLink>
         </>)
     }
 

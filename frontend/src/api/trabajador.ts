@@ -15,3 +15,11 @@ export const crearTrabajador = async (data: TrabajadorFormData): Promise<Trabaja
 
     return response.data.trabajador
 }
+
+export const obtenerTrabajadores = async (limit: number = 50): Promise<Trabajador[]> => {
+    const response = await axios.get('/Trabajador/ObtenerTrabajadores', {
+        params: { limit }
+    })
+
+    return response.data.empleados
+}
