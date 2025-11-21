@@ -36,7 +36,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPost]
-    [Authorize(Roles = "Empleado,Admin")]
+        [Authorize(Roles = "Empleado,Admin")]
 
         public async Task<IActionResult> CrearEcoPunto([FromBody] EcoPunto ecoPunto)
         {

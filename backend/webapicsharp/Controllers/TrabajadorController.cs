@@ -30,8 +30,7 @@ namespace webapicsharp.Controllers
                 string.IsNullOrWhiteSpace(dto.Direccion) ||
                 string.IsNullOrWhiteSpace(dto.Telefono) ||
                 string.IsNullOrWhiteSpace(dto.Contrasena)||
-                string.IsNullOrWhiteSpace(dto.Horario)||
-                string.IsNullOrWhiteSpace(dto.CodigoDeEmpleado))
+                string.IsNullOrWhiteSpace(dto.Horario))
                 {
                     return BadRequest(new { mensaje = "Datos inválidos o incompletos." });
                 }
@@ -122,6 +121,8 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin,Empleado")]
+
         public async Task<IActionResult> ActualizarTrabajador([FromBody] TrabajadorDto dto)
         {
             try
