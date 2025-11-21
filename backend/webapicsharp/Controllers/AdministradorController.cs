@@ -8,7 +8,8 @@ namespace webapicsharp.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
+    
     public class AdministradorController : ControllerBase
     {
         private readonly IServicioAdministrador _servicioAdministrador;

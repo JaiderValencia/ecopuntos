@@ -11,7 +11,6 @@ namespace webapicsharp.Controllers
 
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
     public class ClientesController : ControllerBase
     {
         private readonly IServicioCliente _servicioCliente;
@@ -96,6 +95,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Cliente,Admin")]
         public async Task<IActionResult> ActualizarClientePorCorreo([FromBody] ClienteDto dto, [FromQuery] string correo)
         {
             try
@@ -136,6 +136,8 @@ namespace webapicsharp.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Cliente,Admin")]
+
         public async Task<IActionResult> EliminarUsuarioPorCorreo([FromQuery] string correo)
         {
 
