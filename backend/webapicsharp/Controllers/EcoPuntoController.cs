@@ -7,7 +7,7 @@ namespace webapicsharp.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Empleado,Admin")]
     public class EcoPuntoController : ControllerBase
     {
         private readonly IServicioEcoPunto _servicioEcoPunto;
@@ -88,7 +88,6 @@ namespace webapicsharp.Controllers
             }
             catch (Exception ex)
             {
-                // Aquí puedes personalizar el mensaje de error
                 return StatusCode(500, new { mensaje = $"Error al actualizar EcoPunto: {ex.Message}" });
             }
         }

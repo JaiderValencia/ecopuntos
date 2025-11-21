@@ -9,7 +9,7 @@ namespace webapicsharp.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class TrabajadorController : ControllerBase
     {
         private readonly IServicioTrabajador _servicioTrabajador;

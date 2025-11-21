@@ -1,6 +1,7 @@
 
 using System;
 using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Caching.Memory;
@@ -39,6 +40,28 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtIssuer,
             ValidAudience = jwtAudience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
+        };
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new
+                {
+                    mensaje = "No autenticado"
+                }));
+            },
+            OnForbidden = context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+                return context.Response.WriteAsync(JsonSerializer.Serialize(new
+                {
+                    mensaje = "Sin permisos necesarios"
+                }));
+            }
         };
     });
 
@@ -128,7 +151,6 @@ builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServi
                            webapicsharp.Servicios.ServicioEntrega>();
 builder.Services.AddScoped<webapicsharp.Interface.Servicios.Abstracciones.IServicioReporte,
                            webapicsharp.Servicios.ServicioReporte>();
-
 builder.Services.AddSingleton<webapicsharp.Servicios.Abstracciones.IProveedorConexion,
                               webapicsharp.Servicios.Conexion.ProveedorConexion>();
 
