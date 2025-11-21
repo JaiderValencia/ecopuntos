@@ -21,7 +21,7 @@ namespace webapicsharp.Servicios
             IRepositorioEscrituraTabla repoEscritura,
             IRepositorioActualizarTabla repoActualizar,
             IRepositorioEliminarTabla repoEliminar,
-            IRepositorioBusquedaPorCampoTabla repoBusqueda, 
+            IRepositorioBusquedaPorCampoTabla repoBusqueda,
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
             IRepositorioJoin repoJoinTresFiltrado,
             IServicioJwt servicioJwt
@@ -108,6 +108,46 @@ namespace webapicsharp.Servicios
             }
         }
 
+        public async Task<bool> ActualizarTrabajadorAsync(Trabajador trabajador)
+        {
+            try
+            {
+                var datosActualizarUsuario = new Dictionary<string, object?>
+                {
+                    ["Nombre"] = trabajador.ObtenerNombre(),
+                    ["Cedula"] = trabajador.ObtenerCedula(),
+                    ["Correo"] = trabajador.ObtenerCorreo(),
+                    ["Direccion"] = trabajador.ObtenerDireccion(),
+                    ["Telefono"] = trabajador.ObtenerTelefono(),
+                };
+
+                // Si se proporciona una contraseña, agregarla a los datos a actualizar
+                if (!string.IsNullOrWhiteSpace(trabajador.ObtenerContrasena()))
+                {
+                    datosActualizarUsuario["Contrasena"] = _servicioJwt.HashearContrasena(trabajador.ObtenerContrasena()!);
+                }
+
+                var actualizadoUsuario = await _repoActualizar.ActualizarPorCampoAsync("Usuario", "Id", trabajador.Id, datosActualizarUsuario);
+                if (actualizadoUsuario is null)
+                    throw new Exception("No se pudo actualizar el usuario del trabajador");
+
+                var datosActualizarTrabajador = new Dictionary<string, object?>
+                {
+                    ["Horario"] = trabajador.Horario
+                };
+
+                var actualizadoTrabajador = await _repoActualizar.ActualizarPorCampoAsync("Trabajador", "Id", trabajador.Id, datosActualizarTrabajador);
+                if (actualizadoTrabajador is null)
+                    throw new Exception("No se pudo actualizar el trabajador");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error inesperado al actualizar trabajador: {e.Message}");
+            }
+        }        
+
         public async Task<Trabajador?> BuscarTrabajadorPorCorreoAsync(string correo)
         {
             try
@@ -120,8 +160,8 @@ namespace webapicsharp.Servicios
                    "Id",
                    "Id",
                    "Id",
-                   columnasSeleccionadas:"*",
-                   tipoJoin:"INNER",
+                   columnasSeleccionadas: "*",
+                   tipoJoin: "INNER",
                    limite: null,
                    campoFiltro: "Correo",
                    valorFiltro: correo
