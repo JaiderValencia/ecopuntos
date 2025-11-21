@@ -10,9 +10,10 @@ using webapicsharp.Servicios.Abstracciones;
 namespace webapicsharp.Controllers
 {
 
-   [Route("api/{tabla}")]                                
-   [ApiController]                                
-   public class EntidadesController : ControllerBase
+    [Route("api/{tabla}")]                                
+    [ApiController]
+    [Authorize(Roles = "Admin")]
+    public class EntidadesController : ControllerBase
    {
 
        private readonly IServicioCrud _servicioCrud;          

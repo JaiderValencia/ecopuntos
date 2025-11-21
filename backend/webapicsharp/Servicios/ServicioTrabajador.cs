@@ -15,14 +15,16 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioBuscarUltimoTabla _repoBuscarUltimo;
         private readonly IRepositorioEliminarTabla _repoEliminar;
         private readonly IRepositorioJoin _repoJoinTresFiltrado;
+        private readonly IServicioJwt _servicioJwt;
 
         public ServicioTrabajador(
             IRepositorioEscrituraTabla repoEscritura,
             IRepositorioActualizarTabla repoActualizar,
             IRepositorioEliminarTabla repoEliminar,
-            IRepositorioBusquedaPorCampoTabla repoBusqueda, 
+            IRepositorioBusquedaPorCampoTabla repoBusqueda,
             IRepositorioBuscarUltimoTabla repoBuscarUltimo,
-            IRepositorioJoin repoJoinTresFiltrado
+            IRepositorioJoin repoJoinTresFiltrado,
+            IServicioJwt servicioJwt
             )
         {
             _repoEscritura = repoEscritura;
@@ -31,6 +33,7 @@ namespace webapicsharp.Servicios
             _repoEliminar = repoEliminar;
             _repoBuscarUltimo = repoBuscarUltimo;
             _repoJoinTresFiltrado = repoJoinTresFiltrado;
+            _servicioJwt = servicioJwt;
         }
 
         public async Task<Trabajador?> CrearTrabajadorAsync(Trabajador trabajador)
@@ -56,7 +59,7 @@ namespace webapicsharp.Servicios
                     ["Correo"] = trabajador.ObtenerCorreo(),
                     ["Direccion"] = trabajador.ObtenerDireccion(),
                     ["Telefono"] = trabajador.ObtenerTelefono(),
-                    ["Contrasena"] = trabajador.ObtenerContrasena(),
+                    ["Contrasena"] = _servicioJwt.HashearContrasena(trabajador.ObtenerContrasena()!),
                 };
                 var dictUsuario = await _repoEscritura.InsertarAsync("Usuario", datosUsuario);
                 if (dictUsuario is null)
@@ -105,6 +108,46 @@ namespace webapicsharp.Servicios
             }
         }
 
+        public async Task<bool> ActualizarTrabajadorAsync(Trabajador trabajador)
+        {
+            try
+            {
+                var datosActualizarUsuario = new Dictionary<string, object?>
+                {
+                    ["Nombre"] = trabajador.ObtenerNombre(),
+                    ["Cedula"] = trabajador.ObtenerCedula(),
+                    ["Correo"] = trabajador.ObtenerCorreo(),
+                    ["Direccion"] = trabajador.ObtenerDireccion(),
+                    ["Telefono"] = trabajador.ObtenerTelefono(),
+                };
+
+                // Si se proporciona una contraseña, agregarla a los datos a actualizar
+                if (!string.IsNullOrWhiteSpace(trabajador.ObtenerContrasena()))
+                {
+                    datosActualizarUsuario["Contrasena"] = _servicioJwt.HashearContrasena(trabajador.ObtenerContrasena()!);
+                }
+
+                var actualizadoUsuario = await _repoActualizar.ActualizarPorCampoAsync("Usuario", "Id", trabajador.Id, datosActualizarUsuario);
+                if (actualizadoUsuario is null)
+                    throw new Exception("No se pudo actualizar el usuario del trabajador");
+
+                var datosActualizarTrabajador = new Dictionary<string, object?>
+                {
+                    ["Horario"] = trabajador.Horario
+                };
+
+                var actualizadoTrabajador = await _repoActualizar.ActualizarPorCampoAsync("Trabajador", "Id", trabajador.Id, datosActualizarTrabajador);
+                if (actualizadoTrabajador is null)
+                    throw new Exception("No se pudo actualizar el trabajador");
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                throw new Exception($"Error inesperado al actualizar trabajador: {e.Message}");
+            }
+        }        
+
         public async Task<Trabajador?> BuscarTrabajadorPorCorreoAsync(string correo)
         {
             try
@@ -117,8 +160,8 @@ namespace webapicsharp.Servicios
                    "Id",
                    "Id",
                    "Id",
-                   columnasSeleccionadas:"*",
-                   tipoJoin:"INNER",
+                   columnasSeleccionadas: "*",
+                   tipoJoin: "INNER",
                    limite: null,
                    campoFiltro: "Correo",
                    valorFiltro: correo

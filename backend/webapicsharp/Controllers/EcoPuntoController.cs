@@ -7,7 +7,6 @@ namespace webapicsharp.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
     public class EcoPuntoController : ControllerBase
     {
         private readonly IServicioEcoPunto _servicioEcoPunto;
@@ -18,6 +17,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Empleado,Admin")]
         public async Task<IActionResult> BuscarEcoPuntoPorID([FromQuery] int id)
         {
             try
@@ -36,6 +36,8 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Empleado,Admin")]
+
         public async Task<IActionResult> CrearEcoPunto([FromBody] EcoPunto ecoPunto)
         {
             try
@@ -62,6 +64,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Empleado,Admin")]
         public async Task<IActionResult> ActualizarEcoPuntoPorID([FromBody] ActualizarEcoPuntoDto dto, [FromQuery] int id)
         {
             if (!ModelState.IsValid)
@@ -88,7 +91,6 @@ namespace webapicsharp.Controllers
             }
             catch (Exception ex)
             {
-                // Aquí puedes personalizar el mensaje de error
                 return StatusCode(500, new { mensaje = $"Error al actualizar EcoPunto: {ex.Message}" });
             }
         }
@@ -114,6 +116,7 @@ namespace webapicsharp.Controllers
         }
 
         [HttpDelete]
+        [Authorize(Roles = "Empleado,Admin")]
         public async Task<IActionResult> EliminarEcoPuntoPorID([FromQuery] int id)
         {
             try

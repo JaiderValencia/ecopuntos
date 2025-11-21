@@ -9,7 +9,7 @@ namespace webapicsharp.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class TrabajadorController : ControllerBase
     {
         private readonly IServicioTrabajador _servicioTrabajador;
@@ -30,8 +30,7 @@ namespace webapicsharp.Controllers
                 string.IsNullOrWhiteSpace(dto.Direccion) ||
                 string.IsNullOrWhiteSpace(dto.Telefono) ||
                 string.IsNullOrWhiteSpace(dto.Contrasena)||
-                string.IsNullOrWhiteSpace(dto.Horario)||
-                string.IsNullOrWhiteSpace(dto.CodigoDeEmpleado))
+                string.IsNullOrWhiteSpace(dto.Horario))
                 {
                     return BadRequest(new { mensaje = "Datos inválidos o incompletos." });
                 }
@@ -112,10 +111,58 @@ namespace webapicsharp.Controllers
                 {
                     total = lista.Count(),
                     mensaje = "Lista de trabajadores",
-                    Cliente = lista
+                    Empleados = lista
                 });
             }
             catch(Exception e)
+            {
+                return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
+            }
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin,Empleado")]
+
+        public async Task<IActionResult> ActualizarTrabajador([FromBody] TrabajadorDto dto)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(dto.Nombre) ||
+                string.IsNullOrWhiteSpace(dto.Cedula) ||
+                string.IsNullOrWhiteSpace(dto.Correo) ||
+                string.IsNullOrWhiteSpace(dto.Direccion) ||
+                string.IsNullOrWhiteSpace(dto.Telefono) ||
+                string.IsNullOrWhiteSpace(dto.Horario) ||
+                string.IsNullOrWhiteSpace(dto.CodigoDeEmpleado))
+                {
+                    return BadRequest(new { mensaje = "Datos inválidos o incompletos." });
+                }
+
+                var datosTrabajador = new Trabajador(
+                    dto.Id,
+                    dto.Nombre!,
+                    dto.Cedula!,
+                    dto.Correo!,
+                    dto.Direccion!,
+                    dto.Telefono!,
+                    dto.Contrasena ?? "",
+                    dto.CodigoDeEmpleado!,
+                    dto.Horario!
+                );
+
+                var actualizado = await _servicioTrabajador.ActualizarTrabajadorAsync(datosTrabajador);
+
+                if (!actualizado)
+                {
+                    return BadRequest(new { mensaje = "El trabajador no se pudo actualizar" });
+                }
+
+                return Ok(new   
+                {
+                    mensaje = "El trabajador fue actualizado exitosamente"
+                });
+            }
+            catch (Exception e)
             {
                 return StatusCode(500, new { mensaje = "Error interno del servidor", detalle = e.Message });
             }
