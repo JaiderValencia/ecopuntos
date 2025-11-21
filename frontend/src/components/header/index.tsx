@@ -1,11 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import { useUserContext } from '../../contex/user/user'
 import { useState } from 'react'
+import Button from '../button'
+import { useLogout } from '../../utils/usuario'
 
-function Header() {
+function Header() {    
     const { userStatus } = useUserContext()
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-    
+
     const opcionesTrabajador = () => {
         if (userStatus.userRole !== 'Empleado') return null
 
@@ -48,6 +50,10 @@ function Header() {
 
         return (<>
             <NavLink className='text-white mx-4' to="/reportes/mis-reportes">Mis reportes</NavLink>
+            <NavLink className="text-white mx-4 flex items-center" to={userStatus.isLogged ? '/perfil' : '/login'}>
+                {userStatus.isLogged ? 'Perfil' : 'Iniciar Sesion'}
+                <span className="material-icons ml-2">account_circle</span>
+            </NavLink>
         </>)
     }
 
@@ -55,10 +61,12 @@ function Header() {
         if (userStatus.userRole !== 'Admin') return null
 
         return (<>
-            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>            
+            <NavLink className="text-white mx-4" to="/ecopuntos">ECO puntos</NavLink>
             <NavLink className="text-white mx-4" to="/trabajadores/lista">Trabajadores</NavLink>
         </>)
     }
+
+    const handleLogout = useLogout()
 
     return (
         <header className="bg-green-600 shadow-md fixed top-0 left-0 right-0 z-10">
@@ -76,10 +84,10 @@ function Header() {
                             {opcionesCliente()}
                         </>
                     )}
-                    <NavLink className="text-white mx-4 flex items-center" to={userStatus.isLogged ? '/perfil' : '/login'}>
-                        {userStatus.isLogged ? 'Perfil' : 'Iniciar Sesion'}
-                        <span className="material-icons ml-2">account_circle</span>
-                    </NavLink>
+
+                    {userStatus.userRole != 'Cliente' && userStatus.isLogged && (
+                        <Button onClick={handleLogout} className='bg-red-500 hover:bg-red-600 text-white'>Cerrar sesión</Button>
+                    )}
                 </nav>
             </div>
         </header>

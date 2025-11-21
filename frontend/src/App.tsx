@@ -16,6 +16,7 @@ import DetalleReporte from './pages/reportes/detalleReporte'
 import CrearTrabajador from './pages/trabajadores/crearTrabajador'
 import ListarTrabajadores from './pages/trabajadores/listarTrabajadores'
 import EditarTrabajador from './pages/trabajadores/editarTrabajador'
+import PerfilCliente from './pages/perfil/perfilCliente'
 
 function App() {
   return (
@@ -50,6 +51,8 @@ function App() {
             <Route path='/reportes/registrar' element={<RegistrarReporte />} />
             <Route path='/reportes/mis-reportes/:id' element={<DetalleReporte />} />
             <Route path='/reportes/mis-reportes' element={<ListReportes />} />
+            
+            <Route path='/perfil' element={<PerfilCliente />} />
             
             <Route path='/trabajadores/crear' element={<CrearTrabajador />} />
             <Route path='/trabajadores/lista' element={<ListarTrabajadores />} />
