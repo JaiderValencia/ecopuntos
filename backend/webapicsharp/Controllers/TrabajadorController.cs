@@ -122,6 +122,8 @@ namespace webapicsharp.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin,Empleado")]
+
         public async Task<IActionResult> ActualizarTrabajador([FromBody] TrabajadorDto dto)
         {
             try
