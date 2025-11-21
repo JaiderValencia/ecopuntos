@@ -30,8 +30,7 @@ namespace webapicsharp.Controllers
                 string.IsNullOrWhiteSpace(dto.Direccion) ||
                 string.IsNullOrWhiteSpace(dto.Telefono) ||
                 string.IsNullOrWhiteSpace(dto.Contrasena)||
-                string.IsNullOrWhiteSpace(dto.Horario)||
-                string.IsNullOrWhiteSpace(dto.CodigoDeEmpleado))
+                string.IsNullOrWhiteSpace(dto.Horario))
                 {
                     return BadRequest(new { mensaje = "Datos inválidos o incompletos." });
                 }
