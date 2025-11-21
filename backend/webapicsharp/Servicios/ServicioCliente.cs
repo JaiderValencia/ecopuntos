@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using webapicsharp.Modelos; // para usar la clase Usuario
 using webapicsharp.Repositorios.Abstracciones;
 using webapicsharp.Servicios.Abstracciones;
+using webapicsharp.Interface.Servicios.Abstracciones;
 
 namespace webapicsharp.Servicios
 {
@@ -14,6 +15,7 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioEliminarTabla _repoEliminar;
         private readonly IRepositorioSubconsulta _repoSubconsulta;
         private readonly IRepositorioConsultaPersonalizada _repoConsultaPersonalizada;
+        private readonly IServicioJwt _servicioJwt;
 
         public ServicioCliente(
             IRepositorioEscrituraTabla repoEscritura,
@@ -21,7 +23,8 @@ namespace webapicsharp.Servicios
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda,
             IRepositorioSubconsulta repoSubconsulta,
-            IRepositorioConsultaPersonalizada repoConsultaPersonalizada)
+            IRepositorioConsultaPersonalizada repoConsultaPersonalizada,
+            IServicioJwt servicioJwt)
         {
             _repoEscritura = repoEscritura;
             _repoBusqueda = repoBusqueda;
@@ -29,6 +32,7 @@ namespace webapicsharp.Servicios
             _repoEliminar= repoEliminar;
             _repoSubconsulta = repoSubconsulta;
             _repoConsultaPersonalizada = repoConsultaPersonalizada;
+            _servicioJwt = servicioJwt;
         }
 
 
@@ -55,7 +59,7 @@ namespace webapicsharp.Servicios
                     ["Correo"] = cliente.ObtenerCorreo(),
                     ["Direccion"] = cliente.ObtenerDireccion(),
                     ["Telefono"] = cliente.ObtenerTelefono(),
-                    ["Contrasena"] = cliente.ObtenerContrasena(),
+                    ["Contrasena"] = _servicioJwt.HashearContrasena(cliente.ObtenerContrasena()!),
                 };
 
                 var dictUsuario = await _repoEscritura.InsertarAsync("Usuario", datosUsuario);

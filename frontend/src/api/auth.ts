@@ -1,6 +1,13 @@
+import type { LoginResponse } from '../interfaces/login'
 import axios from './axios'
 
-export const login = async (email: string, password: string) => {
-    const response = await axios.post('/usuarios/login', { email, password })
+export const login = async (email: string, password: string): Promise<LoginResponse> => {
+    const response = await axios.post('/Jwt/Login', { email, password })
+
+    sessionStorage.setItem('userSession', JSON.stringify({
+        bearer: response.data.bearer,
+        datosUsuario: response.data.datosUsuario
+    }))
+
     return response.data
 }

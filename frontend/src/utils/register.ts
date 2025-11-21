@@ -1,6 +1,6 @@
 import type { UseFormRegister } from 'react-hook-form'
-import type { InputsSteps } from '../interfaces/register/inputsSteps'
-import type { registerForm } from '../interfaces/register/registerForm'
+import type { InputsSteps } from '../interfaces/register'
+import type { registerForm } from '../interfaces/register'
 
 export const inputsRegister = (register: UseFormRegister<registerForm>): InputsSteps => ({
     stepOne: [{

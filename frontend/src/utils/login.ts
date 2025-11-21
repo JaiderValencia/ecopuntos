@@ -1,6 +1,6 @@
 import type { UseFormRegister } from 'react-hook-form'
-import type { InputProps } from '../interfaces/inputComponent/InputProps'
-import type { LoginFormData } from '../interfaces/login/loginForm'
+import type { InputProps } from '../interfaces/Input'
+import type { LoginFormData } from '../interfaces/login'
 
 export const inputsLogin = (register: UseFormRegister<LoginFormData>): InputProps[] => {
     return [{

@@ -1,10 +1,21 @@
 import axios from 'axios'
 
-const apiURL = 'http://localhost:4000/api'
+const apiURL = 'http://localhost:5280/api'
 
 const api = axios.create({
     baseURL: apiURL,
-    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    }
+})
+
+api.interceptors.request.use(config => {
+    const { bearer } = JSON.parse(sessionStorage.getItem('userSession') || '{}') || ''
+
+    if (bearer) {
+        config.headers['Authorization'] = `Bearer ${bearer}`
+    }
+    return config
 })
 
 export default api

@@ -1,9 +1,10 @@
 import { Outlet, Navigate } from 'react-router-dom'
-import { useUserContext } from '../../contex/user'
+import { useUserContext } from '../../contex/user/user'
 
 function PublicRoute() {
-    const { isLogged } = useUserContext()
+    const { userStatus: { isLogged } } = useUserContext()
 
+    // Si el usuario no está autenticado, permite el acceso
     if (!isLogged) {
         return <>{<Outlet />}</>
     }
