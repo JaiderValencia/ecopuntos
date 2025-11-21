@@ -1,41 +1,99 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useNavigate, useParams } from 'react-router-dom'
 import InputComponent from '../../components/input/texts'
-import type { TrabajadorFormData } from '../../interfaces/trabajador'
-import { crearTrabajador } from '../../api/trabajador'
+import type { TrabajadorUpdateFormData, Trabajador } from '../../interfaces/trabajador'
+import { actualizarTrabajador, obtenerTrabajadores } from '../../api/trabajador'
 
-function CrearTrabajador() {
-    const { register, handleSubmit, formState: { errors }, reset } = useForm<TrabajadorFormData>()    
+function EditarTrabajador() {
+    const { id } = useParams<{ id: string }>()
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm<TrabajadorUpdateFormData>()
+    const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
+    const [isFetching, setIsFetching] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [success, setSuccess] = useState(false)
 
-    const onSubmit = async (data: TrabajadorFormData) => {
+    useEffect(() => {
+        const cargarTrabajador = async () => {
+            if (!id) {
+                setError('ID de trabajador no válido')
+                setIsFetching(false)
+                return
+            }
+
+            try {
+                setIsFetching(true)
+                const trabajadores = await obtenerTrabajadores(100)
+                const trabajador = trabajadores.find((t: Trabajador) => t.Id === parseInt(id))
+
+                if (!trabajador) {
+                    setError('Trabajador no encontrado')
+                    return
+                }
+
+                // Cargar datos en el formulario
+                setValue('id', trabajador.Id)
+                setValue('nombre', trabajador.Nombre)
+                setValue('cedula', trabajador.Cedula)
+                setValue('correo', trabajador.Correo)
+                setValue('telefono', trabajador.Telefono)
+                setValue('direccion', trabajador.Direccion)
+                setValue('horario', trabajador.Horario)
+            } catch (error) {
+                console.error('Error al cargar trabajador:', error)
+                setError('Error al cargar los datos del trabajador')
+            } finally {
+                setIsFetching(false)
+            }
+        }
+
+        cargarTrabajador()
+    }, [id, setValue])
+
+    const onSubmit = async (data: TrabajadorUpdateFormData) => {
         setIsLoading(true)
         setError(null)
         setSuccess(false)
 
         try {
-            await crearTrabajador(data)
+            await actualizarTrabajador(data)
             setSuccess(true)
-            reset()
             setTimeout(() => {
-                setSuccess(false)
-            }, 3000)
+                navigate('/trabajadores/lista')
+            }, 1500)
         } catch (error: unknown) {
-            console.error('Error al crear trabajador:', error)
+            console.error('Error al actualizar trabajador:', error)
             const err = error as { response?: { data?: { mensaje?: string } } }
-            setError(err.response?.data?.mensaje || 'Error al crear el trabajador')
+            setError(err.response?.data?.mensaje || 'Error al actualizar el trabajador')
         } finally {
             setIsLoading(false)
         }
+    }
+
+    if (isFetching) {
+        return (
+            <div className="text-center py-8">
+                <p className="text-gray-600">Cargando datos del trabajador...</p>
+            </div>
+        )
+    }
+
+    if (error && !success) {
+        return (
+            <div className="max-w-4xl mx-auto p-4">
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {error}
+                </div>                
+            </div>
+        )
     }
 
     return (
         <div className="max-w-4xl mx-auto p-4">
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-text-light dark:text-text-dark">
-                    Crear Trabajador
+                    Editar Trabajador
                 </h2>                
             </div>
 
@@ -47,7 +105,7 @@ function CrearTrabajador() {
 
             {success && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-                    Trabajador creado exitosamente
+                    Trabajador actualizado exitosamente. Redirigiendo...
                 </div>
             )}
 
@@ -141,13 +199,12 @@ function CrearTrabajador() {
                         />
 
                         <InputComponent
-                            label="Contraseña"
+                            label="Nueva contraseña (opcional)"
                             inputType="password"
-                            inputPlaceholder="Ingrese la contraseña"
+                            inputPlaceholder="Dejar vacío para no cambiar"
                             inputId="contrasena"
                             inputName="contrasena"
                             register={register('contrasena', {
-                                required: 'La contraseña es requerida',
                                 minLength: { value: 6, message: 'Mínimo 6 caracteres' }
                             })}
                             spanAlert={errors.contrasena?.message}
@@ -158,17 +215,17 @@ function CrearTrabajador() {
                     <div className="flex gap-4 mt-6">
                         <button
                             type="button"
-                            onClick={() => reset()}
+                            onClick={() => navigate('/trabajadores/lista')}
                             className="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
                         >
-                            Limpiar
+                            Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:bg-gray-400"
                         >
-                            {isLoading ? 'Creando...' : 'Crear Trabajador'}
+                            {isLoading ? 'Actualizando...' : 'Actualizar Trabajador'}
                         </button>
                     </div>
                 </form>
@@ -177,4 +234,4 @@ function CrearTrabajador() {
     )
 }
 
-export default CrearTrabajador
+export default EditarTrabajador

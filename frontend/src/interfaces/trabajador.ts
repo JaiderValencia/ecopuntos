@@ -19,3 +19,15 @@ export interface TrabajadorFormData {
     codigoDeEmpleado: string
     horario: string
 }
+
+export interface TrabajadorUpdateFormData {
+    id: number
+    nombre: string
+    cedula: string
+    correo: string
+    direccion: string
+    telefono: string
+    contrasena?: string
+    codigoDeEmpleado: string
+    horario: string
+}

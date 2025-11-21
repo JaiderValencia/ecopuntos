@@ -15,6 +15,7 @@ import ListReportes from './pages/reportes/listReportes'
 import DetalleReporte from './pages/reportes/detalleReporte'
 import CrearTrabajador from './pages/trabajadores/crearTrabajador'
 import ListarTrabajadores from './pages/trabajadores/listarTrabajadores'
+import EditarTrabajador from './pages/trabajadores/editarTrabajador'
 
 function App() {
   return (
@@ -52,6 +53,7 @@ function App() {
             
             <Route path='/trabajadores/crear' element={<CrearTrabajador />} />
             <Route path='/trabajadores/lista' element={<ListarTrabajadores />} />
+            <Route path='/trabajadores/editar/:id' element={<EditarTrabajador />} />
           </Route>
 
           <Route path='*' element={<PageNotFound />} />

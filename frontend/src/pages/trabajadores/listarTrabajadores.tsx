@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import Table from '../../components/table'
 import type { Trabajador } from '../../interfaces/trabajador'
 import { obtenerTrabajadores } from '../../api/trabajador'
 
 function ListarTrabajadores() {
+    const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
     const [trabajadores, setTrabajadores] = useState<Trabajador[]>([])
     const [error, setError] = useState<string | null>(null)
@@ -64,7 +65,11 @@ function ListarTrabajadores() {
                 <section>
                     <Table columns={['Código de Empleado', 'Nombre', 'Cédula', 'Teléfono']}>
                         {trabajadores.map((trabajador) => (
-                            <tr className="border-b cursor-pointer hover:bg-gray-100" key={trabajador.Id}>
+                            <tr 
+                                className="border-b cursor-pointer hover:bg-gray-100" 
+                                key={trabajador.Id}
+                                onClick={() => navigate(`/trabajadores/editar/${trabajador.Id}`)}
+                            >
                                 <td className="px-4 py-2">{trabajador.CodigoDeEmpleado}</td>
                                 <td className="px-4 py-2">{trabajador.Nombre}</td>
                                 <td className="px-4 py-2">{trabajador.Cedula}</td>
