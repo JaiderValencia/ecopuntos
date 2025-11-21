@@ -21,4 +21,11 @@ namespace webapicsharp.Modelos
         public int EcoPuntos { get; set; }
 
     }
+
+    public class ClienteDetalladoDto : ClienteDto
+    {
+        public int TotalEntregas { get; set; }
+        public double PesoTotalEntregado { get; set; }
+        public string? UltimoEcopunto { get; set; }
+    }
 }
