@@ -153,6 +153,8 @@ switch (proveedorBD.ToLower())
         webapicsharp.Repositorios.RepositorioSubconsultaSqlServer>();
         builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioJoin,
         webapicsharp.Repositorios.RepositorioJoinSqlServer>();
+        builder.Services.AddScoped<webapicsharp.Repositorios.Abstracciones.IRepositorioConsultaPersonalizada,
+        webapicsharp.Repositorios.RepositorioConsultaPersonalizadaSqlServer>();
         break;
     case "sqlserverexpress": 
     case "localdb":

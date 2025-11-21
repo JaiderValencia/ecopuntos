@@ -13,19 +13,22 @@ namespace webapicsharp.Servicios
         private readonly IRepositorioActualizarTabla _repoActualizar;
         private readonly IRepositorioEliminarTabla _repoEliminar;
         private readonly IRepositorioSubconsulta _repoSubconsulta;
+        private readonly IRepositorioConsultaPersonalizada _repoConsultaPersonalizada;
 
         public ServicioCliente(
             IRepositorioEscrituraTabla repoEscritura,
             IRepositorioActualizarTabla repoActualizar,
             IRepositorioEliminarTabla repoEliminar,
             IRepositorioBusquedaPorCampoTabla repoBusqueda,
-            IRepositorioSubconsulta repoSubconsulta)
+            IRepositorioSubconsulta repoSubconsulta,
+            IRepositorioConsultaPersonalizada repoConsultaPersonalizada)
         {
             _repoEscritura = repoEscritura;
             _repoBusqueda = repoBusqueda;
             _repoActualizar = repoActualizar;
             _repoEliminar= repoEliminar;
             _repoSubconsulta = repoSubconsulta;
+            _repoConsultaPersonalizada = repoConsultaPersonalizada;
         }
 
 
@@ -88,7 +91,7 @@ namespace webapicsharp.Servicios
                 throw new Exception($"Error inesperado al crear cliente: {e.Message}");
             }
         }
-        public async Task<Cliente?> BuscarClientePorCorreoAsync(string correo)
+        public async Task<Dictionary<string, object?>?> BuscarClientePorCorreoAsync(string correo)
         {
             try
             {
@@ -102,27 +105,56 @@ namespace webapicsharp.Servicios
                     );
 
 
-                if (cliente == null)
+                if (cliente == null || cliente.Count == 0)
                 {
                     return null;
                 }
 
-                var clienteFiltrado = new Cliente(
-                    int.TryParse(cliente[0]["Id"]?.ToString(), out var id) ? id : 0,
-                    cliente[0]["Nombre"]?.ToString() ?? "",
-                    cliente[0]["Cedula"]?.ToString() ?? "",
-                    cliente[0]["Correo"]?.ToString() ?? "",
-                    cliente[0]["Direccion"]?.ToString() ?? "",
-                    cliente[0]["Telefono"]?.ToString() ?? "",
-                    cliente[0]["Contrasena"]?.ToString() ?? "",
-                    int.TryParse(cliente[0]["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0
-                );
+                var idCliente = int.TryParse(cliente[0]["Id"]?.ToString(), out var id) ? id : 0;
 
-                return clienteFiltrado;
+                // Consulta para obtener estadísticas de entregas
+                var consultaEstadisticas = @"
+                    SELECT 
+                        COUNT(DISTINCT e.Id) AS TotalEntregas,
+                        ISNULL(SUM(me.Peso), 0) AS PesoTotalEntregado,
+                        (
+                            SELECT TOP 1 ep.NombreEcopunto
+                            FROM [dbo].[Entrega] e2
+                            LEFT JOIN [dbo].[EcoPunto] ep ON e2.IdEcopunto = ep.Id
+                            WHERE e2.IdCliente = @IdCliente
+                            ORDER BY e2.FechaCreacion DESC
+                        ) AS UltimoEcopunto
+                    FROM [dbo].[Entrega] e
+                    LEFT JOIN [dbo].[MaterialEntrega] me ON e.Id = me.IdEntrega
+                    WHERE e.IdCliente = @IdCliente
+                ";
+
+                var parametros = new Dictionary<string, object?>
+                {
+                    ["@IdCliente"] = idCliente
+                };
+
+                var estadisticas = await _repoConsultaPersonalizada.EjecutarConsultaAsync(consultaEstadisticas, parametros);
+
+                var resultado = new Dictionary<string, object?>
+                {
+                    ["Id"] = idCliente,
+                    ["Nombre"] = cliente[0]["Nombre"]?.ToString() ?? "",
+                    ["Cedula"] = cliente[0]["Cedula"]?.ToString() ?? "",
+                    ["Correo"] = cliente[0]["Correo"]?.ToString() ?? "",
+                    ["Direccion"] = cliente[0]["Direccion"]?.ToString() ?? "",
+                    ["Telefono"] = cliente[0]["Telefono"]?.ToString() ?? "",                    
+                    ["EcoPuntos"] = int.TryParse(cliente[0]["EcoPuntos"]?.ToString(), out var ecoPuntos) ? ecoPuntos : 0,
+                    ["TotalEntregas"] = estadisticas.Count > 0 && estadisticas[0]["TotalEntregas"] != null ? Convert.ToInt32(estadisticas[0]["TotalEntregas"]) : 0,
+                    ["PesoTotalEntregado"] = estadisticas.Count > 0 && estadisticas[0]["PesoTotalEntregado"] != null ? Convert.ToDouble(estadisticas[0]["PesoTotalEntregado"]) : 0.0,
+                    ["UltimoEcopunto"] = estadisticas.Count > 0 ? estadisticas[0]["UltimoEcopunto"]?.ToString() : null
+                };
+
+                return resultado;
             }
             catch (Exception e)
             {
-                throw new Exception($"Error inesperado al crear cliente: {e.Message}");
+                throw new Exception($"Error inesperado al buscar cliente: {e.Message}");
             }
 
         }
