@@ -5,10 +5,10 @@ export const useLogout = () => {
     const { setUserStatus } = useUserContext()
     const navigate = useNavigate()
 
-    const logout = () => {
+    const logout = async () => {
         sessionStorage.removeItem('userSession')
         setUserStatus(defaultUserStatus)
-        navigate('/login')
+        await navigate('/login')
     }
 
     return logout

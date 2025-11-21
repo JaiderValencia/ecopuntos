@@ -3,17 +3,19 @@ import Card from '../../components/card'
 import FlexCenter from '../../components/flexCenter'
 import InputComponent from '../../components/input/texts'
 import { inputsRegister as inputs } from '../../utils/register'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import type { registerForm } from '../../interfaces/register'
 import { useForm } from 'react-hook-form'
+import { registrarCliente } from '../../api/clientes'
 
 function RegisterPage() {
     const { register, handleSubmit, formState: { errors } } = useForm<registerForm>()
-console.log(errors);
+    const navigate = useNavigate()
+    const [step, setStep] = useState(1)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const inputsRegister = inputs(register)
-
-    const [step, setStep] = useState(1)
 
     const nextStep = () => {
         setStep(prevStep => prevStep + 1)
@@ -23,14 +25,44 @@ console.log(errors);
         setStep(prevStep => prevStep - 1)
     }
 
-    const onSubmit = (data: registerForm) => {
-        console.log(data)   
+    const onSubmit = async (data: registerForm) => {
+        try {
+            setLoading(true)
+            setError(null)
+            
+            const nombreCompleto = `${data.nombre} ${data.apellidos}`
+            
+            await registrarCliente({
+                nombre: nombreCompleto,
+                cedula: data.documento,
+                correo: data.correo,
+                direccion: data.direccion,
+                telefono: data.telefono,
+                contrasena: data.contraseña
+            })
+            
+            alert('Cliente registrado exitosamente. Por favor inicia sesión.')
+            navigate('/login')
+        } catch (err: unknown) {
+            const errorMessage = err && typeof err === 'object' && 'response' in err && err.response && typeof err.response === 'object' && 'data' in err.response && err.response.data && typeof err.response.data === 'object' && 'mensaje' in err.response.data && typeof err.response.data.mensaje === 'string' ? err.response.data.mensaje : 'Error al registrar el cliente'
+            setError(errorMessage)
+            console.error(err)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
         <FlexCenter>
             <Card className='bg-white p-8 rounded-lg shadow-lg w-full max-w-sm'>
                 <h2 className="text-2xl font-bold text-center mb-6">Registrarse</h2>
+                
+                {error && (
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
+                    </div>
+                )}
+                
                 <form onSubmit={handleSubmit(onSubmit)}>
 
                     {/* primera etapa */}
@@ -69,10 +101,12 @@ console.log(errors);
 
                     <div className={`${step === 2 ? 'block' : 'hidden'} flex gap-3`}>
                         <button className="w-full bg-rose-600 text-white py-2 rounded-md hover:bg-rose-700 transition duration-300"
-                            type="button" onClick={prevStep}>Anterior</button>
+                            type="button" onClick={prevStep} disabled={loading}>Anterior</button>
 
-                        <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300"
-                            type="submit">Registrarse</button>
+                        <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-300 disabled:bg-blue-400 disabled:cursor-not-allowed"
+                            type="submit" disabled={loading}>
+                            {loading ? 'Registrando...' : 'Registrarse'}
+                        </button>
                     </div>
                 </form>
             </Card>
